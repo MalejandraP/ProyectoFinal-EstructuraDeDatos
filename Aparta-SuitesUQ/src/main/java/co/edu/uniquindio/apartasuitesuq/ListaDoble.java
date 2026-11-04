@@ -99,7 +99,7 @@ public class ListaDoble<T> implements Iterable<T> {
         }
         return false;
     }
-    public T obtener(int posicion){ //FUNCIONA IGUAL???
+    public T obtener(int posicion){
         if (estaVacia()) {
             throw new NoSuchElementException("No hay elementos en la lista");
         }
