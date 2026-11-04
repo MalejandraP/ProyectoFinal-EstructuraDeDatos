@@ -40,12 +40,12 @@ public class ListaDoble<T> implements Iterable<T> {
     public void agregarInicio(T dato){
         Nodo nuevo = new Nodo(dato);
 
-        if(inicio == null && fin == null && tam == 0){
+        if(estaVacia()){
             inicio = nuevo;
             fin = nuevo;
         }else{
             nuevo.siguiente = inicio;
-            inicio.anterior = nuevo; //?????????
+            inicio.anterior = nuevo;
             inicio = nuevo;
         }
         tam++;
@@ -55,7 +55,7 @@ public class ListaDoble<T> implements Iterable<T> {
     public void agregarFinal(T dato){
         Nodo nuevo = new Nodo(dato);
 
-        if(inicio == null && fin == null && tam == 0){
+        if(estaVacia()){
             inicio = fin = nuevo;
         }else{
             fin.siguiente = nuevo;
@@ -67,8 +67,8 @@ public class ListaDoble<T> implements Iterable<T> {
     }
 
     public void eliminarInicio(){
-        if(inicio == null && fin == null && tam == 0)
-            return;
+        if(estaVacia())
+            throw new NoSuchElementException();
 
         if(tam == 1){
             inicio = fin = null;
@@ -80,8 +80,8 @@ public class ListaDoble<T> implements Iterable<T> {
     }
 
     public void eliminarFinal(){
-        if(inicio == null && fin == null && tam == 0)
-            return;
+        if(estaVacia())
+            throw new NoSuchElementException() ;
 
         if(tam == 1){
             inicio = fin = null;
@@ -92,6 +92,44 @@ public class ListaDoble<T> implements Iterable<T> {
         }
         tam--;
     }
+
+    public boolean estaVacia(){
+        if(inicio == null && fin == null && tam == 0){
+            return true;
+        }
+        return false;
+    }
+    public T obtener(int posicion){ //FUNCIONA IGUAL???
+        if (estaVacia()) {
+            throw new NoSuchElementException("No hay elementos en la lista");
+        }
+        Nodo aux = inicio;
+        int contador = 0;
+        while (aux != null && contador <= posicion) {
+            if(contador == posicion){
+                return aux.dato;
+            }
+            contador++;
+            aux = aux.siguiente;
+        }
+        return null;
+    }
+
+    public boolean buscar(T datoBuscar){
+        if (estaVacia() ) {
+            throw new NoSuchElementException("No hay elementos en la lista");
+        }
+        Nodo aux = inicio;
+        do{
+            if (aux.dato.equals(datoBuscar)){
+                return true;
+            }
+            aux = aux.siguiente;
+        } while (aux != inicio);
+
+        return false;
+    }
+
     private class ListaDobleIterator implements Iterator<T> {
         private Nodo actual = inicio;
 
