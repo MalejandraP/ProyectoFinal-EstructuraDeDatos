@@ -41,7 +41,7 @@ public class Pila<T> implements Iterable<T> {
      * pop
      */
     public T desapilar() {
-        if (cima == null){
+        if (estaVacia()){
             throw new IllegalStateException("La pila está vacía");
         }
         T dato = cima.dato;
@@ -56,7 +56,6 @@ public class Pila<T> implements Iterable<T> {
     public boolean buscar(T datoBuscar) {
         Nodo aux = cima;
         while (aux != null) {
-
             if (aux.dato.equals(datoBuscar)) {
                 return true;
             }
@@ -88,7 +87,7 @@ public class Pila<T> implements Iterable<T> {
      */
     public String mostrar() {
         String listaString = "[";
-        if (cima == null) {
+        if (estaVacia()) {
             listaString += " Null";
         } else {
             Nodo aux = cima;
@@ -99,6 +98,13 @@ public class Pila<T> implements Iterable<T> {
         }
         listaString += " ]";
         return listaString;
+    }
+
+    public boolean estaVacia(){
+        if (cima == null && tam == 0){
+            return true;
+        }
+        return false;
     }
 
     public T getCima() {
