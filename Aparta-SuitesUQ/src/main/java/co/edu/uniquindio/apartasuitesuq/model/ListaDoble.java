@@ -1,4 +1,4 @@
-package co.edu.uniquindio.apartasuitesuq;
+package co.edu.uniquindio.apartasuitesuq.model;
 
 
 import java.util.Iterator;

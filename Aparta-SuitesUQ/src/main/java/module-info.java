@@ -5,4 +5,6 @@ module co.edu.uniquindio.apartasuitesuq {
 
     opens co.edu.uniquindio.apartasuitesuq to javafx.fxml;
     exports co.edu.uniquindio.apartasuitesuq;
+    exports co.edu.uniquindio.apartasuitesuq.model;
+    opens co.edu.uniquindio.apartasuitesuq.model to javafx.fxml;
 }
