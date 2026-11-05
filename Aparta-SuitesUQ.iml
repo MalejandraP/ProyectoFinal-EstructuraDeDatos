@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module version="4">
   <component name="AdditionalModuleElements">
-    <content url="file://$MODULE_DIR$/Aparta-SuitesUQ" dumb="true">
+    <content url="file://$MODULE_DIR$/Aparta-SuitesUQ">
       <sourceFolder url="file://$MODULE_DIR$/Aparta-SuitesUQ/src/main/java" isTestSource="false" />
     </content>
   </component>
