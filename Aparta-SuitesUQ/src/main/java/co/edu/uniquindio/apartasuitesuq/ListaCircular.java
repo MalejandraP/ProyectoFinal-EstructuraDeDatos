@@ -21,8 +21,135 @@ public class ListaCircular<T> implements Iterable<T> {
             this.siguiente = null;
         }
     }
+    public void agregarInicio(T dato){
+        Nodo nuevoNodo = new Nodo(dato);
+        if(estaVacia()){
+            inicio = nuevoNodo;
+            inicio.siguiente = inicio;
+        } else {
+            Nodo aux = inicio;
+            while(aux.siguiente != inicio){
+                aux = aux.siguiente;
+            }
+            nuevoNodo.siguiente = inicio;
+            aux.siguiente = nuevoNodo;
+            inicio = nuevoNodo;
+        }
+        tam++;
+    }
+    public void agregarFinal(T dato){
+        Nodo nuevoNodo = new Nodo(dato);
+        if(estaVacia()){
+            inicio = nuevoNodo;
+            inicio.siguiente = inicio;
+        } else {
+            Nodo aux = inicio;
+            while(aux.siguiente != inicio){
+                aux = aux.siguiente;
+            }
+            aux.siguiente = nuevoNodo;
+            nuevoNodo.siguiente = inicio;
+        }
+        tam++;
+    }
+    public void eliminarInicio(){
+        if(estaVacia()){
+            throw new NoSuchElementException();
+        }
+        if(tam == 1){
+            inicio = null;
+        } else {
+            Nodo aux = inicio;
+            while(aux.siguiente != inicio){
+                aux = aux.siguiente;
+            }
+            inicio = inicio.siguiente;
+            aux.siguiente = inicio;
+        }
+        tam--;
+    }
+    public void eliminarFinal() {
+        if(estaVacia()){
+            throw new NoSuchElementException();
+        }
+        if(tam == 1){
+            inicio = null;
+        } else {
+            Nodo aux = inicio;
+            while (aux.siguiente.siguiente != inicio) {
+                aux = aux.siguiente;
+            }
+            aux.siguiente = inicio;
+        }
+        tam--;
+    }
 
+    /**
+     * Busca un elemento dentro de la lista.
+     */
+    public boolean buscar(T datoBuscar) {
+        if(estaVacia())
+            throw new NoSuchElementException();
 
+        Nodo aux = inicio;
+
+        do{
+            if (aux.dato.equals(datoBuscar)) {
+                return true;
+            }
+            aux = aux.siguiente;
+        } while (aux != inicio);
+
+        return false;
+    }
+
+    /**
+     * Retorna la posición del elemento dentro de la lista.
+     * Si no existe retorna -1.
+     */
+    public int localizar(T datoBuscar) {
+        if(inicio == null && tam == 0)
+            return -1;
+
+        Nodo aux = inicio;
+        int count = 0;
+
+        do{
+            if (aux.dato.equals(datoBuscar)) {
+                return count;
+            }
+            count++;
+            aux = aux.siguiente;
+        } while (aux != inicio);
+
+        return -1;
+    }
+
+    /**
+     * Retorna los elementos de la lista como String.
+     */
+    public String mostrar() {
+        String listaString = "[";
+        if (inicio == null) {
+            listaString += " Null";
+        } else {
+            Nodo aux = inicio;
+
+            do{
+                listaString += " " + aux.dato;
+                aux = aux.siguiente;
+            } while (aux != inicio);
+        }
+        listaString += " ]";
+        return listaString;
+    }
+
+    public boolean estaVacia(){
+        if(inicio == null && tam == 0){
+            return true;
+        }
+        return false;
+    }
     @Override
     public Iterator<T> iterator() {
         return new ListaCircularIterator();
