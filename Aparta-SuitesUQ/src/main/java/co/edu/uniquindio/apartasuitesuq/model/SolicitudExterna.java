@@ -8,7 +8,7 @@ public class SolicitudExterna {
     private LocalDate entrada, salida;
     private int numPersonas;
     private Huesped titular;
-    private EstadoSolicitud estado = EstadoSolicitud.PENDIENTE;   // PENDIENTE, ACEPTADA, RECHAZADA
+    private EstadoSolicitud estado = EstadoSolicitud.PENDIENTE;
     private String motivoRechazo;
 
     public SolicitudExterna(String idExterno, Apartamento apartamento, LocalDate entrada, LocalDate salida, int numPersonas, Huesped titular) {

@@ -156,7 +156,8 @@ public class Reserva implements Comparable<Reserva>{
             default:         return false;
         }
     }
-    public boolean estaActiva(){ //PROVISIONAL HASTA EL CUELLO
+
+    public boolean estaActiva(){ //PROVISIONAL
         return estado == EstadoReserva.PENDIENTE
                 || estado == EstadoReserva.CONFIRMADA
                 || estado == EstadoReserva.ENCURSO;
