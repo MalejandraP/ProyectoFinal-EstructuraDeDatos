@@ -5,8 +5,23 @@ import java.time.LocalDate;
 public class PruebaCanalExterno {
 
     public static void main(String[] args) {
+        ServicioTurnos t = new ServicioTurnos();
+        t.registrar(new Recepcionista("Ana","3029"));
+        t.registrar(new Recepcionista("Luis","3452"));
+        t.registrar(new Recepcionista("Marta","3298"));
+
+        System.out.println(t.turnoActual());   // Ana
+        System.out.println(t.pasarTurno());    // Luis
+        System.out.println(t.pasarTurno());    // Marta
+        System.out.println(t.pasarTurno());    // Ana (dio la vuelta)
+
+        t.retirar(new Recepcionista("Ana","3029"));   // tenía el turno
+        System.out.println(t.turnoActual());   // Luis
+
+
         ServicioReservas servicioReservas = new ServicioReservas();
         ServicioCanalExterno canal = new ServicioCanalExterno(servicioReservas);
+
 
 
         // --- Datos de prueba (AJUSTAR constructores) ---
@@ -65,7 +80,7 @@ public class PruebaCanalExterno {
         try {
             canal.procesarSiguiente();
             comprobar("Debía lanzar EstructuraVaciaException", false);
-        } catch (IllegalArgumentException e) {
+        } catch (EstructuraVaciaException e) {
             comprobar("Lanza EstructuraVaciaException al procesar con cola vacía", true);
         }
     }
