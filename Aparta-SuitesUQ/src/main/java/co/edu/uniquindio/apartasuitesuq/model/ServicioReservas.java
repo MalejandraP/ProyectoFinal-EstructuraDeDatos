@@ -5,7 +5,6 @@ import java.time.temporal.ChronoUnit;
 
 public class ServicioReservas { //PROVISIONAL HASTA EL CUELLO
 
-    // PROVISIONAL: reemplazar por el ABB de reservas de cada apartamento (P2)
     private ListaDoble<Reserva> reservas = new ListaDoble<>();
     private int contador = 0;
 
@@ -14,26 +13,26 @@ public class ServicioReservas { //PROVISIONAL HASTA EL CUELLO
                                              int numPersonas, Canal canal) {
         // 1. Fechas
         if (entrada == null || salida == null) {
-            throw new IllegalArgumentException("Las fechas no pueden ser nulas.");
+            throw new FechasInvalidasException("Las fechas no pueden ser nulas.");
         }
         if (!salida.isAfter(entrada)) {
-            throw new IllegalArgumentException("La salida debe ser posterior a la entrada.");
+            throw new FechasInvalidasException("La salida debe ser posterior a la entrada.");
         }
         if (entrada.isBefore(LocalDate.now())) {
-            throw new IllegalArgumentException("La entrada no puede estar en el pasado.");
+            throw new FechasInvalidasException("La entrada no puede estar en el pasado.");
         }
 
         // 2. Capacidad
         if (numPersonas <= 0) {
-            throw new IllegalArgumentException("Debe haber al menos una persona.");
+            throw new CapacidadExcedidaException("Debe haber al menos una persona.");
         }
         if (numPersonas > apto.getCapacidadMaxima()) {
-            throw new IllegalArgumentException("Capacidad máxima: " + apto.getCapacidadMaxima());
+            throw new CapacidadExcedidaException("Capacidad máxima: " + apto.getCapacidadMaxima());
         }
 
         // 3. Solapamiento
         if (haySolapamiento(apto, entrada, salida)) {
-            throw new IllegalArgumentException(
+            throw new ReservaSolapadaException(
                     "El apartamento " + apto.getCodigo() + " ya está reservado en esas fechas.");
         }
 

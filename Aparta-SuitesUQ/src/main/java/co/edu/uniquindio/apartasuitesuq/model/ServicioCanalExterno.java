@@ -21,8 +21,10 @@ public class ServicioCanalExterno {
             Reserva reserva = servicioReservas.crearReserva(s.getTitular(),s.getCodigoApartamento(),s.getEntrada(), s.getSalida(), s.getNumPersonas(), Canal.EXTERNO);
             s.marcarAceptada();
             return reserva;
-        } catch (IllegalArgumentException e) {
+        } catch (ReservaSolapadaException e) {
             rechazar(s, e.getMessage());
+        } catch (FechasInvalidasException | CapacidadExcedidaException e){
+            s.marcarRechazada(e.getMessage());
         }
         return null;
     }

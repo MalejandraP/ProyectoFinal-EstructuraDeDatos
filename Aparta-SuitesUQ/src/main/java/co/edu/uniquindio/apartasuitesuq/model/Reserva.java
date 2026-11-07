@@ -136,10 +136,10 @@ public class Reserva implements Comparable<Reserva>{
 
     public void cambiarEstado(EstadoReserva nuevo) {
         if (nuevo == null) {
-            throw new IllegalArgumentException("El estado no puede ser nulo.");
+            throw new TransicionEstadoInvalidaException("El estado no puede ser nulo.");
         }
         if (!transicionValida(this.estado, nuevo)) {
-            throw new IllegalArgumentException(
+            throw new TransicionEstadoInvalidaException(
                     "No se puede pasar de " + this.estado + " a " + nuevo);
         }
         this.estado = nuevo;
