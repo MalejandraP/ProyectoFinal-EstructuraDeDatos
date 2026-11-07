@@ -42,7 +42,7 @@ public class Pila<T> implements Iterable<T> {
      */
     public T desapilar() {
         if (estaVacia()){
-            throw new IllegalStateException("La pila está vacía");
+            throw new EstructuraVaciaException("La pila está vacía");
         }
         T dato = cima.dato;
         cima = cima.siguiente;
@@ -54,6 +54,9 @@ public class Pila<T> implements Iterable<T> {
      * Busca un elemento dentro de la lista.
      */
     public boolean buscar(T datoBuscar) {
+        if (estaVacia()){
+            throw new EstructuraVaciaException("La pila está vacía");
+        }
         Nodo aux = cima;
         while (aux != null) {
             if (aux.dato.equals(datoBuscar)) {
@@ -70,6 +73,9 @@ public class Pila<T> implements Iterable<T> {
      * Si no existe retorna -1.
      */
     public int localizar(T datoBuscar) {
+        if (estaVacia()){
+            throw new EstructuraVaciaException("La pila está vacía");
+        }
         Nodo aux = cima;
         int count = 0;
         while (aux != null) {
@@ -134,7 +140,7 @@ public class Pila<T> implements Iterable<T> {
         @Override
         public T next() {
             if(!hasNext()){
-                throw new NoSuchElementException();
+                throw new EstructuraVaciaException("No hay más elementos en la pila");
             }
             T valor = actual.dato;
             actual = actual.siguiente;

@@ -54,7 +54,7 @@ public class ListaCircular<T> implements Iterable<T> {
     }
     public void eliminarInicio(){
         if(estaVacia()){
-            throw new NoSuchElementException();
+            throw new EstructuraVaciaException("La lista esta vacía");
         }
         if(tam == 1){
             inicio = null;
@@ -70,7 +70,7 @@ public class ListaCircular<T> implements Iterable<T> {
     }
     public void eliminarFinal() {
         if(estaVacia()){
-            throw new NoSuchElementException();
+            throw new EstructuraVaciaException("La lista esta vacía");
         }
         if(tam == 1){
             inicio = null;
@@ -89,7 +89,7 @@ public class ListaCircular<T> implements Iterable<T> {
      */
     public boolean buscar(T datoBuscar) {
         if(estaVacia())
-            throw new NoSuchElementException();
+            throw new EstructuraVaciaException("La lista está vacía");
 
         Nodo aux = inicio;
 
@@ -166,7 +166,7 @@ public class ListaCircular<T> implements Iterable<T> {
         @Override
         public T next() {
             if(!hasNext()){
-                throw new NoSuchElementException();
+                throw new EstructuraVaciaException("La lista no tiene más elementos");
             }
             T valor = actual.dato;
             actual = actual.siguiente;

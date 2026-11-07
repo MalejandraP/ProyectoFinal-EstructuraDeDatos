@@ -3,7 +3,7 @@ package co.edu.uniquindio.apartasuitesuq.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Complejo {
+public class  Complejo {
     private String nombre;
     private List<Apartamento> listaApartamentos;
     private List<Huesped> listaHuespedes;

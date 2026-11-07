@@ -10,12 +10,13 @@ public class Reserva implements Comparable<Reserva>{
     private Apartamento apartamento;
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
-    private String estado;
+    private EstadoReserva estado;
     private double costoTotal;
+    private Canal canal;
 
     public Reserva(String codigoReserva, Huesped huesped,
                    Apartamento apartamento, LocalDate fechaInicio,
-                   LocalDate fechaFin, String estado, double costoTotal) {
+                   LocalDate fechaFin, EstadoReserva estado, double costoTotal, Canal canal) {
         this.codigoReserva = codigoReserva;
         this.huesped = huesped;
         this.apartamento = apartamento;
@@ -23,6 +24,7 @@ public class Reserva implements Comparable<Reserva>{
         this.fechaFin = fechaFin;
         this.estado = estado;
         this.costoTotal = costoTotal;
+        this.canal = canal;
     }
 
     public int obtenerNumeroNoches() {
@@ -42,10 +44,10 @@ public class Reserva implements Comparable<Reserva>{
     }
 
     public void cancelarReserva() {
-        if ("Finalizada".equalsIgnoreCase(this.estado)) {
+        if (EstadoReserva.FINALIZADA.equals(estado)) {
             throw new IllegalStateException("No se puede cancelar una reserva que ya fue finalizada.");
         }
-        this.estado = "Cancelada";
+        this.estado = EstadoReserva.CANCELADA;
     }
 
     public String getCodigoReserva() {
@@ -109,21 +111,56 @@ public class Reserva implements Comparable<Reserva>{
         }
     }
 
-    public String getEstado() {
+    public EstadoReserva getEstado() {
         return estado;
     }
 
-    public void setEstado(String estado) {
-        if (estado == null || estado.trim().isEmpty()) {
+    public void setEstado(EstadoReserva estado) {
+        if (estado == null ) {
             throw new IllegalArgumentException("El estado de la reserva no puede estar vacío.");
         }
-        this.estado = estado.trim();
+        this.estado = estado;
     }
 
     public double getCostoTotal() {
         return costoTotal;
     }
 
+    public Canal getCanal() {
+        return canal;
+    }
+
+    public void setCanal(Canal canal) {
+        this.canal = canal;
+    }
+
+    public void cambiarEstado(EstadoReserva nuevo) {
+        if (nuevo == null) {
+            throw new IllegalArgumentException("El estado no puede ser nulo.");
+        }
+        if (!transicionValida(this.estado, nuevo)) {
+            throw new IllegalArgumentException(
+                    "No se puede pasar de " + this.estado + " a " + nuevo);
+        }
+        this.estado = nuevo;
+    }
+
+    private boolean transicionValida(EstadoReserva actual, EstadoReserva nuevo) {
+        switch (actual) {
+            case PENDIENTE:  return nuevo == EstadoReserva.CONFIRMADA
+                    || nuevo == EstadoReserva.CANCELADA;
+            case CONFIRMADA: return nuevo == EstadoReserva.ENCURSO
+                    || nuevo == EstadoReserva.CANCELADA
+                    || nuevo == EstadoReserva.NOSHOW;
+            case ENCURSO:   return nuevo == EstadoReserva.FINALIZADA;
+            default:         return false;
+        }
+    }
+    public boolean estaActiva(){ //PROVISIONAL HASTA EL CUELLO
+        return estado == EstadoReserva.PENDIENTE
+                || estado == EstadoReserva.CONFIRMADA
+                || estado == EstadoReserva.ENCURSO;
+    }
     @Override
     public int compareTo(Reserva auxiliar) {
         if (auxiliar == null || auxiliar.getCodigoReserva() == null) {
