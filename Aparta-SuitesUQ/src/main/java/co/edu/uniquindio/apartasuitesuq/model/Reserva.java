@@ -6,23 +6,26 @@ import java.time.temporal.ChronoUnit;
 public class Reserva implements Comparable<Reserva>{
 
     private String codigoReserva;
-    private Huesped huesped;
+    private Huesped huespedTitular;
     private Apartamento apartamento;
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
     private String estado;
     private double costoTotal;
+    private ListaDoble<Huesped> huespedes;
 
-    public Reserva(String codigoReserva, Huesped huesped,
+    public Reserva(String codigoReserva, Huesped huespedTitular,
                    Apartamento apartamento, LocalDate fechaInicio,
                    LocalDate fechaFin, String estado, double costoTotal) {
         this.codigoReserva = codigoReserva;
-        this.huesped = huesped;
+        this.huespedTitular = huespedTitular;
         this.apartamento = apartamento;
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
         this.estado = estado;
         this.costoTotal = costoTotal;
+        this.huespedes = new ListaDoble<>();
+        this.huespedes.agregarFinal(huespedTitular);
     }
 
     public int obtenerNumeroNoches() {
@@ -60,14 +63,14 @@ public class Reserva implements Comparable<Reserva>{
     }
 
     public Huesped getHuesped() {
-        return huesped;
+        return huespedTitular;
     }
 
     public void setCliente(Huesped huesped) {
         if (huesped == null) {
             throw new IllegalArgumentException("La reserva debe tener un huesped asociado.");
         }
-        this.huesped = huesped;
+        this.huespedTitular = huesped;
     }
 
     public Apartamento getApartamento() {
@@ -136,7 +139,7 @@ public class Reserva implements Comparable<Reserva>{
     public String toString() {
         return "Reserva{" +
                 "codigoReserva='" + codigoReserva + '\'' +
-                ", huesped=" + huesped +
+                ", huesped=" + huespedTitular +
                 ", apartamento=" + apartamento +
                 ", fechaInicio=" + fechaInicio +
                 ", fechaFin=" + fechaFin +

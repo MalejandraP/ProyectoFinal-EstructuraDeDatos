@@ -8,9 +8,10 @@ public class Apartamento implements Comparable<Apartamento> {
     private int numeroDormitorios;
     private int capacidadMaxima;
     private double tarifaBaseNoche;
+    private EstadoApartamento estadoApartamento;
 
     public Apartamento(String codigo, String nombre, String bloque, int piso,
-                       int numeroDormitorios, int capacidadMaxima, double tarifaBaseNoche) {
+                       int numeroDormitorios, int capacidadMaxima, double tarifaBaseNoche, EstadoApartamento estadoApartamento) {
         this.codigo = codigo;
         this.nombre = nombre;
         this.bloque = bloque;
@@ -18,6 +19,7 @@ public class Apartamento implements Comparable<Apartamento> {
         this.numeroDormitorios = numeroDormitorios;
         this.capacidadMaxima = capacidadMaxima;
         this.tarifaBaseNoche = tarifaBaseNoche;
+        this.estadoApartamento = estadoApartamento;
     }
 
 
@@ -96,6 +98,18 @@ public class Apartamento implements Comparable<Apartamento> {
             throw new IllegalArgumentException("La tarifa base por noche debe ser un valor positivo.");
         }
         this.tarifaBaseNoche = tarifaBaseNoche;
+    }
+
+    public EstadoApartamento getEstadoApartamento() {
+        return estadoApartamento;
+    }
+
+
+    public void setEstadoOperativo(EstadoApartamento estadoApartamento) {
+        if (estadoApartamento == null) {
+            throw new IllegalArgumentException("El estado operativo del apartamento no puede ser nulo.");
+        }
+        this.estadoApartamento = estadoApartamento;
     }
 
 
