@@ -8,6 +8,7 @@ public class Apartamento implements Comparable<Apartamento> {
     private int numeroDormitorios;
     private int capacidadMaxima;
     private double tarifaBaseNoche;
+    private EstadoApartamento estado;
 
     public Apartamento(String codigo, String nombre, String bloque, int piso,
                        int numeroDormitorios, int capacidadMaxima, double tarifaBaseNoche) {
@@ -18,6 +19,7 @@ public class Apartamento implements Comparable<Apartamento> {
         this.numeroDormitorios = numeroDormitorios;
         this.capacidadMaxima = capacidadMaxima;
         this.tarifaBaseNoche = tarifaBaseNoche;
+        this.estado = EstadoApartamento.PREPARADO;
     }
 
 
@@ -98,6 +100,13 @@ public class Apartamento implements Comparable<Apartamento> {
         this.tarifaBaseNoche = tarifaBaseNoche;
     }
 
+    public EstadoApartamento getEstado() {
+        return estado;
+    }
+
+    public void setEstado(EstadoApartamento estado) {
+        this.estado = estado;
+    }
 
     public double calcularCostoEstadia(int numNoches) {
         if (numNoches <= 0) {
