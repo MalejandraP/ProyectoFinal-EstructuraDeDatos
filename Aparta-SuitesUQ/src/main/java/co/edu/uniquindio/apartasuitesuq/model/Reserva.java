@@ -100,6 +100,11 @@ public class Reserva implements Comparable<Reserva> {
         return (int) ChronoUnit.DAYS.between(fechaInicio, fechaFin);
     }
 
+    /** @return la estancia de la reserva, iterable noche por noche */
+    public Estancia getEstancia() {
+        return new Estancia(fechaInicio, fechaFin);
+    }
+
     /**
      * @return true si la estancia [entrada, salida) comparte al menos una noche con esta reserva
      */
