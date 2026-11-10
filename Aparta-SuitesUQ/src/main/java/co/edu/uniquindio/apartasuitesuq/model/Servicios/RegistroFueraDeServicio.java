@@ -36,7 +36,7 @@ public class RegistroFueraDeServicio implements Iterable<RegistroFueraDeServicio
         registros.agregarFinal(new Registro(codigo, motivo, desde));
     }
 
-    /** Cierra el registro vigente del apartamento. Devuelve false si no había ninguno. */
+
     public boolean cerrar(String codigo, LocalDateTime hasta) {
         Registro r = vigente(codigo);
         if (r == null) {
@@ -46,7 +46,7 @@ public class RegistroFueraDeServicio implements Iterable<RegistroFueraDeServicio
         return true;
     }
 
-    /** Registro vigente de ese apartamento, o null. */
+
     public Registro vigente(String codigo) {
         for (Registro r : registros) {
             if (r.estaAbierto() && r.codigoApartamento.equalsIgnoreCase(codigo)) {
@@ -56,7 +56,7 @@ public class RegistroFueraDeServicio implements Iterable<RegistroFueraDeServicio
         return null;
     }
 
-    /** Motivo vigente, o null si el apartamento no está fuera de servicio. */
+
     public String motivoDe(String codigo) {
         Registro r = vigente(codigo);
         return r == null ? null : r.motivo;
