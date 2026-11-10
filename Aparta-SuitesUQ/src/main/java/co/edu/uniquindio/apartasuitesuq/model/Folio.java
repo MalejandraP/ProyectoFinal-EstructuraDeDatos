@@ -37,8 +37,10 @@ public class Folio {
         for(Movimiento mov : movimientos){
             if(mov.getTipo() == TipoMovimiento.CARGO){
                 saldo += mov.getMonto();
+            } else{
+                saldo -= mov.getMonto();
             }
-            saldo -= mov.getMonto();
+
         }
         return saldo;
     }
