@@ -23,7 +23,7 @@ public class ServicioPreparacion {
         this.cola = cola;
     }
 
-    /** Solo se puede entrar a un apartamento Preparado. */
+
     public void checkIn(Apartamento a) {
         if (a.getEstado() != EstadoApartamento.PREPARADO) {
             throw new TransicionEstadoInvalidaException(
@@ -32,7 +32,7 @@ public class ServicioPreparacion {
         a.setEstado(EstadoApartamento.OCUPADO);
     }
 
-    /** Al salir el grupo, el apartamento queda pendiente y entra a la cola de preparación. */
+
     public void checkOut(Apartamento a, LocalDateTime ahora) {
         if (a.getEstado() != EstadoApartamento.OCUPADO) {
             throw new TransicionEstadoInvalidaException(
@@ -42,7 +42,7 @@ public class ServicioPreparacion {
         cola.encolar(a, ahora);
     }
 
-    /** Despacha el siguiente según la prioridad y lo pasa a En preparación. */
+
     public ColaPreparacion.Item iniciarSiguiente() {
         ColaPreparacion.Item item;
         do {
