@@ -2,13 +2,12 @@ package co.edu.uniquindio.apartasuitesuq.model.Servicios;
 
 import co.edu.uniquindio.apartasuitesuq.model.EstadoReserva;
 import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ColaPrioridad;
-import co.edu.uniquindio.apartasuitesuq.model.ListaDoble;
+import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ListaDoble;
 import co.edu.uniquindio.apartasuitesuq.model.Reserva;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Comparator;
-import java.util.function.Function;
 
 public class ServicioVencimiento {
 

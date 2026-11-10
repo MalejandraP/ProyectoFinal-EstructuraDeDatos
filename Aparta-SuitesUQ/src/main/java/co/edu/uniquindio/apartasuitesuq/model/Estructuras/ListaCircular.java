@@ -1,7 +1,8 @@
-package co.edu.uniquindio.apartasuitesuq.model;
+package co.edu.uniquindio.apartasuitesuq.model.Estructuras;
+
+import co.edu.uniquindio.apartasuitesuq.model.EstructuraVaciaException;
 
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 /**
  * Clase genérica de una lista circularmente enlazada que implementa Iterable

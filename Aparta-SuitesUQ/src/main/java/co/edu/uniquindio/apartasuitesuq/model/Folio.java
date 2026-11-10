@@ -1,5 +1,8 @@
 package co.edu.uniquindio.apartasuitesuq.model;
 
+import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ListaDoble;
+import co.edu.uniquindio.apartasuitesuq.model.Estructuras.Pila;
+
 import java.util.NoSuchElementException;
 
 public class Folio {

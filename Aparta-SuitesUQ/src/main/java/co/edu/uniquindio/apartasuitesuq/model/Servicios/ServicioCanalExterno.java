@@ -1,6 +1,8 @@
-package co.edu.uniquindio.apartasuitesuq.model;
+package co.edu.uniquindio.apartasuitesuq.model.Servicios;
 
-import java.time.LocalDateTime;
+import co.edu.uniquindio.apartasuitesuq.model.*;
+import co.edu.uniquindio.apartasuitesuq.model.Estructuras.Cola;
+import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ListaDoble;
 
 public class ServicioCanalExterno {
     private ServicioReservas servicioReservas;
