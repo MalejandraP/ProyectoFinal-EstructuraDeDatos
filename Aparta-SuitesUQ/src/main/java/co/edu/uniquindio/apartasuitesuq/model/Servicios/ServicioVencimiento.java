@@ -67,7 +67,7 @@ public class ServicioVencimiento {
         return false;
     }
 
-    
+
     public Duration tiempoRestante(Reserva reserva, LocalDateTime ahora) {
         for (Seguimiento s : cola) {
             if (s.reserva == reserva) {
