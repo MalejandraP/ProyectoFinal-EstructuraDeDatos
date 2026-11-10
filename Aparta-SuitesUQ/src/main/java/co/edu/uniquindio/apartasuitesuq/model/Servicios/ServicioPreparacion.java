@@ -16,6 +16,7 @@ public class ServicioPreparacion {
     private final ColaPreparacion cola;
     private long minutosTotales;
     private int preparaciones;
+    private final RegistroFueraDeServicio fueraDeServicio = new RegistroFueraDeServicio();
 
     public ServicioPreparacion(Grafo<String> mapa, String nodoRecepcion, ColaPreparacion cola) {
         this.mapa = mapa;
@@ -25,20 +26,20 @@ public class ServicioPreparacion {
 
 
     public void checkIn(Apartamento a) {
-        if (a.getEstado() != EstadoApartamento.PREPARADO) {
+        if (estadoDe(a) != EstadoApartamento.PREPARADO) {
             throw new TransicionEstadoInvalidaException(
-                    "No se puede hacer check-in: " + a.getCodigo() + " está " + a.getEstado());
+                    "No se puede hacer check-in: " + a.getCodigo() + " está " + estadoDe(a));
         }
-        a.setEstado(EstadoApartamento.OCUPADO);
+        cambiarEstado(a, EstadoApartamento.OCUPADO);
     }
 
 
     public void checkOut(Apartamento a, LocalDateTime ahora) {
-        if (a.getEstado() != EstadoApartamento.OCUPADO) {
+        if (estadoDe(a) != EstadoApartamento.OCUPADO) {
             throw new TransicionEstadoInvalidaException(
-                    "No se puede hacer check-out: " + a.getCodigo() + " está " + a.getEstado());
+                    "No se puede hacer check-out: " + a.getCodigo() + " está " + estadoDe(a));
         }
-        a.setEstado(EstadoApartamento.PENDIENTEDEPREPARACION);
+        cambiarEstado(a, EstadoApartamento.PENDIENTEDEPREPARACION);
         cola.encolar(a, ahora);
     }
 
@@ -47,38 +48,42 @@ public class ServicioPreparacion {
         ColaPreparacion.Item item;
         do {
             item = cola.siguiente();
-        } while (item.getApartamento().getEstado() != EstadoApartamento.PENDIENTEDEPREPARACION);
-        item.getApartamento().setEstado(EstadoApartamento.ENPREPARACION);
+        } while (estadoDe(item.getApartamento()) != EstadoApartamento.PENDIENTEDEPREPARACION);
+        cambiarEstado(item.getApartamento(), EstadoApartamento.ENPREPARACION);
         return item;
     }
 
     public void terminarPreparacion(ColaPreparacion.Item item, LocalDateTime ahora) {
         Apartamento a = item.getApartamento();
-        if (a.getEstado() != EstadoApartamento.ENPREPARACION) {
+        if (estadoDe(a) != EstadoApartamento.ENPREPARACION) {
             throw new TransicionEstadoInvalidaException(a.getCodigo() + " no está en preparación");
         }
-        a.setEstado(EstadoApartamento.PREPARADO);
+        cambiarEstado(a, EstadoApartamento.PREPARADO);
         minutosTotales += Duration.between(item.getIngreso(), ahora).toMinutes();
         preparaciones++;
     }
 
     public void ponerFueraDeServicio(Apartamento a, String motivo) {
+        ponerFueraDeServicio(a, motivo, LocalDateTime.now());
+    }
+
+    public void ponerFueraDeServicio(Apartamento a, String motivo, LocalDateTime ahora) {
         if (motivo == null || motivo.isBlank()) {
             throw new IllegalArgumentException("Debe indicar el motivo");
         }
-        if (a.getEstado() == EstadoApartamento.OCUPADO) {
+        if (estadoDe(a) == EstadoApartamento.OCUPADO) {
             throw new TransicionEstadoInvalidaException("No se puede sacar de servicio un apartamento ocupado");
         }
-        //a.setMotivoFueraServicio(motivo);
-        a.setEstado(EstadoApartamento.FUERADESERVICIO);
+        cambiarEstado(a, EstadoApartamento.FUERADESERVICIO);
+        fueraDeServicio.abrir(a.getCodigo(), motivo.trim(), ahora);
     }
 
     public void volverAServicio(Apartamento a, LocalDateTime ahora) {
-        if (a.getEstado() != EstadoApartamento.FUERADESERVICIO) {
+        if (estadoDe(a) != EstadoApartamento.FUERADESERVICIO) {
             throw new TransicionEstadoInvalidaException(a.getCodigo() + " no está fuera de servicio");
         }
-        //a.setMotivoFueraServicio(null);
-        a.setEstado(EstadoApartamento.PENDIENTEDEPREPARACION);
+        fueraDeServicio.cerrar(a.getCodigo(), ahora);
+        cambiarEstado(a, EstadoApartamento.PENDIENTEDEPREPARACION);
         cola.encolar(a, ahora);
     }
 
@@ -86,7 +91,7 @@ public class ServicioPreparacion {
     public Recorrido<String> rutaSugerida() {
         Recorrido<String> codigos = new Recorrido<>();
         for (ColaPreparacion.Item item : cola) {
-            if (item.getApartamento().getEstado() == EstadoApartamento.PENDIENTEDEPREPARACION) {
+            if (estadoDe(item.getApartamento()) == EstadoApartamento.PENDIENTEDEPREPARACION) {
                 codigos.agregar(item.getApartamento().getCodigo());
             }
         }
@@ -97,4 +102,24 @@ public class ServicioPreparacion {
     public double tiempoMedioPreparacionMin() {
         return preparaciones == 0 ? 0 : (double) minutosTotales / preparaciones;
     }
+
+
+    private EstadoApartamento estadoDe(Apartamento a) {
+        return a.getEstado();
+    }
+
+    private void cambiarEstado(Apartamento a, EstadoApartamento nuevo) {
+        a.setEstado(nuevo);
+    }
+
+
+    public String motivoFueraDeServicio(Apartamento a) {
+        return fueraDeServicio.motivoDe(a.getCodigo());
+    }
+
+    public RegistroFueraDeServicio historialFueraDeServicio() {
+        return fueraDeServicio;
+    }
+
+
 }

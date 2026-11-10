@@ -10,7 +10,7 @@ import java.time.LocalTime;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class ConsultaEntradasReservas {
+public class ConsultaEntradasReservas implements ColaPreparacion.ConsultaEntradas {
 
     public static final LocalTime HORA_POR_DEFECTO = LocalTime.of(15, 0);
 
