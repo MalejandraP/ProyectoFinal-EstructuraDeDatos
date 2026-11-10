@@ -1,5 +1,7 @@
 package co.edu.uniquindio.apartasuitesuq.model;
 
+import co.edu.uniquindio.apartasuitesuq.model.Servicios.RegistroFueraDeServicio;
+
 public class Apartamento implements Comparable<Apartamento> {
     private String codigo;
     private String nombre;
@@ -9,6 +11,7 @@ public class Apartamento implements Comparable<Apartamento> {
     private int capacidadMaxima;
     private double tarifaBaseNoche;
     private EstadoApartamento estado;
+    private String motivoFueraServicio;
 
     public Apartamento(String codigo, String nombre, String bloque, int piso,
                        int numeroDormitorios, int capacidadMaxima, double tarifaBaseNoche) {
@@ -107,6 +110,15 @@ public class Apartamento implements Comparable<Apartamento> {
     public void setEstado(EstadoApartamento estado) {
         this.estado = estado;
     }
+
+    public String getMotivoFueraServicio() {
+        return motivoFueraServicio;
+    }
+
+    public void setMotivoFueraServicio(String motivoFueraServicio) {
+        this.motivoFueraServicio = motivoFueraServicio;
+    }
+
 
     public double calcularCostoEstadia(int numNoches) {
         if (numNoches <= 0) {
