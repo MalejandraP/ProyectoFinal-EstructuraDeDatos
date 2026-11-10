@@ -46,7 +46,7 @@ public class ServicioPreparacion {
     public ColaPreparacion.Item iniciarSiguiente() {
         ColaPreparacion.Item item;
         do {
-            item = cola.siguiente(); // lanza EstructuraVaciaException si no queda nadie
+            item = cola.siguiente();
         } while (item.getApartamento().getEstado() != EstadoApartamento.PENDIENTEDEPREPARACION);
         item.getApartamento().setEstado(EstadoApartamento.ENPREPARACION);
         return item;
