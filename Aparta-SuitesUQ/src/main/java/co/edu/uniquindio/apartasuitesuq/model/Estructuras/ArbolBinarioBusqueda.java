@@ -83,7 +83,8 @@ public class ArbolBinarioBusqueda <T extends Comparable<T>> implements Iterable<
     }
 
     public void insertar(T elemento) {
-        if (elemento == null) return;
+        if (elemento == null)
+            return;
         raiz = insertarRecursivo(raiz, elemento);
     }
 
@@ -106,5 +107,29 @@ public class ArbolBinarioBusqueda <T extends Comparable<T>> implements Iterable<
     }
 
 
+    public T buscar(T elemento) {
+        if (elemento == null)
+            return null;
+        return buscarRecursivo(raiz, elemento);
+    }
 
+    private T buscarRecursivo(NodoArbol<T> actual, T elemento) {
+        if (actual == null) {
+            return null;
+        }
+
+        int comparacion = elemento.compareTo(actual.elemento);
+
+        if (comparacion == 0) {
+            return actual.elemento;
+        } else if (comparacion < 0) {
+            return buscarRecursivo(actual.izquierdo, elemento);
+        } else {
+            return buscarRecursivo(actual.derecho, elemento);
+        }
+    }
+
+    public boolean contiene(T elemento) {
+        return buscar(elemento) != null;
+    }
 }
