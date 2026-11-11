@@ -192,4 +192,18 @@ public class ArbolBinarioBusqueda <T extends Comparable<T>> implements Iterable<
         int alturaDerecha = obtenerAlturaRecursivo(actual.derecho);
         return 1 + Math.max(alturaIzquierda, alturaDerecha);
     }
+
+    public void recorridoPreorden(java.util.function.Consumer<T> accion) {
+        recorridoPreordenRecursivo(raiz, accion);
+    }
+
+    private void recorridoPreordenRecursivo(NodoArbol<T> actual, java.util.function.Consumer<T> accion) {
+        if (actual != null) {
+            accion.accept(actual.elemento);
+            recorridoPreordenRecursivo(actual.izquierdo, accion);
+            recorridoPreordenRecursivo(actual.derecho, accion);
+        }
+    }
+
+    
 }
