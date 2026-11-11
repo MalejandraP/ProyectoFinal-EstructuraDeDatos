@@ -100,6 +100,35 @@ public class ListaDoble<T> implements Iterable<T> {
         }
         return false;
     }
+    public int tamanio(){
+        return tam;
+    }
+    public ListaDoble<T> copiar(){
+        ListaDoble<T> copia = new ListaDoble<>();
+        for(T dato : this){
+            copia.agregarFinal(dato);
+        }
+        return copia;
+    }
+    public boolean eliminar(T elemento) {
+        Nodo actual = inicio;
+        while (actual != null) {
+            if (actual.dato.equals(elemento)) {
+                if (actual == inicio) {
+                    eliminarInicio();
+                } else if (actual == fin) {
+                    eliminarFinal();
+                } else {
+                    actual.anterior.siguiente = actual.siguiente;
+                    actual.siguiente.anterior = actual.anterior;
+                    tam--;
+                }
+                return true;
+            }
+            actual = actual.siguiente;
+        }
+        return false;
+    }
     public T obtener(int posicion){
         if (estaVacia()) {
             throw new EstructuraVaciaException("No hay elementos en la lista");
