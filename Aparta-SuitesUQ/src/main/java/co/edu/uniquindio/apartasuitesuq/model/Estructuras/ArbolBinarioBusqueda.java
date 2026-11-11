@@ -179,4 +179,17 @@ public class ArbolBinarioBusqueda <T extends Comparable<T>> implements Iterable<
 
         return actual;
     }
+
+    public int obtenerAltura() {
+        return obtenerAlturaRecursivo(raiz);
+    }
+
+    private int obtenerAlturaRecursivo(NodoArbol<T> actual) {
+        if (actual == null) {
+            return 0;
+        }
+        int alturaIzquierda = obtenerAlturaRecursivo(actual.izquierdo);
+        int alturaDerecha = obtenerAlturaRecursivo(actual.derecho);
+        return 1 + Math.max(alturaIzquierda, alturaDerecha);
+    }
 }
