@@ -82,6 +82,29 @@ public class ArbolBinarioBusqueda <T extends Comparable<T>> implements Iterable<
         }
     }
 
+    public void insertar(T elemento) {
+        if (elemento == null) return;
+        raiz = insertarRecursivo(raiz, elemento);
+    }
+
+    private NodoArbol<T> insertarRecursivo(NodoArbol<T> actual, T elemento) {
+        if (actual == null) {
+            tamano++;
+            return new NodoArbol<>(elemento);
+        }
+
+        int comparacion = elemento.compareTo(actual.elemento);
+
+        if (comparacion < 0) {
+            actual.izquierdo = insertarRecursivo(actual.izquierdo, elemento);
+        } else if (comparacion > 0) {
+            actual.derecho = insertarRecursivo(actual.derecho, elemento);
+        }
+        // Si comparacion == 0, se ignora el duplicado
+
+        return actual;
+    }
+
 
 
 }
