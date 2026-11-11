@@ -132,12 +132,51 @@ public class ArbolBinarioBusqueda <T extends Comparable<T>> implements Iterable<
     public boolean contiene(T elemento) {
         return buscar(elemento) != null;
     }
-    
+
 
     private NodoArbol<T> obtenerMayor(NodoArbol<T> actual) {
         while (actual.derecho != null) {
             actual = actual.derecho;
         }
+        return actual;
+    }
+
+    public boolean eliminar(T elemento) {
+        if (elemento == null || estaVacio()) return false;
+        int tamanoAnterior = tamano;
+        raiz = eliminarRecursivo(raiz, elemento);
+        return tamano < tamanoAnterior;
+    }
+
+
+    private NodoArbol<T> eliminarRecursivo(NodoArbol<T> actual, T elemento) {
+        if (actual == null) {
+            return null;
+        }
+
+        int comparacion = elemento.compareTo(actual.elemento);
+
+        if (comparacion < 0) {
+            actual.izquierdo = eliminarRecursivo(actual.izquierdo, elemento);
+        } else if (comparacion > 0) {
+            actual.derecho = eliminarRecursivo(actual.derecho, elemento);
+        } else {
+            // Caso 1: Nodo hoja o con un solo hijo
+            if (actual.izquierdo == null) {
+                tamano--;
+                return actual.derecho;
+            } else if (actual.derecho == null) {
+                tamano--;
+                return actual.izquierdo;
+            }
+
+            // Caso 2: Nodo con dos hijos
+            // Se reemplaza por el mayor elemento del subárbol izquierdo
+            NodoArbol<T> reemplazo = obtenerMayor(actual.izquierdo);
+            actual.elemento = reemplazo.elemento;
+            actual.izquierdo = eliminarRecursivo(actual.izquierdo, reemplazo.elemento);
+        }
+
         return actual;
     }
 }
