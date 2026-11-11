@@ -1,5 +1,7 @@
 package co.edu.uniquindio.apartasuitesuq.model;
 
+import co.edu.uniquindio.apartasuitesuq.model.Servicios.RegistroFueraDeServicio;
+
 public class Apartamento implements Comparable<Apartamento> {
     private String codigo;
     private String nombre;
@@ -8,10 +10,11 @@ public class Apartamento implements Comparable<Apartamento> {
     private int numeroDormitorios;
     private int capacidadMaxima;
     private double tarifaBaseNoche;
-    private EstadoApartamento estadoApartamento;
+    private EstadoApartamento estado;
+    private String motivoFueraServicio;
 
     public Apartamento(String codigo, String nombre, String bloque, int piso,
-                       int numeroDormitorios, int capacidadMaxima, double tarifaBaseNoche, EstadoApartamento estadoApartamento) {
+                       int numeroDormitorios, int capacidadMaxima, double tarifaBaseNoche) {
         this.codigo = codigo;
         this.nombre = nombre;
         this.bloque = bloque;
@@ -19,7 +22,7 @@ public class Apartamento implements Comparable<Apartamento> {
         this.numeroDormitorios = numeroDormitorios;
         this.capacidadMaxima = capacidadMaxima;
         this.tarifaBaseNoche = tarifaBaseNoche;
-        this.estadoApartamento = estadoApartamento;
+        this.estado = EstadoApartamento.PREPARADO;
     }
 
 
@@ -100,16 +103,20 @@ public class Apartamento implements Comparable<Apartamento> {
         this.tarifaBaseNoche = tarifaBaseNoche;
     }
 
-    public EstadoApartamento getEstadoApartamento() {
-        return estadoApartamento;
+    public EstadoApartamento getEstado() {
+        return estado;
     }
 
+    public void setEstado(EstadoApartamento estado) {
+        this.estado = estado;
+    }
 
-    public void setEstadoOperativo(EstadoApartamento estadoApartamento) {
-        if (estadoApartamento == null) {
-            throw new IllegalArgumentException("El estado operativo del apartamento no puede ser nulo.");
-        }
-        this.estadoApartamento = estadoApartamento;
+    public String getMotivoFueraServicio() {
+        return motivoFueraServicio;
+    }
+
+    public void setMotivoFueraServicio(String motivoFueraServicio) {
+        this.motivoFueraServicio = motivoFueraServicio;
     }
 
 
