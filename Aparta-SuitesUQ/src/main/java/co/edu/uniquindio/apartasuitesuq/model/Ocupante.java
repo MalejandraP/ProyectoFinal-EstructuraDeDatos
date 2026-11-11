@@ -42,6 +42,32 @@ public class Ocupante {
         return edadEn(noche) >= EDAD_MINIMA_COBRO;
     }
 
+    /**
+     * Cuenta las personas de un grupo que pagan una noche.
+     * Los ocupantes registrados pagan si tienen 6 años o más esa noche; las personas
+     * declaradas sin datos (por ejemplo, del canal externo) se asumen adultas y pagan.
+     *
+     * @param registrados    ocupantes con fecha de nacimiento conocida
+     * @param numeroPersonas tamaño total del grupo
+     * @param noche          noche que se liquida
+     * @throws CapacidadExcedidaException si hay más ocupantes registrados que personas declaradas
+     */
+    public static int contarPagantes(Iterable<Ocupante> registrados, int numeroPersonas, LocalDate noche) {
+        int pagantes = 0;
+        int conocidos = 0;
+        for (Ocupante ocupante : registrados) {
+            conocidos++;
+            if (ocupante.pagaEn(noche)) {
+                pagantes++;
+            }
+        }
+        if (conocidos > numeroPersonas) {
+            throw new CapacidadExcedidaException("Hay " + conocidos + " ocupantes registrados para un grupo de "
+                    + numeroPersonas + " personas.");
+        }
+        return pagantes + (numeroPersonas - conocidos);
+    }
+
     public String getNombre() {
         return nombre;
     }

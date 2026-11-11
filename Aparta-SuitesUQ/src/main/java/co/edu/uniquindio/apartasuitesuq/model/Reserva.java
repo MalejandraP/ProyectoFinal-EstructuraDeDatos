@@ -148,15 +148,7 @@ public class Reserva implements Comparable<Reserva> {
      * más esa noche; los declarados sin datos (por ejemplo, del canal externo) se asumen adultos.
      */
     public int contarPagantesEn(LocalDate noche) {
-        int pagantes = 0;
-        int registrados = 0;
-        for (Ocupante ocupante : ocupantes) {
-            registrados++;
-            if (ocupante.pagaEn(noche)) {
-                pagantes++;
-            }
-        }
-        return pagantes + (numeroPersonas - registrados);
+        return Ocupante.contarPagantes(ocupantes, numeroPersonas, noche);
     }
 
     public ListaDoble<Ocupante> getOcupantes() {
