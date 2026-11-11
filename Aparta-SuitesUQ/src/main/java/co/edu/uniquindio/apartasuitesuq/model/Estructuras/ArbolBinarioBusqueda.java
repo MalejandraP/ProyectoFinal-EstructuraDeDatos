@@ -2,14 +2,16 @@ package co.edu.uniquindio.apartasuitesuq.model.Estructuras;
 
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Estructura de datos propia: Árbol Binario de Búsqueda (BST)
  * @param <T> Tipo de elemento que debe implementar Comparable para definir su orden natural.
  */
 
-public class ArbolBinarioBusqueda <T extends Comparable<T>> {
-    
+public class ArbolBinarioBusqueda <T extends Comparable<T>> implements Iterable<T>{
+
+
     // Clase interna para los nodos del árbol
     private static class NodoArbol<T> {
         T elemento;
@@ -38,5 +40,48 @@ public class ArbolBinarioBusqueda <T extends Comparable<T>> {
     public int getTamano() {
         return tamano;
     }
+
+    @Override
+    public Iterator<T> iterator() {
+        return new IteradorInorden();
+    }
+
+    private class IteradorInorden implements Iterator<T> {
+        private NodoArbol<T>[] pila;
+        private int tope;
+
+        @SuppressWarnings("unchecked")
+        public IteradorInorden() {
+            this.pila = (NodoArbol<T>[]) new NodoArbol[tamano + 1];
+            this.tope = -1;
+            empujarIzquierdos(raiz);
+        }
+
+        private void empujarIzquierdos(NodoArbol<T> nodo) {
+            while (nodo != null) {
+                pila[++tope] = nodo;
+                nodo = nodo.izquierdo;
+            }
+        }
+
+        @Override
+        public boolean hasNext() {
+            return tope >= 0;
+        }
+
+        @Override
+        public T next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException("No hay más elementos en el árbol.");
+            }
+            NodoArbol<T> nodoActual = pila[tope--];
+            if (nodoActual.derecho != null) {
+                empujarIzquierdos(nodoActual.derecho);
+            }
+            return nodoActual.elemento;
+        }
+    }
+
+
 
 }
