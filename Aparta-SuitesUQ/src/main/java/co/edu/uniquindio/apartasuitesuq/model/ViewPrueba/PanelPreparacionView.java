@@ -1,7 +1,7 @@
 package co.edu.uniquindio.apartasuitesuq.model.ViewPrueba;
 
 import co.edu.uniquindio.apartasuitesuq.model.Apartamento;
-import co.edu.uniquindio.apartasuitesuq.model.EstructuraVaciaException;
+import co.edu.uniquindio.apartasuitesuq.model.Excepciones.EstructuraVaciaException;
 import co.edu.uniquindio.apartasuitesuq.model.Servicios.ColaPreparacion;
 import co.edu.uniquindio.apartasuitesuq.model.Servicios.ServicioPreparacion;
 import javafx.collections.FXCollections;
