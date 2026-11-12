@@ -1,5 +1,8 @@
 package co.edu.uniquindio.apartasuitesuq.model;
 
+import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ListaDoble;
+import co.edu.uniquindio.apartasuitesuq.model.Estructuras.Pila;
+
 import java.util.NoSuchElementException;
 
 public class Folio {
@@ -37,8 +40,10 @@ public class Folio {
         for(Movimiento mov : movimientos){
             if(mov.getTipo() == TipoMovimiento.CARGO){
                 saldo += mov.getMonto();
+            } else{
+                saldo -= mov.getMonto();
             }
-            saldo -= mov.getMonto();
+
         }
         return saldo;
     }

@@ -1,0 +1,130 @@
+/* ===== Paleta ===== */
+.root {
+    -color-primario:      #2C3539;
+    -color-secundario:    #C2A68C;
+    -color-terciario:     #8A9A86;
+    -color-fondo:         #F9F8F6;
+    -color-tarjeta:       #FFFFFF;
+    -color-borde:         #E6E2DB;
+    -color-caja:          #F4F1EC;
+    -color-boton-suave:   #EFECE7;
+    -color-texto:         #2C3539;
+    -color-texto-suave:   #5F686C;
+
+    /* Estados operativos */
+    -color-preparado-bg:  #DDE8D8;  -color-preparado-tx: #1F3A1B;  -color-preparado-punto: #4C8A3F;
+    -color-ocupado-bg:    #DCE5EC;  -color-ocupado-tx:   #1F3748;  -color-ocupado-punto:   #3C6E96;
+    -color-pendiente-bg:  #F5E2A8;  -color-pendiente-tx: #4F3B00;  -color-pendiente-punto: #C99700;
+    -color-fuera-bg:      #F6D9D6;  -color-fuera-tx:     #7A1A13;  -color-fuera-punto:     #B3261E;
+
+    -fx-font-family: "Hanken Grotesk", "System";
+    -fx-font-size: 14px;
+    -fx-text-fill: -color-texto;
+}
+
+/* ===== Estructura general ===== */
+.contenido { -fx-background-color: -color-fondo; -fx-padding: 32; }
+
+.sidebar { -fx-background-color: -color-primario; -fx-padding: 24 16 24 16; }
+.marca-titulo    { -fx-text-fill: -color-fondo; -fx-font-size: 15px; -fx-font-weight: bold; }
+.marca-subtitulo { -fx-text-fill: #B9BEC0; -fx-font-size: 12px; }
+
+.nav-item {
+    -fx-background-color: transparent;
+    -fx-text-fill: #E8E4DD;
+    -fx-alignment: CENTER_LEFT;
+    -fx-pref-height: 44;
+    -fx-padding: 0 12 0 12;
+    -fx-background-radius: 12;
+    -fx-cursor: hand;
+}
+.nav-item:hover   { -fx-background-color: #38444A; }
+.nav-item-activo  { -fx-background-color: -color-secundario; -fx-text-fill: -color-primario; -fx-font-weight: bold; }
+
+/* ===== Textos ===== */
+.titulo-pagina   { -fx-font-size: 28px; -fx-font-weight: bold; }
+.titulo-seccion  { -fx-font-size: 16px; -fx-font-weight: bold; }
+.texto-suave     { -fx-text-fill: -color-texto-suave; -fx-font-size: 13px; }
+.texto-fuerte    { -fx-font-weight: bold; }
+.monto-pago      { -fx-text-fill: #2F4A2B; -fx-font-weight: bold; }
+
+/* ===== Tarjetas ===== */
+.tarjeta {
+    -fx-background-color: -color-tarjeta;
+    -fx-background-radius: 16;
+    -fx-border-color: -color-borde;
+    -fx-border-radius: 16;
+    -fx-padding: 18;
+}
+.tarjeta-seleccionada { -fx-border-color: -color-primario; -fx-border-width: 2; }
+.caja-info { -fx-background-color: -color-caja; -fx-background-radius: 12; -fx-padding: 12; }
+
+/* ===== Chips de estado (Label) ===== */
+.chip {
+    -fx-padding: 5 10 5 10;
+    -fx-background-radius: 999;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+.chip-preparado { -fx-background-color: -color-preparado-bg; -fx-text-fill: -color-preparado-tx; }
+.chip-ocupado   { -fx-background-color: -color-ocupado-bg;   -fx-text-fill: -color-ocupado-tx; }
+.chip-pendiente { -fx-background-color: -color-pendiente-bg; -fx-text-fill: -color-pendiente-tx; }
+.chip-fuera     { -fx-background-color: -color-fuera-bg;     -fx-text-fill: -color-fuera-tx; }
+.chip-neutro    { -fx-background-color: #E3E0DA;             -fx-text-fill: -color-texto; }
+
+/* Punto de color (Circle) */
+.punto-preparado { -fx-fill: -color-preparado-punto; }
+.punto-ocupado   { -fx-fill: -color-ocupado-punto; }
+.punto-pendiente { -fx-fill: -color-pendiente-punto; }
+.punto-fuera     { -fx-fill: -color-fuera-punto; }
+
+/* Tiles del resumen superior */
+.tile-resumen   { -fx-background-radius: 16; -fx-padding: 14 16 14 16; }
+.tile-preparado { -fx-background-color: -color-preparado-bg; }
+.tile-ocupado   { -fx-background-color: -color-ocupado-bg; }
+.tile-pendiente { -fx-background-color: -color-pendiente-bg; }
+.tile-fuera     { -fx-background-color: -color-fuera-bg; }
+
+/* ===== Botones ===== */
+.boton-primario, .boton-secundario, .boton-contorno {
+    -fx-pref-height: 44;
+    -fx-padding: 0 18 0 18;
+    -fx-background-radius: 12;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+.boton-primario   { -fx-background-color: -color-primario;    -fx-text-fill: -color-fondo; }
+.boton-primario:hover { -fx-background-color: #3B4A50; }
+.boton-secundario { -fx-background-color: -color-boton-suave; -fx-text-fill: -color-texto; }
+.boton-secundario:hover { -fx-background-color: #E3DFD8; }
+.boton-contorno   { -fx-background-color: transparent; -fx-border-color: -color-primario; -fx-border-radius: 12; -fx-text-fill: -color-primario; }
+.boton-primario:pressed, .boton-secundario:pressed { -fx-opacity: 0.85; }
+
+/* ===== Filtros (ToggleButton) y búsqueda ===== */
+.filtro {
+    -fx-background-color: -color-boton-suave;
+    -fx-text-fill: -color-texto;
+    -fx-background-radius: 999;
+    -fx-pref-height: 40;
+    -fx-padding: 0 16 0 16;
+    -fx-font-weight: bold;
+}
+.filtro:selected { -fx-background-color: -color-primario; -fx-text-fill: -color-fondo; }
+
+.campo-busqueda {
+    -fx-background-color: -color-tarjeta;
+    -fx-border-color: #D9D4CB;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-pref-height: 44;
+    -fx-padding: 0 14 0 14;
+}
+.campo-busqueda:focused { -fx-border-color: -color-primario; }
+
+/* ===== Tabla del folio ===== */
+.table-view { -fx-background-color: transparent; -fx-table-cell-border-color: #EEEAE3; }
+.table-view .column-header { -fx-background-color: transparent; }
+.table-view .column-header .label { -fx-text-fill: -color-texto-suave; -fx-font-size: 12px; -fx-font-weight: bold; }
+.table-row-cell:selected { -fx-background-color: -color-caja; }
+.table-row-cell:selected .text { -fx-fill: -color-texto; }
+.saldo-grande { -fx-font-size: 28px; -fx-font-weight: bold; }

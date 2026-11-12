@@ -1,7 +1,5 @@
 package co.edu.uniquindio.apartasuitesuq.model.Estructuras;
 
-import co.edu.uniquindio.apartasuitesuq.model.ListaDoble;
-
 public class MapaEdificio implements Iterable<NodoMapa> {
 
     private final Grafo<String> grafo = new Grafo<>();

@@ -1,6 +1,7 @@
 package co.edu.uniquindio.apartasuitesuq.model.Servicios;
 
 import co.edu.uniquindio.apartasuitesuq.model.*;
+import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ListaDoble;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +19,7 @@ class ServicioVencimientoTest {
 
     private Reserva reserva(String codigo, EstadoReserva estado) {
         Apartamento a = new Apartamento("A101", "S", "A", 1, 1, 2, 100000);
-        Huesped h = new Huesped("1", "Ana", "300", "a@x.co");
+        Huesped h = new Huesped("1", "Ana", "300", "a@x.co",LocalDate.of(1980, 3, 14));
         return new Reserva(codigo, h, a, LocalDate.of(2026, 12, 1), LocalDate.of(2026, 12, 3),
                 estado, 0, Canal.values()[0]);
     }

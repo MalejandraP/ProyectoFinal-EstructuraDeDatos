@@ -1,6 +1,6 @@
 package co.edu.uniquindio.apartasuitesuq.model.Estructuras;
 
-import co.edu.uniquindio.apartasuitesuq.model.EstructuraVaciaException;
+import co.edu.uniquindio.apartasuitesuq.model.Excepciones.EstructuraVaciaException;
 
 import java.util.Comparator;
 import java.util.Iterator;

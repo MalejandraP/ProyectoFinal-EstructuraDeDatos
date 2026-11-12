@@ -1,8 +1,9 @@
-package co.edu.uniquindio.apartasuitesuq.model;
+package co.edu.uniquindio.apartasuitesuq.model.Estructuras;
 
+
+import co.edu.uniquindio.apartasuitesuq.model.Excepciones.EstructuraVaciaException;
 
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 public class ListaDoble<T> implements Iterable<T> {
 
@@ -96,6 +97,35 @@ public class ListaDoble<T> implements Iterable<T> {
     public boolean estaVacia(){
         if(inicio == null && fin == null && tam == 0){
             return true;
+        }
+        return false;
+    }
+    public int tamanio(){
+        return tam;
+    }
+    public ListaDoble<T> copiar(){
+        ListaDoble<T> copia = new ListaDoble<>();
+        for(T dato : this){
+            copia.agregarFinal(dato);
+        }
+        return copia;
+    }
+    public boolean eliminar(T elemento) {
+        Nodo actual = inicio;
+        while (actual != null) {
+            if (actual.dato.equals(elemento)) {
+                if (actual == inicio) {
+                    eliminarInicio();
+                } else if (actual == fin) {
+                    eliminarFinal();
+                } else {
+                    actual.anterior.siguiente = actual.siguiente;
+                    actual.siguiente.anterior = actual.anterior;
+                    tam--;
+                }
+                return true;
+            }
+            actual = actual.siguiente;
         }
         return false;
     }
