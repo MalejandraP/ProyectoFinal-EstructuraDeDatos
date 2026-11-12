@@ -1,11 +1,8 @@
 package co.edu.uniquindio.apartasuitesuq;
 
 import co.edu.uniquindio.apartasuitesuq.model.Apartamento;
-import co.edu.uniquindio.apartasuitesuq.model.Estructuras.AnalisisGrafo;
-import co.edu.uniquindio.apartasuitesuq.model.Estructuras.MapaEdificio;
-import co.edu.uniquindio.apartasuitesuq.model.Estructuras.NodoMapa;
-import co.edu.uniquindio.apartasuitesuq.model.Estructuras.TipoNodo;
-import co.edu.uniquindio.apartasuitesuq.model.ListaDoble;
+import co.edu.uniquindio.apartasuitesuq.model.Estructuras.*;
+import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ListaDoble;
 import co.edu.uniquindio.apartasuitesuq.model.Servicios.ColaPreparacion;
 import co.edu.uniquindio.apartasuitesuq.model.Servicios.ServicioPreparacion;
 import co.edu.uniquindio.apartasuitesuq.model.ViewPrueba.ColoresEstado;

@@ -1,6 +1,7 @@
 package co.edu.uniquindio.apartasuitesuq.model.Servicios;
 
 import co.edu.uniquindio.apartasuitesuq.model.*;
+import co.edu.uniquindio.apartasuitesuq.model.ConflictoCanal;
 import co.edu.uniquindio.apartasuitesuq.model.Estructuras.Cola;
 import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ListaDoble;
 import co.edu.uniquindio.apartasuitesuq.model.Excepciones.CapacidadExcedidaException;
