@@ -4,7 +4,7 @@ import co.edu.uniquindio.apartasuitesuq.model.Apartamento;
 import co.edu.uniquindio.apartasuitesuq.model.EstadoApartamento;
 import co.edu.uniquindio.apartasuitesuq.model.Estructuras.Grafo;
 import co.edu.uniquindio.apartasuitesuq.model.Estructuras.Recorrido;
-import co.edu.uniquindio.apartasuitesuq.model.TransicionEstadoInvalidaException;
+import co.edu.uniquindio.apartasuitesuq.model.Excepciones.TransicionEstadoInvalidaException;
 
 import java.time.Duration;
 import java.time.LocalDateTime;

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="co.edu.uniquindio.apartasuitesuq.viewController.FolioViewController"
+      styleClass="contenido" spacing="20">
+
+    <!-- Encabezado -->
+    <HBox alignment="CENTER_LEFT" spacing="12">
+        <VBox spacing="2">
+            <Label fx:id="lblTitulo" text="Folio · R-0142" styleClass="titulo-pagina"/>
+            <Label fx:id="lblSubtitulo" text="A-101 Dúplex · Titular: Camila Torres" styleClass="texto-suave"/>
+        </VBox>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Label fx:id="lblEstadoReserva" text="Confirmada" styleClass="chip, chip-preparado"/>
+    </HBox>
+
+    <HBox spacing="20" VBox.vgrow="ALWAYS">
+
+        <!-- Movimientos -->
+        <VBox styleClass="tarjeta" spacing="14" HBox.hgrow="ALWAYS">
+            <Label text="Movimientos" styleClass="titulo-seccion"/>
+
+            <TableView fx:id="tablaMovimientos" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colFecha" text="Fecha"/>
+                    <TableColumn fx:id="colTipo" text="Tipo"/>
+                    <TableColumn fx:id="colDescripcion" text="Descripción"/>
+                    <TableColumn fx:id="colMonto" text="Monto"/>
+                </columns>
+                <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                </columnResizePolicy>
+            </TableView>
+
+            <HBox styleClass="caja-info" alignment="CENTER_LEFT" spacing="16">
+                <VBox spacing="2" HBox.hgrow="ALWAYS">
+                    <Label text="Última operación que se puede deshacer" styleClass="texto-suave"/>
+                    <Label fx:id="lblUltimaOperacion" text="—" styleClass="texto-fuerte"/>
+                </VBox>
+                <Button fx:id="btnDeshacer" text="Deshacer" styleClass="boton-contorno"
+                        onAction="#onDeshacer"/>
+            </HBox>
+            <Label text="Deshacer registra un movimiento contrario. Nada se borra del folio."
+                   styleClass="texto-suave"/>
+        </VBox>
+
+        <!-- Columna derecha -->
+        <VBox spacing="20" minWidth="340" prefWidth="340" maxWidth="340">
+
+            <!-- Resumen -->
+            <VBox styleClass="tarjeta" spacing="12">
+                <Label text="Resumen" styleClass="titulo-seccion"/>
+                <HBox>
+                    <Label text="Total cargos" styleClass="texto-suave"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="lblTotalCargos" text="\$0" styleClass="texto-fuerte"/>
+                </HBox>
+                <HBox>
+                    <Label text="Total pagos" styleClass="texto-suave"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="lblTotalPagos" text="\$0" styleClass="texto-fuerte"/>
+                </HBox>
+                <Separator/>
+                <Label text="Saldo pendiente" styleClass="texto-suave"/>
+                <Label fx:id="lblSaldo" text="\$0" styleClass="saldo-grande"/>
+            </VBox>
+
+            <!-- Registrar movimiento -->
+            <VBox styleClass="tarjeta" spacing="12">
+                <Label text="Registrar movimiento" styleClass="titulo-seccion"/>
+                <HBox spacing="8">
+                    <ToggleButton fx:id="btnCargo" text="Cargo" selected="true" styleClass="filtro">
+                        <toggleGroup>
+                            <ToggleGroup fx:id="grupoTipo"/>
+                        </toggleGroup>
+                    </ToggleButton>
+                    <ToggleButton fx:id="btnPago" text="Pago" styleClass="filtro"
+                                  toggleGroup="$grupoTipo"/>
+                </HBox>
+                <Label text="Monto (COP)" styleClass="texto-suave"/>
+                <TextField fx:id="txtMonto" promptText="0" styleClass="campo-busqueda"/>
+                <Label text="Descripción" styleClass="texto-suave"/>
+                <TextField fx:id="txtDescripcion" promptText="Ej.: Servicio de desayuno"
+                           styleClass="campo-busqueda"/>
+                <Button text="Registrar" styleClass="boton-primario" maxWidth="Infinity"
+                        onAction="#onRegistrar"/>
+            </VBox>
+        </VBox>
+    </HBox>
+</VBox>

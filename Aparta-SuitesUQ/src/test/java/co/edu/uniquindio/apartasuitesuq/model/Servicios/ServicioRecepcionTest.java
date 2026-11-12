@@ -3,6 +3,7 @@ package co.edu.uniquindio.apartasuitesuq.model.Servicios;
 import co.edu.uniquindio.apartasuitesuq.model.*;
 import co.edu.uniquindio.apartasuitesuq.model.Estructuras.Grafo;
 import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ListaDoble;
+import co.edu.uniquindio.apartasuitesuq.model.Excepciones.TransicionEstadoInvalidaException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +24,7 @@ class ServicioRecepcionTest {
     private Reserva r2;
 
     private Reserva reserva(String cod, Apartamento a, LocalDate entrada, EstadoReserva e) {
-        return new Reserva(cod, new Huesped("1", "Ana", "300", "a@x.co"), a, entrada, entrada.plusDays(2), e, 0, Canal.DIRECTA);
+        return new Reserva(cod, new Huesped("1", "Ana", "300", "a@x.co", LocalDate.of(1999,2,4)), a, entrada, entrada.plusDays(2), e, 0, Canal.DIRECTA);
     }
 
     @BeforeEach
