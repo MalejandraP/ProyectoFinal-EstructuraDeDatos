@@ -113,21 +113,32 @@ public class Apartamento implements Comparable<Apartamento> {
         return estadoOperativo;
     }
 
+    /** Alias de {@link #getEstadoOperativo()}; lo usan ServicioPreparacion y sus pruebas (P3). */
+    public EstadoApartamento getEstado() {
+        return getEstadoOperativo();
+    }
+
     /**
-     * Cambia el estado operativo. Para pasar a FUERADESERVICIO se debe usar
-     * {@link #ponerFueraDeServicio(String)}, porque el motivo es obligatorio.
+     * Cambia el estado operativo. Las reglas de transición (check-in solo si está Preparado,
+     * check-out a Pendiente de preparación, etc.) las aplica ServicioPreparacion.
      * Al salir de Fuera de servicio el motivo se borra.
+     * <p>
+     * Para pasar a Fuera de servicio desde fuera de ServicioPreparacion se recomienda
+     * {@link #ponerFueraDeServicio(String)}, que exige el motivo.
      */
     public void setEstadoOperativo(EstadoApartamento estadoOperativo) {
         if (estadoOperativo == null) {
             throw new IllegalArgumentException("El estado operativo del apartamento no puede ser nulo.");
         }
-        if (estadoOperativo == EstadoApartamento.FUERADESERVICIO) {
-            throw new IllegalArgumentException(
-                    "Para poner el apartamento fuera de servicio se debe registrar un motivo.");
+        if (estadoOperativo != EstadoApartamento.FUERADESERVICIO) {
+            this.motivoFueraServicio = null;
         }
         this.estadoOperativo = estadoOperativo;
-        this.motivoFueraServicio = null;
+    }
+
+    /** Alias de {@link #setEstadoOperativo(EstadoApartamento)}; lo usa ServicioPreparacion (P3). */
+    public void setEstado(EstadoApartamento estado) {
+        setEstadoOperativo(estado);
     }
 
     /**
@@ -145,6 +156,20 @@ public class Apartamento implements Comparable<Apartamento> {
     /** @return el motivo si está Fuera de servicio; null en otro caso */
     public String getMotivoFueraServicio() {
         return motivoFueraServicio;
+    }
+
+    /**
+     * Registra o corrige el motivo de Fuera de servicio.
+     * Solo se acepta mientras el apartamento esté en ese estado.
+     */
+    public void setMotivoFueraServicio(String motivoFueraServicio) {
+        if (!estaFueraDeServicio()) {
+            throw new IllegalStateException("El apartamento " + codigo + " no está fuera de servicio.");
+        }
+        if (motivoFueraServicio == null || motivoFueraServicio.trim().isEmpty()) {
+            throw new IllegalArgumentException("El motivo de fuera de servicio es obligatorio.");
+        }
+        this.motivoFueraServicio = motivoFueraServicio.trim();
     }
 
     public boolean estaFueraDeServicio() {
