@@ -1,6 +1,6 @@
 package co.edu.uniquindio.apartasuitesuq.model.Servicios;
 
-import co.edu.uniquindio.apartasuitesuq.model.ListaDoble;
+import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ListaDoble;
 
 import java.time.LocalDateTime;
 
