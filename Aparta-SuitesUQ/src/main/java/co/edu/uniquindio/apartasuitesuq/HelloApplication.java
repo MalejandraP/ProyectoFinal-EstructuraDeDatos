@@ -1,5 +1,6 @@
 package co.edu.uniquindio.apartasuitesuq;
 
+import co.edu.uniquindio.apartasuitesuq.controller.DatosPrueba;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -20,6 +21,7 @@ public class HelloApplication extends Application {
         stage.setScene(scene);
         stage.show();
     }
+
 
     public static void main(String[] args) {
         launch();
