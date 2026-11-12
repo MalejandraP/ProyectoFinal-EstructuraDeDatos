@@ -216,4 +216,16 @@ public class ArbolBinarioBusqueda <T extends Comparable<T>> implements Iterable<
             accion.accept(actual.elemento);
         }
     }
+
+    public void recorridoInorden(java.util.function.Consumer<T> accion) {
+        recorridoInordenRecursivo(raiz, accion);
+    }
+
+    private void recorridoInordenRecursivo(NodoArbol<T> actual, java.util.function.Consumer<T> accion) {
+        if (actual != null) {
+            recorridoInordenRecursivo(actual.izquierdo, accion);
+            accion.accept(actual.elemento);
+            recorridoInordenRecursivo(actual.derecho, accion);
+        }
+    }
 }
