@@ -1,4 +1,4 @@
-package co.edu.uniquindio.apartasuitesuq.model;
+package co.edu.uniquindio.apartasuitesuq.model.Excepciones;
 
 /**
  * CLase excepción propia, se utiliza para alertar sobre un valor de fecha inválido.

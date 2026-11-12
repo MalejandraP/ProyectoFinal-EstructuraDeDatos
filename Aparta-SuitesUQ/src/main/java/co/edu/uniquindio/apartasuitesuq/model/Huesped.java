@@ -1,17 +1,39 @@
 package co.edu.uniquindio.apartasuitesuq.model;
 
+import co.edu.uniquindio.apartasuitesuq.model.Estructuras.Conjunto;
+import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ListaDoble;
+
+import java.time.LocalDate;
+
 public class Huesped implements Comparable<Huesped>  {
 
     private String cedula;
     private String nombre;
     private String telefono;
     private String correo;
+    private LocalDate fechaNacimiento;
+    private Conjunto<Apartamento> favoritos = new Conjunto<>();
+    private ListaDoble<Reserva> historial;
 
-    public Huesped(String cedula, String nombre, String telefono, String correo) {
+    public Huesped(String cedula, String nombre, String telefono, String correo, LocalDate fechaNacimiento) {
         this.cedula = cedula;
         this.nombre = nombre;
         this.telefono = telefono;
         this.correo = correo;
+        this.fechaNacimiento = fechaNacimiento;
+    }
+
+    public boolean agregarFavorito(Apartamento a) {
+        return favoritos.agregar(a);
+    }
+    public void quitarFavorito(Apartamento a) {
+        favoritos.eliminar(a);
+    }
+    public boolean esFavorito(Apartamento a) {
+        return favoritos.buscar(a);
+    }
+    public Conjunto<Apartamento> getFavoritos() {
+        return favoritos;
     }
 
     public String getCedula() {
@@ -61,6 +83,14 @@ public class Huesped implements Comparable<Huesped>  {
             throw new IllegalArgumentException("El formato del correo electrónico es inválido.");
         }
         this.correo = correoLimpio;
+    }
+
+    public LocalDate getFechaNacimiento() {
+        return fechaNacimiento;
+    }
+
+    public void setFechaNacimiento(LocalDate fechaNacimiento) {
+        this.fechaNacimiento = fechaNacimiento;
     }
 
     @Override

@@ -127,3 +127,4 @@
 .table-view .column-header .label { -fx-text-fill: -color-texto-suave; -fx-font-size: 12px; -fx-font-weight: bold; }
 .table-row-cell:selected { -fx-background-color: -color-caja; }
 .table-row-cell:selected .text { -fx-fill: -color-texto; }
+.saldo-grande { -fx-font-size: 28px; -fx-font-weight: bold; }

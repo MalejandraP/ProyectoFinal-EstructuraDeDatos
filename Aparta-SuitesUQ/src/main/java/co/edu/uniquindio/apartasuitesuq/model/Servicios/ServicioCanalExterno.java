@@ -3,6 +3,9 @@ package co.edu.uniquindio.apartasuitesuq.model.Servicios;
 import co.edu.uniquindio.apartasuitesuq.model.*;
 import co.edu.uniquindio.apartasuitesuq.model.Estructuras.Cola;
 import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ListaDoble;
+import co.edu.uniquindio.apartasuitesuq.model.Excepciones.CapacidadExcedidaException;
+import co.edu.uniquindio.apartasuitesuq.model.Excepciones.FechasInvalidasException;
+import co.edu.uniquindio.apartasuitesuq.model.Excepciones.ReservaSolapadaException;
 
 public class ServicioCanalExterno {
     private ServicioReservas servicioReservas;

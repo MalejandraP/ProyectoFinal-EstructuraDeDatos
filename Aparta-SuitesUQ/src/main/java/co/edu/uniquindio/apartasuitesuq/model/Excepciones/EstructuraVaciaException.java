@@ -1,4 +1,4 @@
-package co.edu.uniquindio.apartasuitesuq.model;
+package co.edu.uniquindio.apartasuitesuq.model.Excepciones;
 
 /**
  * Clase Excepción propia, alerta cuando una estructura está vacía
