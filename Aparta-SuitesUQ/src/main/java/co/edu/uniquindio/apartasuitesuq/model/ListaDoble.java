@@ -68,7 +68,7 @@ public class ListaDoble<T> implements Iterable<T> {
 
     public void eliminarInicio(){
         if(estaVacia())
-            throw new EstructuraVaciaException("No hay elementos en la lista");
+            throw new NoSuchElementException();
 
         if(tam == 1){
             inicio = fin = null;
@@ -81,7 +81,7 @@ public class ListaDoble<T> implements Iterable<T> {
 
     public void eliminarFinal(){
         if(estaVacia())
-            throw new EstructuraVaciaException("No hay elemntos en la lista") ;
+            throw new NoSuchElementException() ;
 
         if(tam == 1){
             inicio = fin = null;
@@ -101,7 +101,7 @@ public class ListaDoble<T> implements Iterable<T> {
     }
     public T obtener(int posicion){
         if (estaVacia()) {
-            throw new EstructuraVaciaException("No hay elementos en la lista");
+            throw new NoSuchElementException("No hay elementos en la lista");
         }
         Nodo aux = inicio;
         int contador = 0;
@@ -117,7 +117,7 @@ public class ListaDoble<T> implements Iterable<T> {
 
     public boolean buscar(T datoBuscar){
         if (estaVacia() ) {
-            throw new EstructuraVaciaException("No hay elementos en la lista");
+            throw new NoSuchElementException("No hay elementos en la lista");
         }
         Nodo aux = inicio;
         do{
@@ -141,7 +141,7 @@ public class ListaDoble<T> implements Iterable<T> {
         @Override
         public T next() {
             if(!hasNext()){
-                throw new EstructuraVaciaException("No hay más elementos en la lista");
+                throw new NoSuchElementException();
             }
             T valor = actual.dato;
             actual = actual.siguiente;

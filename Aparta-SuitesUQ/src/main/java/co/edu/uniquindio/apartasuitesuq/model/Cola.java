@@ -36,8 +36,8 @@ public class Cola<T> implements Iterable<T> {
     }
 
     public T desencolar(){
-        if (estaVacia()){
-            throw new EstructuraVaciaException("La cola está vacía");
+        if(estaVacia()){
+            throw new NoSuchElementException("La Cola está vacía");
         }
         T aux = inicio.dato;
         inicio = inicio.siguiente;
@@ -50,8 +50,8 @@ public class Cola<T> implements Iterable<T> {
 
     public boolean buscar(T datoBuscar){
         Nodo aux = inicio;
-        if (estaVacia()){
-            throw new EstructuraVaciaException("La cola está vacía");
+        if(estaVacia()){
+            throw new NoSuchElementException();
         }
         while (aux != null){
             if(datoBuscar.equals(aux.dato)){
@@ -109,7 +109,7 @@ public class Cola<T> implements Iterable<T> {
         @Override
         public T next() {
             if (!hasNext()) {
-                throw new EstructuraVaciaException("No hay más elementos en la cola");
+                throw new NoSuchElementException();
             }
             T dato = actual.dato;
             actual = actual.siguiente;
