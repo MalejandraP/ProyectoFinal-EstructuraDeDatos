@@ -102,6 +102,20 @@ class ReservaTest {
     }
 
     @Test
+    void agregarHuespedAmpliaElGrupoYLoRegistraComoOcupante() {
+        Reserva r = nueva("R1", ENTRADA, 1);
+        Huesped hijo = new Huesped("2", "Tomás", LocalDate.of(2022, 3, 1), "300", "t@x.co", null);
+        r.agregarHuesped(hijo);
+        assertEquals(2, r.getNumeroPersonas());
+        assertEquals(2, r.contarOcupantesRegistrados());
+        assertEquals(1, r.contarPagantesEn(ENTRADA), "Tomás tiene 4 años: ocupa cupo pero no paga");
+
+        r.agregarHuesped(new Huesped("3", "Luis", LocalDate.of(1980, 1, 1), "300", "l@x.co", null));
+        assertThrows(CapacidadExcedidaException.class,
+                () -> r.agregarHuesped(new Huesped("4", "Otro", LocalDate.of(1980, 1, 1), "300", "o@x.co", null)));
+    }
+
+    @Test
     void anticipoDelTreintaPorCiento() {
         Reserva r = nueva("R1", ENTRADA, 1);
         r.setCostoTotal(1_000_000);

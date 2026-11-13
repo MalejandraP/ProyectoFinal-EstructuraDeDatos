@@ -92,6 +92,18 @@ class SGATest {
     }
 
     @Test
+    void lasReservasSeListanPorFechaDeEntrada() {
+        sga.crearReserva(ana, "B101", HOY.plusDays(20), HOY.plusDays(21), null, 1, Canal.DIRECTA);
+        sga.crearReserva(ana, "A101", HOY.plusDays(5), HOY.plusDays(6), null, 1, Canal.DIRECTA);
+        sga.crearReserva(ana, "A102", HOY.plusDays(10), HOY.plusDays(11), null, 1, Canal.DIRECTA);
+        ListaDoble<Reserva> todas = sga.getReservas();
+        assertEquals("A101", todas.obtener(0).getApartamento().getCodigo());
+        assertEquals("A102", todas.obtener(1).getApartamento().getCodigo());
+        assertEquals("B101", todas.obtener(2).getApartamento().getCodigo());
+        assertSame(todas.obtener(2), sga.buscarReserva("RES-1"));
+    }
+
+    @Test
     void masOcupantesQuePersonasNoDejaReservaGuardada() {
         ListaDoble<Ocupante> dos = new ListaDoble<>();
         dos.agregarFinal(new Ocupante("A", LocalDate.of(1990, 1, 1)));
