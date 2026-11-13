@@ -1,46 +1,52 @@
 package co.edu.uniquindio.apartasuitesuq.model;
 
+import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ListaDoble;
 import co.edu.uniquindio.apartasuitesuq.model.Excepciones.TransicionEstadoInvalidaException;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 
-public class Reserva implements Comparable<Reserva>{
+public class Reserva implements Comparable<Reserva> {
 
     private String codigoReserva;
     private Huesped huesped;
     private Apartamento apartamento;
-    private LocalDate fechaInicio;
-    private LocalDate fechaFin;
+    private Estancia estancia;
     private EstadoReserva estado;
     private double costoTotal;
     private Canal canal;
+    private ListaDoble<Huesped> huespedes;
 
+    // Constructor principal con Estancia
     public Reserva(String codigoReserva, Huesped huesped,
-                   Apartamento apartamento, LocalDate fechaInicio,
-                   LocalDate fechaFin, EstadoReserva estado, double costoTotal, Canal canal) {
+                   Apartamento apartamento, Estancia estancia,
+                   EstadoReserva estado, double costoTotal, Canal canal) {
         this.codigoReserva = codigoReserva;
         this.huesped = huesped;
         this.apartamento = apartamento;
-        this.fechaInicio = fechaInicio;
-        this.fechaFin = fechaFin;
+        this.estancia = estancia;
         this.estado = estado;
         this.costoTotal = costoTotal;
         this.canal = canal;
+        this.huespedes = new ListaDoble<>();
+        if (huesped != null) {
+            this.huespedes.agregarFinal(huesped);
+        }
+    }
+
+    // Constructor sobrecargado por compatibilidad con fechas separadas
+    public Reserva(String codigoReserva, Huesped huesped,
+                   Apartamento apartamento, LocalDate fechaInicio,
+                   LocalDate fechaFin, EstadoReserva estado, double costoTotal, Canal canal) {
+        this(codigoReserva, huesped, apartamento, new Estancia(fechaInicio, fechaFin), estado, costoTotal, canal);
     }
 
     public int obtenerNumeroNoches() {
-        if (fechaInicio != null && fechaFin != null) {
-            long noches = ChronoUnit.DAYS.between(fechaInicio, fechaFin);
-            return (int) noches;
-        }
-        return 0;
+        return (estancia != null) ? estancia.getNumeroNoches() : 0;
     }
 
     public double calcularCostoTotal() {
-        if (this.apartamento != null && this.fechaInicio != null && this.fechaFin != null) {
-            int noches = obtenerNumeroNoches();
-            return this.apartamento.calcularCostoEstadia(noches);
+        if (this.apartamento != null && this.estancia != null) {
+            return this.apartamento.calcularCostoEstadia(obtenerNumeroNoches());
         }
         return 0.0;
     }
@@ -74,6 +80,16 @@ public class Reserva implements Comparable<Reserva>{
         this.huesped = huesped;
     }
 
+    public ListaDoble<Huesped> getHuespedes() {
+        return huespedes;
+    }
+
+    public void agregarHuesped(Huesped acompaniante) {
+        if (acompaniante != null) {
+            this.huespedes.agregarFinal(acompaniante);
+        }
+    }
+
     public Apartamento getApartamento() {
         return apartamento;
     }
@@ -83,31 +99,35 @@ public class Reserva implements Comparable<Reserva>{
             throw new IllegalArgumentException("La reserva debe tener un apartamento asociado.");
         }
         this.apartamento = apartamento;
-        // Calcular el costo del apartamento, si ya hay fechas establecidas
-        if (this.fechaInicio != null && this.fechaFin != null) {
+        if (this.estancia != null) {
+            this.costoTotal = calcularCostoTotal();
+        }
+    }
+
+    public Estancia getEstancia() {
+        return estancia;
+    }
+
+    public void setEstancia(Estancia estancia) {
+        if (estancia == null) {
+            throw new IllegalArgumentException("La estancia no puede ser nula.");
+        }
+        this.estancia = estancia;
+        if (this.apartamento != null) {
             this.costoTotal = calcularCostoTotal();
         }
     }
 
     public LocalDate getFechaInicio() {
-        return fechaInicio;
+        return (estancia != null) ? estancia.getEntrada() : null;
     }
 
     public LocalDate getFechaFin() {
-        return fechaFin;
+        return (estancia != null) ? estancia.getSalida() : null;
     }
 
     public void setFechas(LocalDate fechaInicio, LocalDate fechaFin) {
-        if (fechaInicio == null || fechaFin == null) {
-            throw new IllegalArgumentException("Las fechas de inicio y fin no pueden ser nulas, deben exister.");
-        }
-        if (fechaFin.isBefore(fechaInicio) || fechaFin.isEqual(fechaInicio)) {
-            throw new IllegalArgumentException("La fecha de fin debe ser estrictamente posterior a la fecha de inicio.");
-        }
-        this.fechaInicio = fechaInicio;
-        this.fechaFin = fechaFin;
-
-        // Calcular de nuevo el costo al cambiar fechas si el apartamento ya está asignado
+        this.estancia = new Estancia(fechaInicio, fechaFin);
         if (this.apartamento != null) {
             this.costoTotal = calcularCostoTotal();
         }
@@ -118,7 +138,7 @@ public class Reserva implements Comparable<Reserva>{
     }
 
     public void setEstado(EstadoReserva estado) {
-        if (estado == null ) {
+        if (estado == null) {
             throw new IllegalArgumentException("El estado de la reserva no puede estar vacío.");
         }
         this.estado = estado;
@@ -154,16 +174,17 @@ public class Reserva implements Comparable<Reserva>{
             case CONFIRMADA: return nuevo == EstadoReserva.ENCURSO
                     || nuevo == EstadoReserva.CANCELADA
                     || nuevo == EstadoReserva.NOSHOW;
-            case ENCURSO:   return nuevo == EstadoReserva.FINALIZADA;
+            case ENCURSO:    return nuevo == EstadoReserva.FINALIZADA;
             default:         return false;
         }
     }
 
-    public boolean estaActiva(){ //PROVISIONAL
+    public boolean estaActiva() {
         return estado == EstadoReserva.PENDIENTE
                 || estado == EstadoReserva.CONFIRMADA
                 || estado == EstadoReserva.ENCURSO;
     }
+
     @Override
     public int compareTo(Reserva auxiliar) {
         if (auxiliar == null || auxiliar.getCodigoReserva() == null) {
@@ -178,9 +199,8 @@ public class Reserva implements Comparable<Reserva>{
                 "codigoReserva='" + codigoReserva + '\'' +
                 ", huesped=" + huesped +
                 ", apartamento=" + apartamento +
-                ", fechaInicio=" + fechaInicio +
-                ", fechaFin=" + fechaFin +
-                ", estado='" + estado + '\'' +
+                ", estancia=" + estancia +
+                ", estado=" + estado +
                 ", costoTotal=" + costoTotal +
                 '}';
     }
