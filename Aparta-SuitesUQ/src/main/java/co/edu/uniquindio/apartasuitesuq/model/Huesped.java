@@ -13,7 +13,7 @@ public class Huesped implements Comparable<Huesped>  {
     private String correo;
     private LocalDate fechaNacimiento;
     private Conjunto<Apartamento> favoritos = new Conjunto<>();
-    private ListaDoble<Reserva> historial;
+    private ListaDoble<Estancia> historial = new ListaDoble<>();
 
     public Huesped(String cedula, String nombre, String telefono, String correo, LocalDate fechaNacimiento) {
         this.cedula = cedula;
@@ -34,6 +34,12 @@ public class Huesped implements Comparable<Huesped>  {
     }
     public Conjunto<Apartamento> getFavoritos() {
         return favoritos;
+    }
+    public void agregarAlHistorial(Estancia e) {
+        historial.agregarInicio(e);
+    }
+    public ListaDoble<Estancia> getHistorial() {
+        return historial;
     }
 
     public String getCedula() {

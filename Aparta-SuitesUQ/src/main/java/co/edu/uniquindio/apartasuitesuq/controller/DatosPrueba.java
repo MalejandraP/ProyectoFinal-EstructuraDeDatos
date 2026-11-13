@@ -1,6 +1,7 @@
 package co.edu.uniquindio.apartasuitesuq.controller;
 
 import co.edu.uniquindio.apartasuitesuq.model.*;
+import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ArbolBinarioBusqueda;
 import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ListaDoble;
 
 import java.time.LocalDate;
@@ -10,6 +11,9 @@ public class DatosPrueba {
 
     private static Huesped huesped;
     private static ListaDoble<Reserva> reservas = new ListaDoble<>();
+    private static ArbolBinarioBusqueda<Apartamento> apartamentos = new ArbolBinarioBusqueda<>();
+    public static ArbolBinarioBusqueda<Apartamento> getApartamentos() { return apartamentos; }
+
 
     public static void cargar() {
         huesped = new Huesped("1126094546","Camila Torres", "+57 300 555 0142",
@@ -23,6 +27,13 @@ public class DatosPrueba {
         reservas.agregarFinal(new Reserva("R-0151", huesped, a102,
                 LocalDate.of(2027, 1, 4), LocalDate.of(2027, 1, 6),
                 EstadoReserva.PENDIENTE, 1200000, Canal.PORTAL));
+
+        apartamentos.insertar(a101);
+        apartamentos.insertar(a102);
+        huesped.agregarFavorito(a101);
+        huesped.agregarAlHistorial(new Estancia(LocalDate.of(2026, 3, 20), LocalDate.of(2026, 3, 22)));
+        huesped.agregarAlHistorial(new Estancia(LocalDate.of(2026, 6, 3),  LocalDate.of(2026, 6, 5)));
+        huesped.agregarAlHistorial(new Estancia(LocalDate.of(2026, 8, 14), LocalDate.of(2026, 8, 16)));
     }
 
     public static Huesped getHuesped() { return huesped; }

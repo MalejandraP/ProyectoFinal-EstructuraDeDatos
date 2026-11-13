@@ -18,11 +18,12 @@ public class HelloController {
     private void onAbrirPanelUsuario() throws IOException {
         FXMLLoader loader = new FXMLLoader(
                 HelloApplication.class.getResource("panel-usuario.fxml"));
-        Stage ventana = crearVentana(loader, "Panel de usuario", 900, 600);
+        Stage ventana = crearVentana(loader, "Panel de usuario", 900, 700);
 
         // Se obtiene el controlador DESPUÉS de crear la ventana (que hace el load)
         PanelUsuarioViewController controlador = loader.getController();
         controlador.setHuesped(DatosPrueba.getHuesped());
+        controlador.setApartamentos(DatosPrueba.getApartamentos());
         controlador.setReservas(DatosPrueba.getReservas());
         ventana.show();
     }

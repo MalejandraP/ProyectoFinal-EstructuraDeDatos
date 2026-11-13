@@ -28,9 +28,6 @@ public class Conjunto<T> implements Iterable<T> {
         return elementos.estaVacia();
     }
     public boolean buscar(T elemento) {
-        if(estaVacia()){
-            throw new EstructuraVaciaException("No hay elementos en el conjunto");
-        }
         for(T elem : elementos){
             if(elem.equals(elemento)){
                 return true;
