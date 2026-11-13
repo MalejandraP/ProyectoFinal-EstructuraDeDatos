@@ -1,10 +1,8 @@
 package co.edu.uniquindio.apartasuitesuq.model;
 
+import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ListaDoble;
 import co.edu.uniquindio.apartasuitesuq.model.Excepciones.CapacidadExcedidaException;
 import co.edu.uniquindio.apartasuitesuq.model.Excepciones.FechasInvalidasException;
-
-import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ListaDoble;
-
 import co.edu.uniquindio.apartasuitesuq.model.Excepciones.TransicionEstadoInvalidaException;
 
 import java.time.LocalDate;
@@ -41,6 +39,7 @@ public class Reserva implements Comparable<Reserva> {
     private Canal canal;
     private int numeroPersonas;
     private final ListaDoble<Ocupante> ocupantes;
+    private final ListaDoble<Huesped> huespedes;
     private final Folio folio;
     private final LocalDateTime fechaCreacion;
     private LocalTime horaEstimadaLlegada;
@@ -54,6 +53,16 @@ public class Reserva implements Comparable<Reserva> {
                    LocalDate fechaFin, EstadoReserva estado, double costoTotal, Canal canal) {
         this(codigoReserva, huesped, apartamento, fechaInicio, fechaFin, estado, costoTotal, canal,
                 1, LocalDateTime.now());
+    }
+
+    /**
+     * Constructor con la estancia ya construida (lo usa ServicioReservas, P2).
+     * Un solo ocupante declarado; creada en este instante.
+     */
+    public Reserva(String codigoReserva, Huesped huesped, Apartamento apartamento, Estancia estancia,
+                   EstadoReserva estado, double costoTotal, Canal canal) {
+        this(codigoReserva, huesped, apartamento, estancia == null ? null : estancia.getEntrada(),
+                estancia == null ? null : estancia.getSalida(), estado, costoTotal, canal);
     }
 
     /**
@@ -84,6 +93,8 @@ public class Reserva implements Comparable<Reserva> {
         this.fechaCreacion = fechaCreacion == null ? LocalDateTime.now() : fechaCreacion;
         this.horaEstimadaLlegada = HORA_LLEGADA_POR_DEFECTO;
         this.ocupantes = new ListaDoble<>();
+        this.huespedes = new ListaDoble<>();
+        this.huespedes.agregarFinal(huesped);
         setNumeroPersonas(numeroPersonas);
         if (huesped.getFechaNacimiento() != null) {
             this.ocupantes.agregarFinal(huesped.comoOcupante());
@@ -156,6 +167,38 @@ public class Reserva implements Comparable<Reserva> {
      */
     public int contarPagantesEn(LocalDate noche) {
         return Ocupante.contarPagantes(ocupantes, numeroPersonas, noche);
+    }
+
+    /**
+     * Agrega un acompañante con perfil de huésped (P2). Si el grupo crece por encima de las
+     * personas declaradas, se amplía el número de personas (validando la capacidad); si tiene
+     * fecha de nacimiento, queda también como ocupante para la liquidación.
+     *
+     * @throws CapacidadExcedidaException si el apartamento ya está lleno
+     */
+    public void agregarHuesped(Huesped acompanante) {
+        if (acompanante == null) {
+            return;
+        }
+        int total = 1;
+        for (Huesped ignored : huespedes) {
+            total++;
+        }
+        if (acompanante.getFechaNacimiento() != null) {
+            total = Math.max(total, contarOcupantesRegistrados() + 1);
+        }
+        if (total > numeroPersonas) {
+            setNumeroPersonas(total);
+        }
+        if (acompanante.getFechaNacimiento() != null) {
+            ocupantes.agregarFinal(acompanante.comoOcupante());
+        }
+        huespedes.agregarFinal(acompanante);
+    }
+
+    /** @return el titular y los acompañantes con perfil de huésped */
+    public ListaDoble<Huesped> getHuespedes() {
+        return huespedes;
     }
 
     public ListaDoble<Ocupante> getOcupantes() {
@@ -334,6 +377,14 @@ public class Reserva implements Comparable<Reserva> {
     /**
      * @throws FechasInvalidasException si la salida no es posterior a la entrada
      */
+    /** Cambia la estancia de la reserva (equivale a {@link #setFechas}). */
+    public void setEstancia(Estancia estancia) {
+        if (estancia == null) {
+            throw new IllegalArgumentException("La estancia no puede ser nula.");
+        }
+        setFechas(estancia.getEntrada(), estancia.getSalida());
+    }
+
     public void setFechas(LocalDate fechaInicio, LocalDate fechaFin) {
         validarFechas(fechaInicio, fechaFin);
         this.fechaInicio = fechaInicio;
