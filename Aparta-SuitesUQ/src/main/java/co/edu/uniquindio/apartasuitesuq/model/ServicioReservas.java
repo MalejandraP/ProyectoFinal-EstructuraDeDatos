@@ -1,6 +1,7 @@
 package co.edu.uniquindio.apartasuitesuq.model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 public class ServicioReservas { //PROVISIONAL
@@ -41,7 +42,7 @@ public class ServicioReservas { //PROVISIONAL
         double costo = apto.calcularCostoEstadia(noches);
         String codigo = "RES-" + (++contador);
         Reserva r = new Reserva(codigo, titular, apto, entrada, salida,
-                estadoInicial(canal), costo, canal);
+                estadoInicial(canal), costo, canal, numPersonas, LocalDateTime.now());
         r.setCanal(canal);
 
         // Guardar
@@ -83,6 +84,41 @@ public class ServicioReservas { //PROVISIONAL
         long horas = ChronoUnit.HOURS.between(LocalDate.now().atStartOfDay(),
                 r.getFechaInicio().atStartOfDay());
         return horas > 48 ? r.getCostoTotal() * 0.30 : 0.0;
+    }
+
+    /**
+     * Registra una reserva ya existente (por ejemplo, cargada desde el archivo de datos)
+     * respetando la regla de no solapamiento entre reservas activas.
+     *
+     * @throws ReservaSolapadaException si está activa y choca con otra reserva activa
+     * @throws IllegalArgumentException si ya existe una reserva con el mismo código
+     */
+    public void registrar(Reserva r) {
+        if (buscarPorCodigo(r.getCodigoReserva()) != null) {
+            throw new IllegalArgumentException("Ya existe la reserva " + r.getCodigoReserva() + ".");
+        }
+        if (r.estaActiva() && haySolapamiento(r.getApartamento(), r.getFechaInicio(), r.getFechaFin())) {
+            throw new ReservaSolapadaException("La reserva " + r.getCodigoReserva() + " choca con otra reserva activa de "
+                    + r.getApartamento().getCodigo() + ".");
+        }
+        reservas.agregarFinal(r);
+        actualizarContador(r.getCodigoReserva());
+    }
+
+    /** Evita que una reserva nueva reciba un código "RES-n" que ya fue cargado. */
+    private void actualizarContador(String codigo) {
+        if (codigo.toUpperCase().startsWith("RES-")) {
+            try {
+                contador = Math.max(contador, Integer.parseInt(codigo.substring(4)));
+            } catch (NumberFormatException ignored) {
+                // código con otro formato: no afecta la numeración
+            }
+        }
+    }
+
+    /** @return todas las reservas registradas, en orden de registro */
+    public ListaDoble<Reserva> getReservas() {
+        return reservas;
     }
 
     public Reserva buscarPorCodigo(String codigo) {
