@@ -2,7 +2,7 @@ package co.edu.uniquindio.apartasuitesuq.model.Servicios;
 
 import co.edu.uniquindio.apartasuitesuq.model.EstadoReserva;
 import co.edu.uniquindio.apartasuitesuq.model.Reserva;
-import co.edu.uniquindio.apartasuitesuq.model.TransicionEstadoInvalidaException;
+import co.edu.uniquindio.apartasuitesuq.model.Excepciones.TransicionEstadoInvalidaException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

@@ -1,4 +1,8 @@
-package co.edu.uniquindio.apartasuitesuq.model;
+package co.edu.uniquindio.apartasuitesuq.model.Estructuras;
+
+import co.edu.uniquindio.apartasuitesuq.model.Excepciones.EstructuraVaciaException;
+
+import java.util.Iterator;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;

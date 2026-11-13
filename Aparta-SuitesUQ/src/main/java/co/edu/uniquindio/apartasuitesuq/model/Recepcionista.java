@@ -1,5 +1,6 @@
 package co.edu.uniquindio.apartasuitesuq.model;
 
+
 /**
  * Empleado de recepción. Registra reservas directas, procesa el canal externo,
  * maneja folios, hace check-in/check-out y rota en los turnos (lista circular).

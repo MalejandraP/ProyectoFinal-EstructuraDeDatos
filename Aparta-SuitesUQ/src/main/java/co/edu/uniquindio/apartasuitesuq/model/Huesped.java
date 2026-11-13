@@ -1,5 +1,9 @@
 package co.edu.uniquindio.apartasuitesuq.model;
 
+import co.edu.uniquindio.apartasuitesuq.model.Estructuras.Conjunto;
+import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ListaDoble;
+import co.edu.uniquindio.apartasuitesuq.model.Excepciones.FechasInvalidasException;
+
 import java.time.LocalDate;
 import java.time.Period;
 
@@ -18,6 +22,8 @@ public class Huesped implements Comparable<Huesped> {
     private String telefono;
     private String correo;
     private String rutaFoto;
+    private final Conjunto<Apartamento> favoritos = new Conjunto<>();
+    private final ListaDoble<Reserva> historial = new ListaDoble<>();
 
     /**
      * Constructor sin fecha de nacimiento ni foto.
@@ -25,6 +31,11 @@ public class Huesped implements Comparable<Huesped> {
      */
     public Huesped(String cedula, String nombre, String telefono, String correo) {
         this(cedula, nombre, null, telefono, correo, null);
+    }
+
+    /** Constructor con fecha de nacimiento y sin foto (lo usan las pantallas del equipo). */
+    public Huesped(String cedula, String nombre, String telefono, String correo, LocalDate fechaNacimiento) {
+        this(cedula, nombre, fechaNacimiento, telefono, correo, null);
     }
 
     /**
@@ -141,6 +152,34 @@ public class Huesped implements Comparable<Huesped> {
     /** La foto es opcional: null o vacío significa que no tiene. */
     public void setRutaFoto(String rutaFoto) {
         this.rutaFoto = (rutaFoto == null || rutaFoto.trim().isEmpty()) ? null : rutaFoto.trim();
+    }
+
+    // ------------------------------------------------- favoritos e historial
+
+    /** @return true si se agregó; false si ya era favorito (el Conjunto no admite repetidos) */
+    public boolean agregarFavorito(Apartamento apartamento) {
+        return favoritos.agregar(apartamento);
+    }
+
+    public void quitarFavorito(Apartamento apartamento) {
+        favoritos.eliminar(apartamento);
+    }
+
+    public boolean esFavorito(Apartamento apartamento) {
+        return favoritos.buscar(apartamento);
+    }
+
+    public Conjunto<Apartamento> getFavoritos() {
+        return favoritos;
+    }
+
+    /** Agrega una estancia al historial del huésped. */
+    public void agregarAlHistorial(Reserva reserva) {
+        historial.agregarFinal(reserva);
+    }
+
+    public ListaDoble<Reserva> getHistorial() {
+        return historial;
     }
 
     // ------------------------------------------- Comparable, equals, hashCode

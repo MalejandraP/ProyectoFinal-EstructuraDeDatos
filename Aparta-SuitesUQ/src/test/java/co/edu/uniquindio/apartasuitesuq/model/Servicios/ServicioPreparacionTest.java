@@ -3,7 +3,7 @@ package co.edu.uniquindio.apartasuitesuq.model.Servicios;
 import co.edu.uniquindio.apartasuitesuq.model.Apartamento;
 import co.edu.uniquindio.apartasuitesuq.model.EstadoApartamento;
 import co.edu.uniquindio.apartasuitesuq.model.Estructuras.Grafo;
-import co.edu.uniquindio.apartasuitesuq.model.TransicionEstadoInvalidaException;
+import co.edu.uniquindio.apartasuitesuq.model.Excepciones.TransicionEstadoInvalidaException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

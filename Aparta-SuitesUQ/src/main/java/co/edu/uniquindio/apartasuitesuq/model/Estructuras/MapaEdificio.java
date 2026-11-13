@@ -1,7 +1,5 @@
 package co.edu.uniquindio.apartasuitesuq.model.Estructuras;
 
-import co.edu.uniquindio.apartasuitesuq.model.ListaDoble;
-
 public class MapaEdificio implements Iterable<NodoMapa> {
 
     private final Grafo<String> grafo = new Grafo<>();
@@ -53,6 +51,28 @@ public class MapaEdificio implements Iterable<NodoMapa> {
     @Override
     public java.util.Iterator<NodoMapa> iterator() {
         return nodos.iterator();
+    }
+
+    public static MapaEdificio ejemplo() {
+        MapaEdificio m = new MapaEdificio();
+        m.agregarNodo(new NodoMapa("REC", TipoNodo.RECEPCION, 0.1, 0.5));
+        m.agregarNodo(new NodoMapa("ESC_A", TipoNodo.ESCALERA, 0.35, 0.5));
+        m.agregarNodo(new NodoMapa("ESC_B", TipoNodo.ESCALERA, 0.75, 0.5));
+        m.agregarNodo(new NodoMapa("ASEO", TipoNodo.ZONA_ASEO, 0.1, 0.85));
+        m.agregarNodo(new NodoMapa("A101", TipoNodo.APARTAMENTO, 0.3, 0.15));
+        m.agregarNodo(new NodoMapa("A102", TipoNodo.APARTAMENTO, 0.45, 0.15));
+        m.agregarNodo(new NodoMapa("A103", TipoNodo.APARTAMENTO, 0.38, 0.85));
+        m.agregarNodo(new NodoMapa("B101", TipoNodo.APARTAMENTO, 0.7, 0.15));
+        m.agregarNodo(new NodoMapa("B102", TipoNodo.APARTAMENTO, 0.85, 0.85));
+        m.agregarPasillo("REC", "ESC_A", 12);
+        m.agregarPasillo("REC", "ASEO", 8);
+        m.agregarPasillo("ESC_A", "A101", 10);
+        m.agregarPasillo("ESC_A", "A102", 14);
+        m.agregarPasillo("ESC_A", "A103", 9);
+        m.agregarPasillo("ESC_A", "ESC_B", 20);
+        m.agregarPasillo("ESC_B", "B101", 11);
+        m.agregarPasillo("ESC_B", "B102", 13);
+        return m;
     }
 
 

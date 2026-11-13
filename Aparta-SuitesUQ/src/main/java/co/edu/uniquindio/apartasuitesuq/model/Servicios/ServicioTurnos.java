@@ -1,4 +1,7 @@
-package co.edu.uniquindio.apartasuitesuq.model;
+package co.edu.uniquindio.apartasuitesuq.model.Servicios;
+
+import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ListaCircular;
+import co.edu.uniquindio.apartasuitesuq.model.Recepcionista;
 
 public class ServicioTurnos {
     private ListaCircular<Recepcionista> turnos = new ListaCircular<>();

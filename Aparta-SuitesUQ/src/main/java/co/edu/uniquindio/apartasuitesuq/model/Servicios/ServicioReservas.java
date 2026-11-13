@@ -1,4 +1,10 @@
-package co.edu.uniquindio.apartasuitesuq.model;
+package co.edu.uniquindio.apartasuitesuq.model.Servicios;
+
+import co.edu.uniquindio.apartasuitesuq.model.*;
+import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ListaDoble;
+import co.edu.uniquindio.apartasuitesuq.model.Excepciones.CapacidadExcedidaException;
+import co.edu.uniquindio.apartasuitesuq.model.Excepciones.FechasInvalidasException;
+import co.edu.uniquindio.apartasuitesuq.model.Excepciones.ReservaSolapadaException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
