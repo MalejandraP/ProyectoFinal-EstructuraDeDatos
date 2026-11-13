@@ -38,9 +38,9 @@ public class DatosPrueba {
         apartamentos.insertar(a101);
         apartamentos.insertar(a102);
         huesped.agregarFavorito(a101);
-        huesped.agregarAlHistorial(new Estancia(LocalDate.of(2026, 3, 20), LocalDate.of(2026, 3, 22)));
-        huesped.agregarAlHistorial(new Estancia(LocalDate.of(2026, 6, 3),  LocalDate.of(2026, 6, 5)));
-        huesped.agregarAlHistorial(new Estancia(LocalDate.of(2026, 8, 14), LocalDate.of(2026, 8, 16)));
+        huesped.agregarAlHistorial(new Reserva("r130",huesped,a101, LocalDate.of(2026, 3, 20), LocalDate.of(2026, 3, 22),EstadoReserva.CANCELADA,400000,Canal.DIRECTA));
+        huesped.agregarAlHistorial(new Reserva("r140",huesped,a102,LocalDate.of(2026, 6, 3),  LocalDate.of(2026, 6, 5), EstadoReserva.CANCELADA,400000,Canal.DIRECTA));
+        huesped.agregarAlHistorial(new Reserva("r150",huesped,a101,LocalDate.of(2026, 8, 14), LocalDate.of(2026, 8, 16),EstadoReserva.CANCELADA,400000,Canal.DIRECTA));
     }
 
     public static Huesped getHuesped() { return huesped; }
