@@ -9,6 +9,7 @@ import co.edu.uniquindio.apartasuitesuq.model.Servicios.ServicioReservas;
 import co.edu.uniquindio.apartasuitesuq.model.Servicios.ServicioTurnos;
 
 import co.edu.uniquindio.apartasuitesuq.model.Estructuras.AnalisisGrafo;
+import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ArbolBinarioBusqueda;
 import co.edu.uniquindio.apartasuitesuq.model.Estructuras.MapaEdificio;
 import co.edu.uniquindio.apartasuitesuq.model.Estructuras.Recorrido;
 import co.edu.uniquindio.apartasuitesuq.model.Servicios.ColaPreparacion;
@@ -37,9 +38,9 @@ import java.util.Comparator;
  * La GUI obtiene la instancia compartida con {@link #getInstancia()}; las pruebas pueden
  * crear la suya con un {@link Clock} fijo para controlar la fecha "de hoy".
  * <p>
- * Integración pendiente: cuando se integre el {@code ArbolBinarioBusqueda} de P2, los catálogos
- * de apartamentos, huéspedes y empleados pasan de {@link ListaDoble} al árbol. Solo cambian
- * los métodos {@code registrar*} y {@code buscar*} de esta clase; la GUI no se entera.
+ * Los catálogos de apartamentos (por código), huéspedes (por documento) y empleados (por id)
+ * son árboles binarios de búsqueda: registrar, buscar y eliminar son recursivos y recorrer el
+ * catálogo lo entrega ordenado (inorden).
  */
 public class SGA {
 
@@ -48,9 +49,9 @@ public class SGA {
     private final Clock reloj;
 
     // catálogos
-    private ListaDoble<Apartamento> apartamentos;
-    private ListaDoble<Huesped> huespedes;
-    private ListaDoble<Empleado> empleados;
+    private ArbolBinarioBusqueda<Apartamento> apartamentos;
+    private ArbolBinarioBusqueda<Huesped> huespedes;
+    private ArbolBinarioBusqueda<Empleado> empleados;
 
     // edificio y tarifas
     private MapaEdificio mapa;
@@ -94,9 +95,9 @@ public class SGA {
 
     /** Deja el sistema vacío: sin apartamentos, huéspedes, empleados, reservas ni temporadas. */
     public final void reiniciar() {
-        apartamentos = new ListaDoble<>();
-        huespedes = new ListaDoble<>();
-        empleados = new ListaDoble<>();
+        apartamentos = new ArbolBinarioBusqueda<>();
+        huespedes = new ArbolBinarioBusqueda<>();
+        empleados = new ArbolBinarioBusqueda<>();
         calendario = new CalendarioTemporadas();
         liquidador = new LiquidadorTarifas(calendario);
         servicioReservas = new ServicioReservas();
@@ -174,23 +175,39 @@ public class SGA {
         if (apartamento == null) {
             throw new IllegalArgumentException("El apartamento no puede ser nulo.");
         }
-        if (buscarApartamento(apartamento.getCodigo()) != null) {
+        if (apartamentos.contiene(apartamento)) {
             throw new IllegalArgumentException("Ya existe el apartamento " + apartamento.getCodigo() + ".");
         }
-        apartamentos.agregarFinal(apartamento);
+        apartamentos.insertar(apartamento);
     }
 
-    /** @return el apartamento con ese código (sin distinguir mayúsculas) o null */
+    /**
+     * Búsqueda recursiva en el árbol por código (sin distinguir mayúsculas).
+     * @return el apartamento o null si no existe
+     */
     public Apartamento buscarApartamento(String codigo) {
-        if (codigo == null) {
+        if (codigo == null || codigo.isBlank()) {
             return null;
         }
-        for (Apartamento apartamento : apartamentos) {
-            if (apartamento.getCodigo().equalsIgnoreCase(codigo.trim())) {
-                return apartamento;
+        return apartamentos.buscar(new Apartamento(codigo, "clave", "clave", 1, 1, 1, 1));
+    }
+
+    /**
+     * Elimina un apartamento del catálogo.
+     * @throws IllegalStateException si tiene reservas activas
+     */
+    public boolean eliminarApartamento(String codigo) {
+        Apartamento apartamento = buscarApartamento(codigo);
+        if (apartamento == null) {
+            return false;
+        }
+        for (Reserva reserva : servicioReservas.getReservas()) {
+            if (reserva.estaActiva() && reserva.getApartamento().equals(apartamento)) {
+                throw new IllegalStateException("El apartamento " + apartamento.getCodigo()
+                        + " tiene reservas activas (" + reserva.getCodigoReserva() + ").");
             }
         }
-        return null;
+        return apartamentos.eliminar(apartamento);
     }
 
     /** @throws IllegalArgumentException si el código no existe */
@@ -202,7 +219,8 @@ public class SGA {
         return apartamento;
     }
 
-    public ListaDoble<Apartamento> getApartamentos() {
+    /** @return el catálogo; recorrerlo con for-each lo entrega ordenado por código */
+    public ArbolBinarioBusqueda<Apartamento> getApartamentos() {
         return apartamentos;
     }
 
@@ -213,26 +231,42 @@ public class SGA {
         if (huesped == null) {
             throw new IllegalArgumentException("El huésped no puede ser nulo.");
         }
-        if (buscarHuesped(huesped.getDocumento()) != null) {
+        if (huespedes.contiene(huesped)) {
             throw new IllegalArgumentException("Ya existe un huésped con documento " + huesped.getDocumento() + ".");
         }
-        huespedes.agregarFinal(huesped);
+        huespedes.insertar(huesped);
     }
 
-    /** @return el huésped con ese documento o null. También sirve para que el huésped inicie sesión. */
+    /**
+     * Búsqueda recursiva en el árbol por documento. También sirve para que el huésped inicie sesión.
+     * @return el huésped o null si no existe
+     */
     public Huesped buscarHuesped(String documento) {
-        if (documento == null) {
+        if (documento == null || documento.isBlank()) {
             return null;
         }
-        for (Huesped huesped : huespedes) {
-            if (huesped.getDocumento().equals(documento.trim())) {
-                return huesped;
-            }
-        }
-        return null;
+        return huespedes.buscar(new Huesped(documento, "clave", "clave", "clave@clave.co"));
     }
 
-    public ListaDoble<Huesped> getHuespedes() {
+    /**
+     * Elimina un huésped del catálogo.
+     * @throws IllegalStateException si es titular de reservas activas
+     */
+    public boolean eliminarHuesped(String documento) {
+        Huesped huesped = buscarHuesped(documento);
+        if (huesped == null) {
+            return false;
+        }
+        for (Reserva reserva : servicioReservas.reservasDe(huesped)) {
+            if (reserva.estaActiva()) {
+                throw new IllegalStateException("El huésped tiene reservas activas (" + reserva.getCodigoReserva() + ").");
+            }
+        }
+        return huespedes.eliminar(huesped);
+    }
+
+    /** @return el catálogo; recorrerlo con for-each lo entrega ordenado por documento */
+    public ArbolBinarioBusqueda<Huesped> getHuespedes() {
         return huespedes;
     }
 
@@ -249,22 +283,30 @@ public class SGA {
         if (buscarEmpleado(empleado.getId()) != null) {
             throw new IllegalArgumentException("Ya existe un empleado con id " + empleado.getId() + ".");
         }
-        empleados.agregarFinal(empleado);
+        empleados.insertar(empleado);
         if (empleado instanceof Recepcionista) {
             turnos.registrar((Recepcionista) empleado);
         }
     }
 
+    /** Búsqueda recursiva en el árbol por id. @return el empleado o null */
     public Empleado buscarEmpleado(String id) {
-        if (id == null) {
+        if (id == null || id.isBlank()) {
             return null;
         }
-        for (Empleado empleado : empleados) {
-            if (empleado.getId().equalsIgnoreCase(id.trim())) {
-                return empleado;
-            }
+        return empleados.buscar(new Administrador("clave", id.trim()));
+    }
+
+    /** Elimina un empleado; si es recepcionista, sale también de la rotación de turnos. */
+    public boolean eliminarEmpleado(String id) {
+        Empleado empleado = buscarEmpleado(id);
+        if (empleado == null) {
+            return false;
         }
-        return null;
+        if (empleado instanceof Recepcionista) {
+            turnos.retirar((Recepcionista) empleado);
+        }
+        return empleados.eliminar(empleado);
     }
 
     /**
@@ -279,7 +321,8 @@ public class SGA {
         return null;
     }
 
-    public ListaDoble<Empleado> getEmpleados() {
+    /** @return el catálogo; recorrerlo con for-each lo entrega ordenado por id */
+    public ArbolBinarioBusqueda<Empleado> getEmpleados() {
         return empleados;
     }
 
@@ -656,5 +699,12 @@ public class SGA {
 
     public AnalisisGrafo getAnalisisGrafo() {
         return new AnalisisGrafo(mapa);
+    }
+
+    // ============================================================= estadísticas
+
+    /** @return los reportes calculados sobre el estado actual del sistema */
+    public Estadisticas getEstadisticas() {
+        return new Estadisticas(this);
     }
 }
