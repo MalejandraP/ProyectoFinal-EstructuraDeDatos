@@ -1,5 +1,7 @@
 package co.edu.uniquindio.apartasuitesuq.model;
 
+import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ListaDoble;
+
 import co.edu.uniquindio.apartasuitesuq.model.Estructuras.MapaEdificio;
 import co.edu.uniquindio.apartasuitesuq.model.Estructuras.NodoMapa;
 import co.edu.uniquindio.apartasuitesuq.model.Estructuras.TipoNodo;

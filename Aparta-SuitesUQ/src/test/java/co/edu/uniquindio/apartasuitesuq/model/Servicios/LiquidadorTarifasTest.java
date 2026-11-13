@@ -1,5 +1,9 @@
 package co.edu.uniquindio.apartasuitesuq.model.Servicios;
 
+import co.edu.uniquindio.apartasuitesuq.model.Excepciones.CapacidadExcedidaException;
+
+import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ListaDoble;
+
 import co.edu.uniquindio.apartasuitesuq.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

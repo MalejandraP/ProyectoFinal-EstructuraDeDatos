@@ -1,5 +1,13 @@
 package co.edu.uniquindio.apartasuitesuq.model;
 
+import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ListaDoble;
+import co.edu.uniquindio.apartasuitesuq.model.Excepciones.CapacidadExcedidaException;
+import co.edu.uniquindio.apartasuitesuq.model.Excepciones.EstructuraVaciaException;
+import co.edu.uniquindio.apartasuitesuq.model.Excepciones.TransicionEstadoInvalidaException;
+import co.edu.uniquindio.apartasuitesuq.model.Servicios.ServicioCanalExterno;
+import co.edu.uniquindio.apartasuitesuq.model.Servicios.ServicioReservas;
+import co.edu.uniquindio.apartasuitesuq.model.Servicios.ServicioTurnos;
+
 import co.edu.uniquindio.apartasuitesuq.model.Estructuras.AnalisisGrafo;
 import co.edu.uniquindio.apartasuitesuq.model.Estructuras.MapaEdificio;
 import co.edu.uniquindio.apartasuitesuq.model.Estructuras.Recorrido;

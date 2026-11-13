@@ -1,5 +1,8 @@
 package co.edu.uniquindio.apartasuitesuq.model;
 
+import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ListaDoble;
+import co.edu.uniquindio.apartasuitesuq.model.Excepciones.ReservaSolapadaException;
+
 import co.edu.uniquindio.apartasuitesuq.model.Servicios.ColaPreparacion;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

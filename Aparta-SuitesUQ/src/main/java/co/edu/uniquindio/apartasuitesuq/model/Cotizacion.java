@@ -1,5 +1,7 @@
 package co.edu.uniquindio.apartasuitesuq.model;
 
+import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ListaDoble;
+
 /**
  * Resultado de cotizar una estancia en un apartamento: el valor total y su desglose
  * noche por noche, guardado en una {@link ListaDoble} de {@link NocheLiquidada}.

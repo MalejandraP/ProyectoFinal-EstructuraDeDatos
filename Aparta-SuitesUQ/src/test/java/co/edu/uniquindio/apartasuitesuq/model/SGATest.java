@@ -1,5 +1,12 @@
 package co.edu.uniquindio.apartasuitesuq.model;
 
+import co.edu.uniquindio.apartasuitesuq.model.Excepciones.CapacidadExcedidaException;
+import co.edu.uniquindio.apartasuitesuq.model.Excepciones.EstructuraVaciaException;
+
+import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ListaDoble;
+import co.edu.uniquindio.apartasuitesuq.model.Excepciones.ReservaSolapadaException;
+import co.edu.uniquindio.apartasuitesuq.model.Excepciones.TransicionEstadoInvalidaException;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

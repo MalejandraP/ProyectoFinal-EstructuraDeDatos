@@ -1,5 +1,8 @@
 package co.edu.uniquindio.apartasuitesuq.model;
 
+import co.edu.uniquindio.apartasuitesuq.model.Excepciones.CapacidadExcedidaException;
+import co.edu.uniquindio.apartasuitesuq.model.Excepciones.FechasInvalidasException;
+
 import java.time.LocalDate;
 import java.time.Period;
 

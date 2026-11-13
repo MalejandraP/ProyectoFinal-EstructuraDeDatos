@@ -1,5 +1,7 @@
 package co.edu.uniquindio.apartasuitesuq.model;
 
+import co.edu.uniquindio.apartasuitesuq.model.Excepciones.FechasInvalidasException;
+
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
