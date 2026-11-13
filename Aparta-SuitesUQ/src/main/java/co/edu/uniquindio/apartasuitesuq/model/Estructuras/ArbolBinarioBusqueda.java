@@ -228,4 +228,41 @@ public class ArbolBinarioBusqueda <T extends Comparable<T>> implements Iterable<
             recorridoInordenRecursivo(actual.derecho, accion);
         }
     }
+
+    /**
+     * Evalúa recursivamente si algún elemento del árbol cumple {@code condicion},
+     * podando las ramas izquierda o derecha según los predicados de navegación.
+     * Evita recorrer todo el árbol cuando el orden natural permite descartar subárboles.
+     *
+     * @param condicion         predicado que indica si el elemento actual satisface la búsqueda
+     * @param explorarIzquierda predicado que indica si tiene sentido descender al subárbol izquierdo
+     * @param explorarDerecha   predicado que indica si tiene sentido descender al subárbol derecho
+     * @return {@code true} si se encontró un elemento que cumple la condición; {@code false} en caso contrario
+     */
+    public boolean existeConPoda(java.util.function.Predicate<T> condicion,
+                                 java.util.function.Predicate<T> explorarIzquierda,
+                                 java.util.function.Predicate<T> explorarDerecha) {
+        return existeConPodaRecursivo(raiz, condicion, explorarIzquierda, explorarDerecha);
+    }
+
+    private boolean existeConPodaRecursivo(NodoArbol<T> actual,
+                                           java.util.function.Predicate<T> condicion,
+                                           java.util.function.Predicate<T> explorarIzquierda,
+                                           java.util.function.Predicate<T> explorarDerecha) {
+        if (actual == null) {
+            return false;
+        }
+        if (condicion.test(actual.elemento)) {
+            return true;
+        }
+        if (explorarIzquierda.test(actual.elemento)
+                && existeConPodaRecursivo(actual.izquierdo, condicion, explorarIzquierda, explorarDerecha)) {
+            return true;
+        }
+        if (explorarDerecha.test(actual.elemento)
+                && existeConPodaRecursivo(actual.derecho, condicion, explorarIzquierda, explorarDerecha)) {
+            return true;
+        }
+        return false;
+    }
 }
