@@ -186,11 +186,20 @@ public class Reserva implements Comparable<Reserva> {
     }
 
     @Override
-    public int compareTo(Reserva auxiliar) {
-        if (auxiliar == null || auxiliar.getCodigoReserva() == null) {
+    public int compareTo(Reserva otra) {
+        if (otra == null) {
             return 1;
         }
-        return this.codigoReserva.compareToIgnoreCase(auxiliar.getCodigoReserva());
+        if (this.getFechaInicio() != null && otra.getFechaInicio() != null) {
+            int cmpFecha = this.getFechaInicio().compareTo(otra.getFechaInicio());
+            if (cmpFecha != 0) {
+                return cmpFecha;
+            }
+        }
+        if (this.codigoReserva == null) {
+            return otra.codigoReserva == null ? 0 : -1;
+        }
+        return otra.codigoReserva == null ? 1 : this.codigoReserva.compareToIgnoreCase(otra.codigoReserva);
     }
 
     @Override
