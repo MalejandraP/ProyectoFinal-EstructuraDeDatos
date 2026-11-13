@@ -9,18 +9,19 @@ import co.edu.uniquindio.apartasuitesuq.model.Excepciones.ReservaSolapadaExcepti
 import co.edu.uniquindio.apartasuitesuq.model.Excepciones.TransicionEstadoInvalidaException;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 /**
  * Servicio encargado de gestionar el ciclo de vida completo de las reservas (Módulo P2).
  * <p>
- * Utiliza un {@link ArbolBinarioBusqueda} para indexar y consultar las reservas por código
- * de manera eficiente, delegando la validación de fechas y detección de solapamientos
- * a la clase {@link Estancia}.
+ * Guarda las reservas en un {@link ArbolBinarioBusqueda} ordenado por el orden natural de
+ * {@link Reserva} (fecha de entrada y, si coincide, código), delegando la validación de fechas
+ * y la detección de solapamientos a la clase {@link Estancia}.
  */
 public class ServicioReservas {
 
-    /** Árbol binario de búsqueda que almacena las reservas ordenadas por su código único. */
+    /** Árbol binario de búsqueda que almacena las reservas ordenadas por fecha de entrada. */
     private final ArbolBinarioBusqueda<Reserva> arbolReservas = new ArbolBinarioBusqueda<>();
 
 
@@ -83,10 +84,13 @@ public class ServicioReservas {
                 codigo,
                 titular,
                 apartamento,
-                nuevaEstancia,
+                entrada,
+                salida,
                 estadoInicial(canalEfectivo),
                 costo,
-                canalEfectivo
+                canalEfectivo,
+                numPersonas,
+                LocalDateTime.now()
         );
 
         arbolReservas.insertar(reserva);
@@ -256,7 +260,9 @@ public class ServicioReservas {
     // --- Consultas sobre el Árbol Binario de Búsqueda ---
 
     /**
-     * Busca una reserva en el árbol binario de búsqueda a partir de su código único.
+     * Busca una reserva por su código recorriendo el árbol en inorden.
+     * El árbol está ordenado por fecha de entrada (orden natural de Reserva), así que la
+     * búsqueda por código no puede descartar ramas.
      *
      * @param codigo identificador de la reserva (por ejemplo, {@code "RES-1"})
      * @return la instancia de {@link Reserva} encontrada, o {@code null} si no existe
@@ -265,10 +271,50 @@ public class ServicioReservas {
         if (codigo == null || codigo.trim().isEmpty()) {
             return null;
         }
-        Reserva claveBusqueda = new Reserva(
-                codigo.trim(), null, null, (Estancia) null, null, 0.0, null
-        );
-        return arbolReservas.buscar(claveBusqueda);
+        for (Reserva r : arbolReservas) {
+            if (r.getCodigoReserva().equalsIgnoreCase(codigo.trim())) {
+                return r;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Registra una reserva ya existente (por ejemplo, cargada desde el archivo de datos)
+     * respetando la regla de no solapamiento entre reservas activas.
+     *
+     * @throws ReservaSolapadaException si está activa y choca con otra reserva activa
+     * @throws IllegalArgumentException si ya existe una reserva con el mismo código
+     */
+    public synchronized void registrar(Reserva reserva) {
+        validarReservaNoNula(reserva);
+        if (buscarPorCodigo(reserva.getCodigoReserva()) != null) {
+            throw new IllegalArgumentException("Ya existe la reserva " + reserva.getCodigoReserva() + ".");
+        }
+        if (reserva.estaActiva() && haySolapamiento(reserva.getApartamento(), reserva.getEstancia())) {
+            throw new ReservaSolapadaException("La reserva " + reserva.getCodigoReserva()
+                    + " choca con otra reserva activa de " + reserva.getApartamento().getCodigo() + ".");
+        }
+        arbolReservas.insertar(reserva);
+        actualizarContador(reserva.getCodigoReserva());
+    }
+
+    /** Evita que una reserva nueva reciba un código "RES-n" que ya fue cargado. */
+    private void actualizarContador(String codigo) {
+        if (codigo.toUpperCase().startsWith("RES-")) {
+            try {
+                contador = Math.max(contador, Integer.parseInt(codigo.substring(4)));
+            } catch (NumberFormatException ignored) {
+                // código con otro formato: no afecta la numeración
+            }
+        }
+    }
+
+    /**
+     * @return todas las reservas ordenadas por fecha de entrada (recorrido inorden del árbol)
+     */
+    public ListaDoble<Reserva> getReservas() {
+        return listarTodasOrdenadas();
     }
 
     /**
@@ -301,9 +347,9 @@ public class ServicioReservas {
 
     /**
      * Genera una lista doblemente enlazada con todas las reservas del sistema
-     * ordenadas ascendentemente por código mediante un recorrido inorden del árbol.
+     * ordenadas por fecha de entrada mediante un recorrido inorden del árbol.
      *
-     * @return {@link ListaDoble} con todas las reservas ordenadas por código
+     * @return {@link ListaDoble} con todas las reservas ordenadas por fecha de entrada
      */
     public ListaDoble<Reserva> listarTodasOrdenadas() {
         ListaDoble<Reserva> lista = new ListaDoble<>();

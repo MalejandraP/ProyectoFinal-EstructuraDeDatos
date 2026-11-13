@@ -2,42 +2,27 @@ package co.edu.uniquindio.apartasuitesuq.model;
 
 
 /**
- * Clase de empleado Recepcionista con implementación Comparable y atributos nombre y id
+ * Empleado de recepción. Registra reservas directas, procesa el canal externo,
+ * maneja folios, hace check-in/check-out y rota en los turnos (lista circular).
+ * <p>
+ * Hereda de {@link Empleado} el id, el nombre, la contraseña y el orden natural por id.
  */
-public class Recepcionista implements Comparable<Recepcionista> {
-    private String nombre, id;
+public class Recepcionista extends Empleado {
 
+    /**
+     * Crea un recepcionista cuya contraseña inicial es su id.
+     * Se conserva el orden (nombre, id) del constructor original.
+     */
     public Recepcionista(String nombre, String id) {
-        this.nombre = nombre;
-        this.id = id;
+        this(nombre, id, null);
     }
 
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+    public Recepcionista(String nombre, String id, String contrasena) {
+        super(id, nombre, contrasena);
     }
 
     @Override
-    public int compareTo(Recepcionista o) {
-        return id.compareTo(o.id);
-    }
-
-    @Override
-    public String toString() {
-        return "Recepcionista{" +
-                "nombre='" + nombre + '\'' +
-                ", id='" + id + '\'' +
-                '}';
+    public Rol getRol() {
+        return Rol.RECEPCIONISTA;
     }
 }
