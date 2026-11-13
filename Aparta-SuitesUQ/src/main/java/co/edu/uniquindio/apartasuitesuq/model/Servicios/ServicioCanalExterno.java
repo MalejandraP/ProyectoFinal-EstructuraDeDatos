@@ -24,7 +24,7 @@ public class ServicioCanalExterno {
     public Reserva procesarSiguiente(){
         SolicitudExterna s = cola.desencolar();
         try{
-            Reserva reserva = servicioReservas.crearReserva(s.getTitular(),s.getCodigoApartamento(),s.getEntrada(), s.getSalida(), s.getNumPersonas(), Canal.EXTERNO);
+            Reserva reserva = servicioReservas.crearReserva(s.getTitular(),s.getApartamento(),s.getEntrada(), s.getSalida(), s.getNumPersonas(), Canal.EXTERNO);
             s.marcarAceptada();
             return reserva;
         } catch (ReservaSolapadaException e) {

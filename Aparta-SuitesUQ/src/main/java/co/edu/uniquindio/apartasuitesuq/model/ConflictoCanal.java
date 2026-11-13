@@ -19,7 +19,7 @@ public class ConflictoCanal {
 
     @Override
     public String toString() {
-        return "Conflicto [" + fechaRegistro + "] apto " + solicitud.getCodigoApartamento()
+        return "Conflicto [" + fechaRegistro + "] apto " + solicitud.getApartamento().getCodigo()
                 + " " + solicitud.getEntrada() + " a " + solicitud.getSalida()
                 + " - " + motivo;
     }

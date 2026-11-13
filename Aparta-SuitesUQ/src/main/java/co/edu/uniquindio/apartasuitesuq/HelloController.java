@@ -24,7 +24,8 @@ public class HelloController {
         PanelUsuarioViewController controlador = loader.getController();
         controlador.setHuesped(DatosPrueba.getHuesped());
         controlador.setApartamentos(DatosPrueba.getApartamentos());
-        controlador.setReservas(DatosPrueba.getReservas());
+        controlador.setReservas(
+                DatosPrueba.getServicioReservas().reservasDe(DatosPrueba.getHuesped()));
         ventana.show();
     }
 

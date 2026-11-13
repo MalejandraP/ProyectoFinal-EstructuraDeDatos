@@ -15,6 +15,7 @@ public class Reserva implements Comparable<Reserva> {
     private double costoTotal;
     private Canal canal;
     private ListaDoble<Huesped> huespedes;
+    private Folio folio;
 
     // Constructor principal con Estancia
     public Reserva(String codigoReserva, Huesped huesped,
@@ -31,6 +32,7 @@ public class Reserva implements Comparable<Reserva> {
         if (huesped != null) {
             this.huespedes.agregarFinal(huesped);
         }
+        this.folio = new Folio(this);
     }
 
     // Constructor sobrecargado por compatibilidad con fechas separadas
@@ -51,11 +53,8 @@ public class Reserva implements Comparable<Reserva> {
         return 0.0;
     }
 
-    public void cancelarReserva() {
-        if (EstadoReserva.FINALIZADA.equals(estado)) {
-            throw new IllegalStateException("No se puede cancelar una reserva que ya fue finalizada.");
-        }
-        this.estado = EstadoReserva.CANCELADA;
+    public Folio getFolio() {
+        return folio;
     }
 
     public String getCodigoReserva() {
@@ -186,11 +185,9 @@ public class Reserva implements Comparable<Reserva> {
     }
 
     @Override
-    public int compareTo(Reserva auxiliar) {
-        if (auxiliar == null || auxiliar.getCodigoReserva() == null) {
-            return 1;
-        }
-        return this.codigoReserva.compareToIgnoreCase(auxiliar.getCodigoReserva());
+    public int compareTo(Reserva otra) {
+        int c = this.estancia.getEntrada().compareTo(otra.estancia.getEntrada());
+        return c != 0 ? c : this.codigoReserva.compareToIgnoreCase(otra.codigoReserva);
     }
 
     @Override

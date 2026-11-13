@@ -14,8 +14,9 @@ public class Movimiento {
     }
     private Movimiento(TipoMovimiento tipo, double monto, String descripcion, boolean esReverso) {
         if (monto <= 0) throw new IllegalArgumentException("El monto debe ser positivo");
-        this.tipo = tipo;
         this.monto = monto;
+        if (tipo == null) throw new IllegalArgumentException("El tipo no puede ser nulo");
+        this.tipo = tipo;
         this.descripcion = descripcion;
         this.fechayHora = LocalDateTime.now();
         this.esReverso = esReverso;
