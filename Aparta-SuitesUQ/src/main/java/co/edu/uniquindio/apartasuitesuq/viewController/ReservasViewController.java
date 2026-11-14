@@ -4,6 +4,7 @@ import co.edu.uniquindio.apartasuitesuq.model.Apartamento;
 import co.edu.uniquindio.apartasuitesuq.model.Canal;
 import co.edu.uniquindio.apartasuitesuq.model.EstadoReserva;
 import co.edu.uniquindio.apartasuitesuq.model.Huesped;
+import co.edu.uniquindio.apartasuitesuq.model.Ocupante;
 import co.edu.uniquindio.apartasuitesuq.model.OrdenApartamentos;
 import co.edu.uniquindio.apartasuitesuq.model.Reserva;
 import co.edu.uniquindio.apartasuitesuq.model.Rol;
@@ -18,11 +19,12 @@ import javafx.scene.control.ButtonType;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.Optional;
+import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ListaDoble;
 
 /**
- * Controlador del panel de reservas (P2): gestiona los eventos de búsqueda ordenada,
- * creación de reservas, pago de anticipo del 30 %, cancelación con devolución y
- * sincronización de estado en la tabla.
+ * Controlador del panel de reservas: gestiona los eventos de búsqueda ordenada,
+ * registro de acompañantes con fecha de nacimiento, creación de reservas, pago de
+ * anticipo del 30 %, cancelación con devolución y sincronización de estado en la tabla.
  */
 public class ReservasViewController {
 
@@ -40,6 +42,7 @@ public class ReservasViewController {
     private void inicializar() {
         vista.getDpEntrada().setValue(sga.hoy().plusDays(1));
         vista.getDpSalida().setValue(sga.hoy().plusDays(3));
+        vista.getDpEntrada().valueProperty().addListener((obs, ant, act) -> vista.getListaAcompanantes().refresh());
 
         vista.getCbOrden().getItems().setAll(ReservasView.CriterioOrden.values());
         vista.getCbOrden().setValue(ReservasView.CriterioOrden.PRECIO);
@@ -47,6 +50,8 @@ public class ReservasViewController {
 
         vista.getBtnBuscar().setOnAction(e -> buscarDisponibles());
         vista.getBtnAutocompletar().setOnAction(e -> autocompletarHuesped());
+        vista.getBtnAgregarAcompanante().setOnAction(e -> agregarAcompanante());
+        vista.getBtnQuitarAcompanante().setOnAction(e -> quitarAcompanante());
         vista.getBtnReservar().setOnAction(e -> crearReserva());
         vista.getBtnAnticipo().setOnAction(e -> pagarAnticipoSeleccionada());
         vista.getBtnCancelar().setOnAction(e -> cancelarSeleccionada());
@@ -136,23 +141,70 @@ public class ReservasViewController {
         }
     }
 
+    private void agregarAcompanante() {
+        String nombre = txtOrEmpty(vista.getTxtNombreAcompanante().getText());
+        LocalDate nacimiento = vista.getDpNacimientoAcompanante().getValue();
+        int maxAcompanantes = Math.max(0, vista.getSpPersonas().getValue() - 1);
+
+        if (nombre.isBlank()) {
+            mostrarInfo("Nombre requerido", "Ingrese el nombre completo del acompañante.");
+            return;
+        }
+        if (nacimiento == null || nacimiento.isAfter(sga.hoy())) {
+            mostrarInfo("Fecha inválida", "Seleccione una fecha de nacimiento válida para el acompañante.");
+            return;
+        }
+        if (vista.getListaAcompanantes().getItems().size() >= maxAcompanantes) {
+            mostrarInfo("Límite de personas alcanzado",
+                    "El grupo tiene " + vista.getSpPersonas().getValue()
+                            + " persona(s) en total (titular + máximo " + maxAcompanantes + " acompañante(s)).");
+            return;
+        }
+
+        vista.getListaAcompanantes().getItems().add(new Ocupante(nombre, nacimiento));
+        vista.getTxtNombreAcompanante().clear();
+    }
+
+    private void quitarAcompanante() {
+        Ocupante sel = vista.getListaAcompanantes().getSelectionModel().getSelectedItem();
+        if (sel != null) {
+            vista.getListaAcompanantes().getItems().remove(sel);
+        }
+    }
+
     private void crearReserva() {
         Apartamento seleccionado = vista.getTablaDisponibles().getSelectionModel().getSelectedItem();
         if (seleccionado == null) {
             mostrarInfo("Seleccione un apartamento", "Elija primero un apartamento disponible en la tabla superior.");
             return;
         }
+        int totalPersonas = vista.getSpPersonas().getValue();
+        ObservableList<Ocupante> acompanantesUI = vista.getListaAcompanantes().getItems();
+        if (acompanantesUI.size() > totalPersonas - 1) {
+            mostrarInfo("Cantidad de acompañantes inválida",
+                    "Registró " + acompanantesUI.size() + " acompañantes, pero el total de personas es " + totalPersonas + ".");
+            return;
+        }
+
         try {
             Huesped titular = obtenerOTitularNuevo();
+            ListaDoble<Ocupante> listaOcupantes = new ListaDoble<>();
+            for (Ocupante acompanante : acompanantesUI) {
+                listaOcupantes.agregarFinal(acompanante);
+            }
+
             Reserva creada = sga.crearReserva(
                     titular,
                     seleccionado.getCodigo(),
                     vista.getDpEntrada().getValue(),
                     vista.getDpSalida().getValue(),
-                    null,
-                    vista.getSpPersonas().getValue(),
+                    listaOcupantes,
+                    totalPersonas,
                     vista.getCbCanal().getValue()
             );
+
+            int pagantesPrimeraNoche = creada.contarPagantesEn(creada.getFechaInicio());
+            int exentos = totalPersonas - pagantesPrimeraNoche;
 
             String detalleAnticipo = creada.getCanal() == Canal.PORTAL
                     ? "\nEstado: PENDIENTE. Anticipo requerido (30 %): " + moneda(creada.getValorAnticipo())
@@ -161,9 +213,12 @@ public class ReservasViewController {
             mostrarInfo("Reserva registrada",
                     "Código: " + creada.getCodigoReserva()
                             + "\nApartamento: " + seleccionado.getCodigo() + " - " + seleccionado.getNombre()
+                            + "\nOcupantes: " + totalPersonas + " (" + pagantesPrimeraNoche + " pagante(s), "
+                            + exentos + " menor(es) de 6 años exento(s))"
                             + "\nTotal estancia: " + moneda(creada.getCostoTotal())
                             + detalleAnticipo);
 
+            vista.getListaAcompanantes().getItems().clear();
             buscarDisponibles();
             recargarReservas();
         } catch (RuntimeException ex) {
