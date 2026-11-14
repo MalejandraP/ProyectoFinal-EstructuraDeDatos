@@ -45,6 +45,7 @@ public class VentanaPrincipal {
     enum Pantalla {
         INICIO("Inicio"),
         MAPA("Mapa y preparación"),
+        RESERVAS("Reservas"),
         MI_PANEL("Mi panel"),
         FOLIO("Folio"),
         COTIZAR("Cotizar estancia"),
@@ -86,12 +87,12 @@ public class VentanaPrincipal {
     static Pantalla[] pantallasDe(Rol rol) {
         switch (rol) {
             case HUESPED:
-                return new Pantalla[]{Pantalla.MI_PANEL, Pantalla.COTIZAR};
+                return new Pantalla[]{Pantalla.MI_PANEL, Pantalla.RESERVAS, Pantalla.COTIZAR};
             case RECEPCIONISTA:
-                return new Pantalla[]{Pantalla.INICIO, Pantalla.MAPA, Pantalla.FOLIO, Pantalla.COTIZAR};
+                return new Pantalla[]{Pantalla.INICIO, Pantalla.MAPA, Pantalla.RESERVAS, Pantalla.FOLIO, Pantalla.COTIZAR};
             default:
-                return new Pantalla[]{Pantalla.INICIO, Pantalla.MAPA, Pantalla.COTIZAR, Pantalla.TEMPORADAS,
-                        Pantalla.ESTADISTICAS, Pantalla.CARGA, Pantalla.FOLIO};
+                return new Pantalla[]{Pantalla.INICIO, Pantalla.MAPA, Pantalla.RESERVAS, Pantalla.COTIZAR,
+                        Pantalla.TEMPORADAS, Pantalla.ESTADISTICAS, Pantalla.CARGA, Pantalla.FOLIO};
         }
     }
 
@@ -223,6 +224,9 @@ public class VentanaPrincipal {
                 return new EstadisticasView(sga).getVista();
             case CARGA:
                 return new CargaDatosView(sga, this::alCargarDatos).getVista();
+
+            case RESERVAS:
+                return new ReservasView(sga, sesion).getVista();
             default:
                 throw new IllegalArgumentException("Pantalla desconocida: " + pantalla);
         }

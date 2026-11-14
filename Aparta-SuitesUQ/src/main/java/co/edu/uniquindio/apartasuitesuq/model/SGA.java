@@ -551,12 +551,11 @@ public class SGA {
     }
 
     /** @return las reservas de un apartamento, en el orden en que se registraron */
+    /** @return las reservas de un apartamento ordenadas por fecha de entrada */
     public ListaDoble<Reserva> reservasDe(Apartamento apartamento) {
         ListaDoble<Reserva> resultado = new ListaDoble<>();
-        for (Reserva reserva : servicioReservas.getReservas()) {
-            if (reserva.getApartamento().equals(apartamento)) {
-                resultado.agregarFinal(reserva);
-            }
+        if (apartamento != null) {
+            apartamento.getReservas().recorridoInorden(resultado::agregarFinal);
         }
         return resultado;
     }
