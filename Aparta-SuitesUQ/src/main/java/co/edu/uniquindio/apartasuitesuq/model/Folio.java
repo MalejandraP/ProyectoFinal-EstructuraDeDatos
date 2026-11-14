@@ -4,7 +4,6 @@ import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ListaDoble;
 import co.edu.uniquindio.apartasuitesuq.model.Estructuras.Pila;
 import co.edu.uniquindio.apartasuitesuq.model.Excepciones.EstructuraVaciaException;
 
-import java.util.NoSuchElementException;
 
 public class Folio {
     private Reserva reserva;
@@ -60,7 +59,7 @@ public class Folio {
             if(mov.getTipo() == TipoMovimiento.PAGO && !mov.isEsReverso()){
                 pagado += mov.getMonto();
             } else if(mov.getTipo() == TipoMovimiento.CARGO && mov.isEsReverso()){
-                pagado -= mov.getMonto();
+                pagado -= mov.getMonto(); //reverso de un pago
             }
         }
         return pagado;
@@ -70,15 +69,9 @@ public class Folio {
         return reserva;
     }
 
-    public void setReserva(Reserva reserva) {
-        this.reserva = reserva;
-    }
 
-    public ListaDoble<Movimiento> getMovimientos() {
+    public Iterable<Movimiento> getMovimientos() {
         return movimientos;
-    }
-    public Pila<Movimiento> getOperaciones() {
-        return operaciones;
     }
 
     @Override

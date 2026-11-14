@@ -89,7 +89,4 @@ public class SolicitudExterna {
         return motivoRechazo;
     }
 
-    public void setMotivoRechazo(String motivoRechazo) {
-        this.motivoRechazo = motivoRechazo;
-    }
 }

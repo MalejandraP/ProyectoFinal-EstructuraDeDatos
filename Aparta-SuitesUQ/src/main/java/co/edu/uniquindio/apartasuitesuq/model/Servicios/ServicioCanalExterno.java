@@ -15,17 +15,20 @@ import co.edu.uniquindio.apartasuitesuq.model.Excepciones.ReservaSolapadaExcepti
  * {@link ListaDoble} aquellos casos que generen conflictos de disponibilidad.
  */
 public class ServicioCanalExterno {
-    private ServicioReservas servicioReservas;
-    private Cola<SolicitudExterna> cola = new Cola<>();
-    private ListaDoble<ConflictoCanal> conflictos = new ListaDoble<>();
+    private final SGA sga;
+    private final Cola<SolicitudExterna> cola = new Cola<>();
+    private final ListaDoble<ConflictoCanal> conflictos = new ListaDoble<>();
+    private final ListaDoble<SolicitudExterna> procesadas = new ListaDoble<>();
 
-    public ServicioCanalExterno(ServicioReservas servicioReservas) {
-        this.servicioReservas = servicioReservas;
+    public ServicioCanalExterno(SGA sga) {
+        this.sga = sga;
     }
 
     public void recibirSolicitud(SolicitudExterna solicitud){
+        if(solicitud==null) throw new IllegalArgumentException("La solicitud no puede ser nula");
         cola.encolar(solicitud);
     }
+    public boolean hayPendientes() { return !cola.estaVacia(); }
     /**
      * Extrae y procesa la siguiente solicitud pendiente en la cola (la más antigua).
      * <ul>
@@ -42,14 +45,14 @@ public class ServicioCanalExterno {
     public Reserva procesarSiguiente(){
         SolicitudExterna s = cola.desencolar();
         try{
-            Reserva reserva = servicioReservas.crearReserva(s.getTitular(),s.getApartamento(),s.getEntrada(), s.getSalida(), s.getNumPersonas(), Canal.EXTERNO);
+            sga.crearReservaExterna(s);
             s.marcarAceptada();
-            return reserva;
         } catch (ReservaSolapadaException e) {
             rechazar(s, e.getMessage());
         } catch (FechasInvalidasException | CapacidadExcedidaException e){
             s.marcarRechazada(e.getMessage());
         }
+        procesadas.agregarFinal(s);
         return null;
     }
     /**
@@ -72,5 +75,16 @@ public class ServicioCanalExterno {
         return conflictos;
     }
 
+    /** Para el botón "Procesar cola" de la GUI. @return cuántas solicitudes se procesaron */
+    public int procesarTodas() {
+        int total = 0;
+        while (hayPendientes()) {
+            procesarSiguiente();
+            total++;
+        }
+        return total;
+    }
+
+    public ListaDoble<SolicitudExterna> getProcesadas() { return procesadas; }
 
 }

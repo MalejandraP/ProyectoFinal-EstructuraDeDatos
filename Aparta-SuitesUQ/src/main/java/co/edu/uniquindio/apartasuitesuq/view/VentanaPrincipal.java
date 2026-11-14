@@ -217,7 +217,7 @@ public class VentanaPrincipal {
             case FOLIO:
                 return crearFolio();
             case COTIZAR:
-                return new CotizacionView(sga, sesion, () -> navegar(Pantalla.MI_PANEL)).getVista();
+                return new CotizacionView(sga, sesion).getVista();
             case TEMPORADAS:
                 return new TemporadasTarifasView(sga).getVista();
             case ESTADISTICAS:
@@ -336,7 +336,7 @@ public class VentanaPrincipal {
         controlador.setServicio(sga.getServicioReservas());
         controlador.setHuesped(sesion.getHuesped());
         controlador.setReservas(sga.reservasDe(sesion.getHuesped()));
-        controlador.setAlSolicitarReserva(() -> navegar(Pantalla.COTIZAR));
+        controlador.setAlSolicitarReserva(() -> navegar(Pantalla.RESERVAS));
         return vista;
     }
 

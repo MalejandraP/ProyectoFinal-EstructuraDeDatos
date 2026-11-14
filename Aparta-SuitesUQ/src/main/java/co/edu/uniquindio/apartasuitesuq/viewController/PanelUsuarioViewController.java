@@ -64,7 +64,8 @@ public class PanelUsuarioViewController {
     private Huesped huesped;
     private ServicioReservas servicio;
     private Runnable alSolicitarReserva;
-    public void setAlSolicitarReserva(Runnable accion) { this.alSolicitarReserva = accion; }
+    public void setAlSolicitarReserva(Runnable accion) {
+        this.alSolicitarReserva = accion; }
 
 
 

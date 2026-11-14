@@ -103,7 +103,7 @@ public class SGA {
         calendario = new CalendarioTemporadas();
         liquidador = new LiquidadorTarifas(calendario);
         servicioReservas = new ServicioReservas();
-        canalExterno = new ServicioCanalExterno(servicioReservas);
+        canalExterno = new ServicioCanalExterno(this);
         solicitudesExternasPendientes = 0;
         turnos = new ServicioTurnos();
         vencimiento = new ServicioVencimiento(r -> r.cambiarEstado(EstadoReserva.CANCELADA));
@@ -515,6 +515,14 @@ public class SGA {
             servicioReservas.desindexar(reserva);           // no dejar una reserva a medias
             throw ex;
         }
+        return reserva;
+    }
+
+    public Reserva crearReservaExterna(SolicitudExterna s) {
+        Reserva reserva = servicioReservas.crearReserva(s.getTitular(), s.getApartamento(),
+                s.getEntrada(), s.getSalida(), s.getNumPersonas(), Canal.EXTERNO);
+        liquidador.liquidar(reserva);
+        reserva.getFolio().registrarCargo(reserva.getCostoTotal(), "Alojamiento " + reserva.getEstancia());
         return reserva;
     }
     /** Paga el anticipo del 30 % de una reserva del portal y la confirma. */
