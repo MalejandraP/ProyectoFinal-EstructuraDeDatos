@@ -133,13 +133,11 @@ public class ArbolBinarioBusqueda <T extends Comparable<T>> implements Iterable<
         return buscar(elemento) != null;
     }
 
-
     private NodoArbol<T> obtenerMayor(NodoArbol<T> actual) {
-        while (actual.derecho != null) {
-            actual = actual.derecho;
-        }
-        return actual;
+        return (actual.derecho == null) ? actual : obtenerMayor(actual.derecho);
     }
+
+    
 
     public boolean eliminar(T elemento) {
         if (elemento == null || estaVacio()) return false;
