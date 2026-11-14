@@ -43,4 +43,9 @@ public final class OrdenApartamentos {
         }
         return total;
     }
+
+    public static Comparator<Apartamento> porNumeroDeReservas() {
+        return Comparator.comparingInt(Apartamento::getNumeroReservas).reversed()
+                .thenComparing(Comparator.naturalOrder());
+    }
 }
