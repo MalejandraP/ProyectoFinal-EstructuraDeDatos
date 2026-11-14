@@ -46,6 +46,7 @@ public class VentanaPrincipal {
         INICIO("Inicio"),
         MAPA("Mapa y preparación"),
         RESERVAS("Reservas"),
+        CALENDARIO("Calendario de ocupación"),
         MI_PANEL("Mi panel"),
         FOLIO("Folio"),
         COTIZAR("Cotizar estancia"),
@@ -89,10 +90,12 @@ public class VentanaPrincipal {
             case HUESPED:
                 return new Pantalla[]{Pantalla.MI_PANEL, Pantalla.RESERVAS, Pantalla.COTIZAR};
             case RECEPCIONISTA:
-                return new Pantalla[]{Pantalla.INICIO, Pantalla.MAPA, Pantalla.RESERVAS, Pantalla.FOLIO, Pantalla.COTIZAR};
+                return new Pantalla[]{Pantalla.INICIO, Pantalla.MAPA, Pantalla.RESERVAS,
+                        Pantalla.CALENDARIO, Pantalla.FOLIO, Pantalla.COTIZAR};
             default:
-                return new Pantalla[]{Pantalla.INICIO, Pantalla.MAPA, Pantalla.RESERVAS, Pantalla.COTIZAR,
-                        Pantalla.TEMPORADAS, Pantalla.ESTADISTICAS, Pantalla.CARGA, Pantalla.FOLIO};
+                return new Pantalla[]{Pantalla.INICIO, Pantalla.MAPA, Pantalla.RESERVAS,
+                        Pantalla.CALENDARIO, Pantalla.COTIZAR, Pantalla.TEMPORADAS,
+                        Pantalla.ESTADISTICAS, Pantalla.CARGA, Pantalla.FOLIO};
         }
     }
 
@@ -227,6 +230,9 @@ public class VentanaPrincipal {
 
             case RESERVAS:
                 return new ReservasView(sga, sesion).getVista();
+
+            case CALENDARIO:
+                return new CalendarioOcupacionView(sga).getVista();
             default:
                 throw new IllegalArgumentException("Pantalla desconocida: " + pantalla);
         }
