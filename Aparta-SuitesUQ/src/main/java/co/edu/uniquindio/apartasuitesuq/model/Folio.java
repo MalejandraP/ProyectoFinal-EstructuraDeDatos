@@ -35,7 +35,13 @@ public class Folio {
         Movimiento ultimo = operaciones.desapilar();
         movimientos.agregarFinal(ultimo.crearReverso());
     }
-
+    /** @return la última operación que se puede deshacer, o null si no hay. */
+    public Movimiento ultimaOperacion() {
+        if(operaciones.estaVacia()){
+            return null;
+        }
+        return operaciones.cima();
+    }
     public double calcularSaldo(){
         double saldo = 0;
         for(Movimiento mov : movimientos){

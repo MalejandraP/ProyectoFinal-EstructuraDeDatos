@@ -70,6 +70,12 @@ public class Pila<T> implements Iterable<T> {
         tam--;
         return dato;
     }
+    public T cima(){
+        if(estaVacia()){
+            throw new EstructuraVaciaException("La pila está vacía");
+        }
+        return cima.dato;
+    }
 
     /**
      * Verifica si un elemento específico se encuentra presente dentro de la pila.

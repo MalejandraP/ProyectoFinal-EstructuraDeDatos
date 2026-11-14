@@ -9,6 +9,7 @@ import co.edu.uniquindio.apartasuitesuq.model.ViewPrueba.ColoresEstado;
 import co.edu.uniquindio.apartasuitesuq.model.ViewPrueba.MapaEdificioView;
 import co.edu.uniquindio.apartasuitesuq.model.ViewPrueba.PanelPreparacionView;
 import co.edu.uniquindio.apartasuitesuq.model.ViewPrueba.TableroInicioView;
+import co.edu.uniquindio.apartasuitesuq.viewController.FolioViewController;
 import co.edu.uniquindio.apartasuitesuq.viewController.PanelUsuarioViewController;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -213,7 +214,7 @@ public class VentanaPrincipal {
             case MI_PANEL:
                 return crearPanelUsuario();
             case FOLIO:
-                return new FXMLLoader(VentanaPrincipal.class.getResource(FXML_FOLIO)).load();
+                return crearFolio();
             case COTIZAR:
                 return new CotizacionView(sga, sesion).getVista();
             case TEMPORADAS:
@@ -331,6 +332,22 @@ public class VentanaPrincipal {
         controlador.setServicio(sga.getServicioReservas());
         controlador.setHuesped(sesion.getHuesped());
         controlador.setReservas(sga.reservasDe(sesion.getHuesped()));
+        return vista;
+    }
+
+    /**
+     * Pantalla de folio para recepción y administración (FXML del equipo). Carga la vista,
+     * obtiene su controlador y le entrega el servicio de reservas para que el usuario pueda
+     * elegir una reserva, registrar cargos y pagos, y deshacer la última operación.
+     *
+     * @return la vista del folio lista para mostrarse en el centro de la ventana
+     * @throws IOException si no se puede cargar {@code folio.fxml}
+     */
+    private Node crearFolio() throws IOException {
+        FXMLLoader loader = new FXMLLoader(VentanaPrincipal.class.getResource(FXML_FOLIO));
+        Parent vista = loader.load();
+        FolioViewController controlador = loader.getController();
+        controlador.setServicio(sga.getServicioReservas());
         return vista;
     }
 }
