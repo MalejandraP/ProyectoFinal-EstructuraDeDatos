@@ -14,7 +14,7 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 
 /**
- * Controlador del calendario de ocupación mensual (P2): consulta los apartamentos
+ * Controlador del calendario de ocupación mensual: consulta los apartamentos
  * y sus árboles de reservas para pintar cada día como Libre, Ocupado/Reservado o Bloqueado.
  */
 public class CalendarioOcupacionViewController {
