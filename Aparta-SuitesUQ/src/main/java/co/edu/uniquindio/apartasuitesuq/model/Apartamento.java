@@ -1,10 +1,16 @@
 package co.edu.uniquindio.apartasuitesuq.model;
 
+import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ArbolBinarioBusqueda;
+
 /**
  * Apartamento del alojamiento. Se entrega completo y en exclusiva a un solo grupo.
  * <p>
  * Orden natural (Comparable): por código, sin distinguir mayúsculas. Es lo que permite
  * guardarlo en el árbol binario de búsqueda del catálogo.
+ * <p>
+ * Cada apartamento administra además su propio {@link ArbolBinarioBusqueda} de {@link Reserva}
+ * ordenadas cronológicamente por fecha de entrada para detectar solapamientos de forma recursiva
+ * mediante poda de ramas.
  * <p>
  * Las tarifas se guardan por persona y por noche, una por cada {@link Temporada}.
  * Se usa un arreglo indexado por {@code Temporada.ordinal()} (no una colección de java.util).
@@ -21,6 +27,7 @@ public class Apartamento implements Comparable<Apartamento> {
     private final double[] tarifasPorTemporada;
     private EstadoApartamento estadoOperativo;
     private String motivoFueraServicio;
+    private ArbolBinarioBusqueda<Reserva> reservas;
 
     /**
      * Crea un apartamento sin características, con la misma tarifa en todas las temporadas.
@@ -55,6 +62,7 @@ public class Apartamento implements Comparable<Apartamento> {
         }
         this.estadoOperativo = EstadoApartamento.PREPARADO;
         this.motivoFueraServicio = null;
+        this.reservas = new ArbolBinarioBusqueda<>();
     }
 
     // ---------------------------------------------------------------- tarifas
@@ -72,6 +80,7 @@ public class Apartamento implements Comparable<Apartamento> {
 
     /**
      * Define la tarifa por persona por noche de una temporada.
+     *
      * @throws IllegalArgumentException si la temporada es nula o la tarifa no es positiva
      */
     public void setTarifa(Temporada temporada, double tarifa) {
@@ -143,6 +152,7 @@ public class Apartamento implements Comparable<Apartamento> {
 
     /**
      * Pone el apartamento Fuera de servicio registrando el motivo (obligatorio).
+     *
      * @param motivo razón del bloqueo (daño, mantenimiento, fumigación...)
      */
     public void ponerFueraDeServicio(String motivo) {
@@ -179,6 +189,51 @@ public class Apartamento implements Comparable<Apartamento> {
     /** @return true si está Preparado y por tanto puede hacer check-in */
     public boolean estaPreparado() {
         return estadoOperativo.puedeRecibirHuespedes();
+    }
+
+    // ------------------------------------------------------ árbol de reservas
+
+    /**
+     * Devuelve el árbol binario de búsqueda de reservas asociadas a este apartamento,
+     * ordenadas cronológicamente por fecha de entrada.
+     *
+     * @return {@link ArbolBinarioBusqueda} de reservas del apartamento
+     */
+    public ArbolBinarioBusqueda<Reserva> getReservas() {
+        if (reservas == null) {
+            reservas = new ArbolBinarioBusqueda<>();
+        }
+        return reservas;
+    }
+
+    /**
+     * Inserta una reserva en el árbol propio de este apartamento.
+     *
+     * @param reserva reserva asociada al apartamento
+     */
+    public void registrarReserva(Reserva reserva) {
+        if (reserva != null) {
+            getReservas().insertar(reserva);
+        }
+    }
+
+    /**
+     * Detecta de forma recursiva si alguna reserva activa de este apartamento se solapa
+     * con {@code nuevaEstancia}, podando el subárbol derecho cuando la fecha de entrada
+     * del nodo actual es igual o posterior a la salida solicitada.
+     *
+     * @param nuevaEstancia rango de fechas [entrada, salida) a verificar
+     * @return {@code true} si existe solapamiento con una reserva activa; {@code false} en caso contrario
+     */
+    public boolean tieneSolapamiento(Estancia nuevaEstancia) {
+        if (nuevaEstancia == null || getReservas().estaVacio()) {
+            return false;
+        }
+        return getReservas().existeConPoda(
+                r -> r.estaActiva() && r.getEstancia() != null && r.getEstancia().seSolapaCon(nuevaEstancia),
+                r -> true,
+                r -> r.getFechaInicio() != null && r.getFechaInicio().isBefore(nuevaEstancia.getSalida())
+        );
     }
 
     // ------------------------------------------------------------- capacidad
@@ -261,24 +316,24 @@ public class Apartamento implements Comparable<Apartamento> {
     }
 
     public void setCaracteristicas(String caracteristicas) {
-        this.caracteristicas = caracteristicas == null ? "" : caracteristicas.trim();
+        this.caracteristicas = (caracteristicas == null) ? "" : caracteristicas.trim();
     }
 
-    // ------------------------------------------- Comparable, equals, hashCode
+    // ------------------------------------------ Comparable, equals, hashCode
 
-    /** Orden natural por código, sin distinguir mayúsculas. */
     @Override
-    public int compareTo(Apartamento otro) {
-        if (otro == null || otro.getCodigo() == null) {
+    public int compareTo(Apartamento auxiliar) {
+        if (auxiliar == null || auxiliar.getCodigo() == null) {
             return 1;
         }
-        return this.codigo.compareToIgnoreCase(otro.getCodigo());
+        return this.codigo.compareToIgnoreCase(auxiliar.getCodigo());
     }
 
-    /**
-     * Dos apartamentos son iguales si tienen el mismo código (coherente con compareTo).
-     * Lo usa el Conjunto de favoritos para no guardar repetidos.
-     */
+    /** @return cantidad total de reservas registradas en este apartamento */
+    public int getNumeroReservas() {
+        return getReservas().getTamano();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

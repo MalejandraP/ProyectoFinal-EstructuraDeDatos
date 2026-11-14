@@ -94,6 +94,7 @@ public class ServicioReservas {
         );
 
         arbolReservas.insertar(reserva);
+        apartamento.registrarReserva(reserva);
         return reserva;
     }
 
@@ -121,18 +122,8 @@ public class ServicioReservas {
         if (apartamento == null || nuevaEstancia == null) {
             return false;
         }
-        for (Reserva r : arbolReservas) {
-            if (r.estaActiva()
-                    && r.getApartamento() != null
-                    && r.getApartamento().getCodigo().equals(apartamento.getCodigo())
-                    && r.getEstancia() != null
-                    && r.getEstancia().seSolapaCon(nuevaEstancia)) {
-                return true;
-            }
-        }
-        return false;
+        return apartamento.tieneSolapamiento(nuevaEstancia);
     }
-
     // --- Gestión del ciclo de vida de la reserva ---
 
     /**
@@ -307,8 +298,9 @@ public class ServicioReservas {
      * Registra una reserva ya existente (por ejemplo, cargada desde el archivo de datos)
      * respetando la regla de no solapamiento entre reservas activas.
      *
+     * @param reserva reserva existente a registrar en el servicio y en el apartamento
      * @throws ReservaSolapadaException si está activa y choca con otra reserva activa
-     * @throws IllegalArgumentException si ya existe una reserva con el mismo código
+     * @throws IllegalArgumentException si la reserva es nula o ya existe una con el mismo código
      */
     public synchronized void registrar(Reserva reserva) {
         validarReservaNoNula(reserva);
@@ -320,7 +312,12 @@ public class ServicioReservas {
                     + " choca con otra reserva activa de " + reserva.getApartamento().getCodigo() + ".");
         }
         arbolReservas.insertar(reserva);
-        reserva.getHuesped().agregarAlHistorial(reserva);
+        if (reserva.getApartamento() != null) {
+            reserva.getApartamento().registrarReserva(reserva);
+        }
+        if (reserva.getHuesped() != null) {
+            reserva.getHuesped().agregarAlHistorial(reserva);
+        }
         actualizarContador(reserva.getCodigoReserva());
     }
 
