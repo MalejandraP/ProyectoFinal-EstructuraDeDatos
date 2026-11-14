@@ -2,6 +2,7 @@ package co.edu.uniquindio.apartasuitesuq.model;
 
 import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ListaDoble;
 import co.edu.uniquindio.apartasuitesuq.model.Estructuras.Pila;
+import co.edu.uniquindio.apartasuitesuq.model.Excepciones.EstructuraVaciaException;
 
 import java.util.NoSuchElementException;
 
@@ -29,12 +30,18 @@ public class Folio {
     }
     public void deshacer(){
         if (operaciones.estaVacia()){
-            throw new NoSuchElementException("La pila esta vacía");
+            throw new EstructuraVaciaException("El folio esta vacío");
         }
         Movimiento ultimo = operaciones.desapilar();
         movimientos.agregarFinal(ultimo.crearReverso());
     }
-
+    /** @return la última operación que se puede deshacer, o null si no hay. */
+    public Movimiento ultimaOperacion() {
+        if(operaciones.estaVacia()){
+            return null;
+        }
+        return operaciones.cima();
+    }
     public double calcularSaldo(){
         double saldo = 0;
         for(Movimiento mov : movimientos){
@@ -50,8 +57,10 @@ public class Folio {
     public double totalPago(){
         double pagado = 0;
         for(Movimiento mov : movimientos){
-            if(mov.getTipo() == TipoMovimiento.PAGO){
+            if(mov.getTipo() == TipoMovimiento.PAGO && !mov.isEsReverso()){
                 pagado += mov.getMonto();
+            } else if(mov.getTipo() == TipoMovimiento.CARGO && mov.isEsReverso()){
+                pagado -= mov.getMonto();
             }
         }
         return pagado;
@@ -68,23 +77,14 @@ public class Folio {
     public ListaDoble<Movimiento> getMovimientos() {
         return movimientos;
     }
-
-    public void setMovimientos(ListaDoble<Movimiento> movimientos) {
-        this.movimientos = movimientos;
-    }
-
     public Pila<Movimiento> getOperaciones() {
         return operaciones;
-    }
-
-    public void setOperaciones(Pila<Movimiento> operaciones) {
-        this.operaciones = operaciones;
     }
 
     @Override
     public String toString() {
         return "Folio{" +
-                " reserva= " + reserva +
+                " reserva= " + reserva.getCodigoReserva() +
                 ", movimientos= " + movimientos +
                 ", operaciones= " + operaciones +
                 ", saldo = " + calcularSaldo() +

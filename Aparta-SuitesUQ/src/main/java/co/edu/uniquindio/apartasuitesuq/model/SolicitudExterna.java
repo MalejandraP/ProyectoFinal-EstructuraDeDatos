@@ -37,7 +37,7 @@ public class SolicitudExterna {
         this.idExterno = idExterno;
     }
 
-    public Apartamento getCodigoApartamento() {
+    public Apartamento getApartamento() {
         return apartamento;
     }
 

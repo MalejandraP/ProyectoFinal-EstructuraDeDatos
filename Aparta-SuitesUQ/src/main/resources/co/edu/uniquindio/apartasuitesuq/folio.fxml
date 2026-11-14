@@ -13,6 +13,7 @@
             <Label fx:id="lblTitulo" text="Folio · R-0142" styleClass="titulo-pagina"/>
             <Label fx:id="lblSubtitulo" text="A-101 Dúplex · Titular: Camila Torres" styleClass="texto-suave"/>
         </VBox>
+        <ComboBox fx:id="cmbReservas" promptText="Elige una reserva" prefWidth="320"/>
         <Region HBox.hgrow="ALWAYS"/>
         <Label fx:id="lblEstadoReserva" text="Confirmada" styleClass="chip, chip-preparado"/>
     </HBox>

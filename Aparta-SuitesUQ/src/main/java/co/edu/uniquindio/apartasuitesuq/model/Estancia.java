@@ -7,7 +7,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-
 /**
  * Estancia expresada con una fecha de entrada y una de salida: el intervalo [entrada, salida).
  * La noche de salida no se ocupa ni se cobra, así que del 10 al 12 de marzo son dos noches
@@ -83,7 +82,7 @@ public class Estancia implements Iterable<LocalDate> {
         @Override
         public LocalDate next() {
             if (!hasNext()) {
-                throw new NoSuchElementException("No hay más noches en la estancia.");
+                throw new FechasInvalidasException("No hay más noches en la estancia.");
             }
             LocalDate noche = actual;
             actual = actual.plusDays(1);

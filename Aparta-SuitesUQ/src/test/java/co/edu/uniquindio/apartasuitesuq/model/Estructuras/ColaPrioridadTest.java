@@ -1,6 +1,7 @@
 package co.edu.uniquindio.apartasuitesuq.model.Estructuras;
 
-import co.edu.uniquindio.apartasuitesuq.model.EstructuraVaciaException;
+import co.edu.uniquindio.apartasuitesuq.model.Excepciones.EstructuraVaciaException;
+
 import org.junit.jupiter.api.Test;
 
 import java.util.Comparator;

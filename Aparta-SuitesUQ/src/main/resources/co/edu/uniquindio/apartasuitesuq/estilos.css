@@ -41,6 +41,8 @@
 .nav-item:hover   { -fx-background-color: #38444A; }
 .nav-item-activo  { -fx-background-color: -color-secundario; -fx-text-fill: -color-primario; -fx-font-weight: bold; }
 
+.scroll-pane { -fx-background-color: transparent; -fx-padding: 0; }
+.scroll-pane > .viewport { -fx-background-color: -color-fondo; }
 /* ===== Textos ===== */
 .titulo-pagina   { -fx-font-size: 28px; -fx-font-weight: bold; }
 .titulo-seccion  { -fx-font-size: 16px; -fx-font-weight: bold; }
@@ -58,7 +60,132 @@
 }
 .tarjeta-seleccionada { -fx-border-color: -color-primario; -fx-border-width: 2; }
 .caja-info { -fx-background-color: -color-caja; -fx-background-radius: 12; -fx-padding: 12; }
+/* Quita bordes y fondo del ListView contenedor */
+.lista-tarjetas {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
 
+/* Cada fila de la lista */
+.lista-tarjetas .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 0 0 8 0; /* Espacio de 8px entre tarjetas */
+}
+
+.lista-tarjetas .list-cell:empty {
+    -fx-padding: 0;
+}
+
+/* La tarjeta interior beige de cada apartamento */
+.item-favorito {
+    -fx-background-color: #F5F2EB;
+    -fx-background-radius: 10;
+    -fx-padding: 12 14 12 14;
+    -fx-border-color: transparent;
+    -fx-border-radius: 10;
+}
+
+/* Efecto visual cuando el usuario selecciona una fila para quitarla */
+.lista-tarjetas .list-cell:filled:selected .item-favorito {
+    -fx-border-color: #7D5A44;
+    -fx-border-width: 1.5;
+}
+.lista-tarjetas .scroll-bar:horizontal {
+    -fx-opacity: 0;
+    -fx-max-height: 0;
+    -fx-pref-height: 0;
+}
+/* Tipografía dentro de la tarjeta */
+.fav-codigo {
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-text-fill: #2B2B2B;
+}
+
+.fav-nombre {
+    -fx-font-size: 13px;
+    -fx-text-fill: #4A4A4A;
+}
+
+.fav-detalle {
+    -fx-font-size: 11px;
+    -fx-text-fill: #7A756D;
+}
+
+.fav-corazon {
+    -fx-font-size: 16px;
+    -fx-text-fill: #7D5A44; /* Tono café/terracota del diseño */
+}
+/* Tarjeta blanca de cada reserva */
+.item-reserva {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 12;
+    -fx-border-color: #E6E2DA;
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+    -fx-padding: 16 20 16 20;
+}
+
+.lista-tarjetas .list-cell:filled:selected .item-reserva {
+    -fx-border-color: #2B2B2B;
+    -fx-border-width: 1.5;
+}
+
+.res-codigo {
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-text-fill: #2B2B2B;
+}
+
+.res-apto {
+    -fx-font-size: 14px;
+    -fx-text-fill: #4A4A4A;
+}
+
+.res-fechas {
+    -fx-font-size: 12px;
+    -fx-text-fill: #7A756D;
+}
+
+.res-etiqueta-monto {
+    -fx-font-size: 11px;
+    -fx-text-fill: #8C877E;
+}
+
+.res-valor-monto {
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-text-fill: #2B2B2B;
+}
+
+/* Badges de estado (píldoras superiores derechas) */
+.badge-estado {
+    -fx-padding: 4 10 4 10;
+    -fx-background-radius: 12;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.badge-confirmada {
+    -fx-background-color: #E2EFE3;
+    -fx-text-fill: #2E6F3E;
+}
+
+.badge-pendiente {
+    -fx-background-color: #FDF3D7;
+    -fx-text-fill: #9A6B16;
+}
+
+.badge-encurso {
+    -fx-background-color: #E3ECF8;
+    -fx-text-fill: #2C5282;
+}
+
+.badge-cancelada {
+    -fx-background-color: #FBE4E4;
+    -fx-text-fill: #9B2C2C;
+}
 /* ===== Chips de estado (Label) ===== */
 .chip {
     -fx-padding: 5 10 5 10;
@@ -120,6 +247,15 @@
     -fx-padding: 0 14 0 14;
 }
 .campo-busqueda:focused { -fx-border-color: -color-primario; }
+.scroll-panel-usuario {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-panel-usuario > .viewport {
+    -fx-background-color: transparent;
+}
 
 /* ===== Tabla del folio ===== */
 .table-view { -fx-background-color: transparent; -fx-table-cell-border-color: #EEEAE3; }
@@ -128,3 +264,33 @@
 .table-row-cell:selected { -fx-background-color: -color-caja; }
 .table-row-cell:selected .text { -fx-fill: -color-texto; }
 .saldo-grande { -fx-font-size: 28px; -fx-font-weight: bold; }
+
+/* 1. Devolver color oscuro a los títulos y textos del perfil */
+.titulo-pagina {
+    -fx-text-fill: #2B2B2B;
+    -fx-font-weight: bold;
+    -fx-font-size: 24px;
+}
+
+.titulo-seccion {
+    -fx-text-fill: #2B2B2B;
+    -fx-font-weight: bold;
+    -fx-font-size: 15px;
+}
+
+.texto-fuerte {
+    -fx-text-fill: #2B2B2B;
+    -fx-font-weight: bold;
+}
+
+.texto-suave {
+    -fx-text-fill: #7A756D;
+}
+
+/* 2. Versión compacta de los botones para que quepan sin cortarse */
+.boton-primario.boton-sm,
+.boton-secundario.boton-sm {
+    -fx-padding: 6 12 6 12;
+    -fx-font-size: 12px;
+    -fx-background-radius: 8;
+}
