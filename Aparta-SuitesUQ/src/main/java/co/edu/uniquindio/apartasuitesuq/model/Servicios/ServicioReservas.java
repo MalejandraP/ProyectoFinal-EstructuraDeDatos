@@ -124,7 +124,7 @@ public class ServicioReservas {
         }
         return apartamento.tieneSolapamiento(nuevaEstancia);
     }
-    // --- Gestión del ciclo de vida de la reserva ---
+
 
     /**
      * Cambia el estado de una reserva a {@link EstadoReserva#CONFIRMADA}.
@@ -391,6 +391,8 @@ public class ServicioReservas {
         }
     }
     public void desindexar(Reserva reserva) {
-        // TODO: sacar la reserva del árbol por apartamento cuando exista
+        if (reserva == null) return;
+        arbolReservas.eliminar(reserva);                       // árbol global
+        reserva.getApartamento().getReservas().eliminar(reserva);   // árbol del apartamento (si ya existe)
     }
 }
