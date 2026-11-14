@@ -355,17 +355,11 @@ public class SGA {
      *         ocupa alguna de las noches [entrada, salida)
      */
     public boolean estaDisponible(Apartamento apartamento, LocalDate entrada, LocalDate salida) {
-        new Estancia(entrada, salida); // valida las fechas
-        if (apartamento.estaFueraDeServicio()) {
+        Estancia solicitada = new Estancia(entrada, salida); // valida las fechas
+        if (apartamento == null || apartamento.estaFueraDeServicio()) {
             return false;
         }
-        for (Reserva reserva : servicioReservas.getReservas()) {
-            if (reserva.estaActiva() && reserva.getApartamento().equals(apartamento)
-                    && reserva.seSolapaCon(entrada, salida)) {
-                return false;
-            }
-        }
-        return true;
+        return !servicioReservas.haySolapamiento(apartamento, solicitada);
     }
 
     /**
