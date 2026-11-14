@@ -61,7 +61,7 @@
 
                 <!-- 1. Mis reservas -->
                 <VBox spacing="12">
-                    <Label text="Mis reservas" styleClass="titulo-seccion"/>
+                    <Label text="Mis reservas" styleClass="titulo-seccion"/><Button text="Solicitar reserva" onAction="#onSolicitarReserva" styleClass="boton-primario, boton-sm"/>
                     <!-- prefHeight ajustado para 2-3 tarjetas sin robar espacio al Folio -->
                     <ListView fx:id="listaReservas" styleClass="lista-tarjetas" prefHeight="270" minHeight="130"/>
                 </VBox>

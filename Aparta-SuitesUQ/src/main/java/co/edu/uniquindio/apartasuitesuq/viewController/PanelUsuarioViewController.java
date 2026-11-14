@@ -63,6 +63,9 @@ public class PanelUsuarioViewController {
     // HUESPED ACTUAL
     private Huesped huesped;
     private ServicioReservas servicio;
+    private Runnable alSolicitarReserva;
+    public void setAlSolicitarReserva(Runnable accion) { this.alSolicitarReserva = accion; }
+
 
 
     @FXML
@@ -466,5 +469,9 @@ public class PanelUsuarioViewController {
         lblTotalCargos.setText("$" + String.format(co, "%,.0f", cargos));
         lblTotalPagos.setText("$" + String.format(co, "%,.0f", pagos));
         lblSaldoPendiente.setText("$" + String.format(co, "%,.0f", r.getFolio().calcularSaldo()));
+    }
+    @FXML
+    private void onSolicitarReserva() {
+        if (alSolicitarReserva != null) alSolicitarReserva.run();
     }
 }
