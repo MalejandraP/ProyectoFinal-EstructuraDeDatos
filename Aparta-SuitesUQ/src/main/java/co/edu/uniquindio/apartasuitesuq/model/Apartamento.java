@@ -329,6 +329,11 @@ public class Apartamento implements Comparable<Apartamento> {
         return this.codigo.compareToIgnoreCase(auxiliar.getCodigo());
     }
 
+    /** @return cantidad total de reservas registradas en este apartamento */
+    public int getNumeroReservas() {
+        return getReservas().getTamano();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

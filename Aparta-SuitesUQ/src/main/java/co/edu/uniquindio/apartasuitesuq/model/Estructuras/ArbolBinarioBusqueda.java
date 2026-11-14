@@ -137,7 +137,7 @@ public class ArbolBinarioBusqueda <T extends Comparable<T>> implements Iterable<
         return (actual.derecho == null) ? actual : obtenerMayor(actual.derecho);
     }
 
-    
+
 
     public boolean eliminar(T elemento) {
         if (elemento == null || estaVacio()) return false;
