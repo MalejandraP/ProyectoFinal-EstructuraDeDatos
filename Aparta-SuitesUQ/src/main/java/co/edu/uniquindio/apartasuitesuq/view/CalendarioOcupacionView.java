@@ -19,7 +19,7 @@ import java.time.format.TextStyle;
 import java.util.Locale;
 
 /**
- * Vista pura del calendario mensual de ocupación por apartamento (P2).
+ * Vista pura del calendario mensual de ocupación por apartamento.
  * Delega la carga de datos y pintado de celdas a {@link CalendarioOcupacionViewController}.
  */
 public class CalendarioOcupacionView {
