@@ -2,6 +2,7 @@ package co.edu.uniquindio.apartasuitesuq.view;
 
 import co.edu.uniquindio.apartasuitesuq.model.Apartamento;
 import co.edu.uniquindio.apartasuitesuq.model.Canal;
+import co.edu.uniquindio.apartasuitesuq.model.Ocupante;
 import co.edu.uniquindio.apartasuitesuq.model.Reserva;
 import co.edu.uniquindio.apartasuitesuq.model.Rol;
 import co.edu.uniquindio.apartasuitesuq.model.SGA;
@@ -14,6 +15,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -24,9 +27,10 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 import java.time.LocalDate;
+import java.time.Period;
 
 /**
- * Vista pura del panel de reservas (P2). Delega la lógica y eventos a {@link ReservasViewController}.
+ * Vista pura del panel de reservas. Delega la lógica y eventos a {@link ReservasViewController}.
  */
 public class ReservasView {
 
@@ -60,7 +64,7 @@ public class ReservasView {
     private final Button btnBuscar = new Button("Buscar disponibles");
     private final TableView<Apartamento> tablaDisponibles = new TableView<>();
 
-    // Controles de creación de reserva
+    // Controles de creación de reserva (titular)
     private final Label lblSeleccionado = Vistas.texto("Ningún apartamento seleccionado", "texto-suave");
     private final VBox zonaTitular = new VBox(8);
     private final TextField txtDocumento = new TextField();
@@ -70,6 +74,14 @@ public class ReservasView {
     private final DatePicker dpNacimiento = new DatePicker(LocalDate.of(1995, 1, 1));
     private final ComboBox<Canal> cbCanal = new ComboBox<>();
     private final Button btnAutocompletar = new Button("Buscar titular");
+
+    // Controles de acompañantes (para detectar menores de 6 años)
+    private final TextField txtNombreAcompanante = new TextField();
+    private final DatePicker dpNacimientoAcompanante = new DatePicker(LocalDate.of(2022, 1, 1));
+    private final Button btnAgregarAcompanante = new Button("Agregar acompañante");
+    private final Button btnQuitarAcompanante = new Button("Quitar seleccionado");
+    private final ListView<Ocupante> listaAcompanantes = new ListView<>();
+
     private final Button btnReservar = new Button("Confirmar creación de reserva");
 
     // Tabla y acciones de gestión
@@ -87,6 +99,7 @@ public class ReservasView {
         configurarEstilos();
         configurarTablaDisponibles();
         configurarTablaReservas();
+        configurarListaAcompanantes();
 
         VBox tarjetaBusqueda = Vistas.tarjeta(
                 "1. Buscar disponibilidad",
@@ -120,10 +133,38 @@ public class ReservasView {
         btnBuscar.getStyleClass().add("boton-primario");
         btnBuscar.setMinWidth(155);
         btnAutocompletar.getStyleClass().add("boton-contorno");
+        btnAgregarAcompanante.getStyleClass().add("boton-contorno");
+        btnQuitarAcompanante.getStyleClass().add("boton-secundario");
         btnReservar.getStyleClass().add("boton-primario");
         btnAnticipo.getStyleClass().add("boton-primario");
         btnCancelar.getStyleClass().add("boton-contorno");
         btnRefrescar.getStyleClass().add("boton-secundario");
+
+        txtNombreAcompanante.setPromptText("Nombre completo del acompañante");
+        txtNombreAcompanante.setPrefWidth(220);
+        listaAcompanantes.setPrefHeight(105);
+        listaAcompanantes.setPlaceholder(new Label("Sin acompañantes registrados (los cupos extra se asumen adultos)."));
+    }
+
+    private void configurarListaAcompanantes() {
+        listaAcompanantes.setCellFactory(lv -> new ListCell<>() {
+            @Override
+            protected void updateItem(Ocupante item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    return;
+                }
+                LocalDate ref = dpEntrada.getValue() != null ? dpEntrada.getValue() : LocalDate.now();
+                int edad = item.getFechaNacimiento() != null
+                        ? Period.between(item.getFechaNacimiento(), ref).getYears()
+                        : -1;
+                String etiquetaEdad = edad < 0
+                        ? "Sin fecha de nacimiento"
+                        : edad + " años (" + (edad < 6 ? "Menor de 6 años · EXENTO" : "Adulto / Pagante") + ")";
+                setText(item.getNombre() + " · Nac: " + item.getFechaNacimiento() + " · " + etiquetaEdad);
+            }
+        });
     }
 
     @SuppressWarnings("unchecked")
@@ -213,9 +254,24 @@ public class ReservasView {
     }
 
     private Node construirFormularioReserva() {
+        HBox filaAcompanante = new HBox(10,
+                etiquetarCampo("Nombre acompañante:", txtNombreAcompanante),
+                etiquetarCampo("Fecha de nacimiento:", dpNacimientoAcompanante),
+                btnAgregarAcompanante,
+                btnQuitarAcompanante
+        );
+        filaAcompanante.setAlignment(Pos.BOTTOM_LEFT);
+
+        VBox bloqueAcompanantes = new VBox(8,
+                Vistas.texto("Acompañantes (registre fecha de nacimiento para exención de menores de 6 años):", "texto-suave"),
+                filaAcompanante,
+                listaAcompanantes
+        );
+
         HBox pie = new HBox(btnReservar);
         pie.setAlignment(Pos.CENTER_RIGHT);
-        return new VBox(12, lblSeleccionado, zonaTitular, pie);
+
+        return new VBox(12, lblSeleccionado, zonaTitular, bloqueAcompanantes, pie);
     }
 
     private Node construirBarraAccionesReserva() {
@@ -263,7 +319,7 @@ public class ReservasView {
         zonaTitular.getChildren().setAll(grid);
     }
 
-    // ================================================================ getters para el controlador
+    // getters para el controlador
 
     public DatePicker getDpEntrada() { return dpEntrada; }
     public DatePicker getDpSalida() { return dpSalida; }
@@ -279,6 +335,11 @@ public class ReservasView {
     public DatePicker getDpNacimiento() { return dpNacimiento; }
     public ComboBox<Canal> getCbCanal() { return cbCanal; }
     public Button getBtnAutocompletar() { return btnAutocompletar; }
+    public TextField getTxtNombreAcompanante() { return txtNombreAcompanante; }
+    public DatePicker getDpNacimientoAcompanante() { return dpNacimientoAcompanante; }
+    public Button getBtnAgregarAcompanante() { return btnAgregarAcompanante; }
+    public Button getBtnQuitarAcompanante() { return btnQuitarAcompanante; }
+    public ListView<Ocupante> getListaAcompanantes() { return listaAcompanantes; }
     public Button getBtnReservar() { return btnReservar; }
     public TableView<Reserva> getTablaReservas() { return tablaReservas; }
     public Button getBtnAnticipo() { return btnAnticipo; }
