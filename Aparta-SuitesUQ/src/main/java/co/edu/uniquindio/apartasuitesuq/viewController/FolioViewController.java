@@ -27,8 +27,8 @@ public class FolioViewController {
     @FXML private TextField txtMonto, txtDescripcion;
 
     private static final Locale CO = new Locale("es", "CO");
-    private ServicioReservas servicio;
     private Reserva actual;
+    private SGA sga;
 
     @FXML
     private void initialize() {
@@ -51,15 +51,6 @@ public class FolioViewController {
         mostrar(null);
     }
 
-    /** Lo llama VentanaPrincipal al abrir la pantalla. */
-    public void setServicio(ServicioReservas servicio) {
-        this.servicio = servicio;
-        ObservableList<Reserva> opciones = FXCollections.observableArrayList();
-        for (Reserva r : servicio.getReservas()) {
-            opciones.add(r);
-        }
-        cmbReservas.setItems(opciones);
-    }
 
     private void mostrar(Reserva r) {
         actual = r;
@@ -96,7 +87,7 @@ public class FolioViewController {
         tablaMovimientos.setItems(filas);
         lblTotalCargos.setText(dinero(cargos));
         lblTotalPagos.setText(dinero(pagos));
-        lblSaldo.setText(dinero(folio.calcularSaldo()));
+        lblSaldo.setText(dinero(sga.saldoDe(r)));
 
         Movimiento ultima = folio.ultimaOperacion();
         lblUltimaOperacion.setText(ultima == null ? "—"
@@ -121,9 +112,9 @@ public class FolioViewController {
         String descripcion = txtDescripcion.getText() == null ? "" : txtDescripcion.getText().trim();
         try {
             if (btnPago.isSelected()) {
-                actual.getFolio().registrarPago(monto, descripcion.isEmpty() ? "Pago en recepción" : descripcion);
+                sga.registrarPago(actual,monto, descripcion.isEmpty() ? "Pago en recepción" : descripcion);
             } else {
-                actual.getFolio().registrarCargo(monto, descripcion.isEmpty() ? "Cargo en recepción" : descripcion);
+                sga.registrarCargo(actual,monto, descripcion.isEmpty() ? "Cargo en recepción" : descripcion);
             }
             txtMonto.clear();
             txtDescripcion.clear();
@@ -136,8 +127,13 @@ public class FolioViewController {
     @FXML
     private void onDeshacer() {
         if (actual == null) return;
+        if (actual.getEstado() == EstadoReserva.CANCELADA || actual.getEstado() == EstadoReserva.NOSHOW) {
+            aviso("La reserva " + actual.getCodigoReserva() + " está "
+                    + actual.getEstado().getDescripcion() + ": no admite nuevos movimientos.");
+            return;
+        }
         try {
-            actual.getFolio().deshacer();
+            sga.deshacerUltimaOperacion(actual);
             mostrar(actual);
         } catch (EstructuraVaciaException ex) {
             aviso("No hay operaciones para deshacer.");
@@ -150,5 +146,14 @@ public class FolioViewController {
 
     private void aviso(String texto) {
         new Alert(Alert.AlertType.WARNING, texto).showAndWait();
+    }
+    /** Lo llama VentanaPrincipal al abrir la pantalla. */
+    public void setSga(SGA sga) {
+        this.sga = sga;
+        ObservableList<Reserva> opciones = FXCollections.observableArrayList();
+        for (Reserva r : sga.getServicioReservas().getReservas()) {
+            opciones.add(r);
+        }
+        cmbReservas.setItems(opciones);
     }
 }

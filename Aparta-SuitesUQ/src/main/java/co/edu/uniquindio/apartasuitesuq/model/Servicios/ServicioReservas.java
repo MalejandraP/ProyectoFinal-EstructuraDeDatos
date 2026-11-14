@@ -393,4 +393,7 @@ public class ServicioReservas {
             throw new IllegalArgumentException("La reserva no puede ser nula.");
         }
     }
+    public void desindexar(Reserva reserva) {
+        // TODO: sacar la reserva del árbol por apartamento cuando exista
+    }
 }

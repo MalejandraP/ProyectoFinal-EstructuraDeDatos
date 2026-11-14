@@ -496,6 +496,33 @@ public class SGA {
         }
     }
 
+    /**
+     * Crea una reserva por el canal Portal: queda Pendiente, con el cargo de la estancia
+     * en el folio y programada para vencer a las 24 horas si no se paga el anticipo.
+     *
+     * @param ocupantes acompañantes con fecha de nacimiento (sin incluir al titular, que se registra solo)
+     * @return la reserva creada
+     */
+    public Reserva crearReservaPortal(Huesped titular, Apartamento apartamento,
+                                      LocalDate entrada, LocalDate salida,
+                                      int personas, ListaDoble<Ocupante> ocupantes) {
+        Reserva reserva = servicioReservas.crearReserva(titular, apartamento, entrada, salida,
+                personas, Canal.PORTAL);
+        try {
+            if (ocupantes != null) {
+                for (Ocupante o : ocupantes) {
+                    reserva.agregarOcupante(o);
+                }
+            }
+            liquidador.liquidar(reserva);
+            reserva.getFolio().registrarCargo(reserva.getCostoTotal(), "Alojamiento " + reserva.getEstancia());
+            vencimiento.registrar(reserva, reserva.getFechaCreacion());
+        } catch (RuntimeException ex) {
+            servicioReservas.desindexar(reserva);           // no dejar una reserva a medias
+            throw ex;
+        }
+        return reserva;
+    }
     /** Paga el anticipo del 30 % de una reserva del portal y la confirma. */
     public void pagarAnticipo(Reserva reserva) {
         if (reserva.getEstado() != EstadoReserva.PENDIENTE) {

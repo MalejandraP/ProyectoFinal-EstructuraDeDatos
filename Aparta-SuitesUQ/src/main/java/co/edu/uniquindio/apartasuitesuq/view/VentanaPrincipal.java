@@ -216,7 +216,7 @@ public class VentanaPrincipal {
             case FOLIO:
                 return crearFolio();
             case COTIZAR:
-                return new CotizacionView(sga, sesion).getVista();
+                return new CotizacionView(sga, sesion, () -> navegar(Pantalla.MI_PANEL)).getVista();
             case TEMPORADAS:
                 return new TemporadasTarifasView(sga).getVista();
             case ESTADISTICAS:
@@ -332,6 +332,7 @@ public class VentanaPrincipal {
         controlador.setServicio(sga.getServicioReservas());
         controlador.setHuesped(sesion.getHuesped());
         controlador.setReservas(sga.reservasDe(sesion.getHuesped()));
+        controlador.setAlSolicitarReserva(() -> navegar(Pantalla.COTIZAR));
         return vista;
     }
 
@@ -347,7 +348,7 @@ public class VentanaPrincipal {
         FXMLLoader loader = new FXMLLoader(VentanaPrincipal.class.getResource(FXML_FOLIO));
         Parent vista = loader.load();
         FolioViewController controlador = loader.getController();
-        controlador.setServicio(sga.getServicioReservas());
+        controlador.setSga(sga);
         return vista;
     }
 }

@@ -1,14 +1,7 @@
 package co.edu.uniquindio.apartasuitesuq.view;
 
-import co.edu.uniquindio.apartasuitesuq.model.Apartamento;
-import co.edu.uniquindio.apartasuitesuq.model.Cotizacion;
+import co.edu.uniquindio.apartasuitesuq.model.*;
 import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ListaDoble;
-import co.edu.uniquindio.apartasuitesuq.model.Huesped;
-import co.edu.uniquindio.apartasuitesuq.model.NocheLiquidada;
-import co.edu.uniquindio.apartasuitesuq.model.Ocupante;
-import co.edu.uniquindio.apartasuitesuq.model.OrdenApartamentos;
-import co.edu.uniquindio.apartasuitesuq.model.SGA;
-import co.edu.uniquindio.apartasuitesuq.model.Temporada;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -45,10 +38,16 @@ public class CotizacionView {
     private final TableView<NocheLiquidada> desglose = new TableView<>();
     private final FlowPane totales = new FlowPane(12, 12);
     private final Node vista;
+    private final Runnable alReservar;
 
     public CotizacionView(SGA sga, Sesion sesion) {
+        this(sga, sesion, null);
+    }
+
+    public CotizacionView(SGA sga, Sesion sesion, Runnable alReservar) {
         this.sga = sga;
         this.sesion = sesion;
+        this.alReservar = alReservar;
         this.vista = construir();
     }
 
@@ -201,6 +200,12 @@ public class CotizacionView {
                             + cotizacion.contarNochesEn(Temporada.MEDIA) + " / "
                             + cotizacion.contarNochesEn(Temporada.ALTA)),
                     dato("Disponible", sga.estaDisponible(apartamento, entrada, salida) ? "Sí" : "No"));
+            if (sesion.getRol() == Rol.HUESPED && sga.estaDisponible(apartamento, entrada, salida)) {
+                Button reservar = new Button("Reservar");
+                reservar.getStyleClass().add("boton-primario");
+                reservar.setOnAction(e -> reservar(apartamento, entrada, salida, personas));
+                totales.getChildren().add(reservar);
+            }
         } catch (RuntimeException ex) {
             Vistas.error("No se pudo cotizar", ex);
         }
@@ -212,5 +217,34 @@ public class CotizacionView {
         caja.setAlignment(Pos.CENTER_LEFT);
         caja.setMinWidth(130);
         return caja;
+    }
+    private void reservar(Apartamento apto, LocalDate fechaEntrada, LocalDate fechaSalida, int cantidad) {
+        if (apto == null || fechaEntrada == null || fechaSalida == null) {
+            Vistas.info("Faltan datos", "Elija apartamento y fechas antes de reservar.");
+            return;
+        }
+
+        // Reserva ya registra al titular como ocupante, así que no se envía en la lista
+        Huesped titular = sesion.getHuesped();
+        ListaDoble<Ocupante> acompanantes = new ListaDoble<>();
+        for (Ocupante o : ocupantes) {
+            boolean esTitular = titular.getFechaNacimiento() != null
+                    && o.getNombre().equalsIgnoreCase(titular.getNombre())
+                    && o.getFechaNacimiento().equals(titular.getFechaNacimiento());
+            if (!esTitular) {
+                acompanantes.agregarFinal(o);
+            }
+        }
+
+        try {
+            Reserva r = sga.crearReservaPortal(titular, apto, fechaEntrada, fechaSalida, cantidad, acompanantes);
+            Vistas.info("Reserva creada", r.getCodigoReserva()
+                    + " quedó Pendiente. Tiene 24 horas para pagar el anticipo.");
+            if (alReservar != null) {
+                alReservar.run();
+            }
+        } catch (RuntimeException ex) {
+            Vistas.error("No se pudo crear la reserva", ex);
+        }
     }
 }
