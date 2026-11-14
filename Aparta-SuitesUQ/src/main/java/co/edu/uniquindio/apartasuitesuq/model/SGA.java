@@ -4,6 +4,8 @@ import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ListaDoble;
 import co.edu.uniquindio.apartasuitesuq.model.Excepciones.CapacidadExcedidaException;
 import co.edu.uniquindio.apartasuitesuq.model.Excepciones.EstructuraVaciaException;
 import co.edu.uniquindio.apartasuitesuq.model.Excepciones.TransicionEstadoInvalidaException;
+import co.edu.uniquindio.apartasuitesuq.model.Excepciones.ReservaSolapadaException;
+import co.edu.uniquindio.apartasuitesuq.model.Excepciones.FechasInvalidasException;
 import co.edu.uniquindio.apartasuitesuq.model.Servicios.ServicioCanalExterno;
 import co.edu.uniquindio.apartasuitesuq.model.Servicios.ServicioReservas;
 import co.edu.uniquindio.apartasuitesuq.model.Servicios.ServicioTurnos;
@@ -546,6 +548,8 @@ public class SGA {
     public ListaDoble<Reserva> procesarVencimientos() {
         return vencimiento.procesarVencimientos(ahora());
     }
+
+    public ServicioReservas getServicioReservas() {return servicioReservas;}
 
     // ============================================================= canal externo
 

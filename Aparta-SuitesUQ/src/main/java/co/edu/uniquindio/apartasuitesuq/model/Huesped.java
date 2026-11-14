@@ -175,6 +175,14 @@ public class Huesped implements Comparable<Huesped> {
 
     /** Agrega una estancia al historial del huésped. */
     public void agregarAlHistorial(Reserva reserva) {
+        if (reserva == null || reserva.getEstado() != EstadoReserva.FINALIZADA){
+            return;
+        }
+        for(Reserva r : historial){
+            if(r.equals(reserva)){
+                return;
+            }
+        }
         historial.agregarFinal(reserva);
     }
 

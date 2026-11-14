@@ -327,6 +327,8 @@ public class VentanaPrincipal {
         FXMLLoader loader = new FXMLLoader(VentanaPrincipal.class.getResource(FXML_PANEL_USUARIO));
         Parent vista = loader.load();
         PanelUsuarioViewController controlador = loader.getController();
+        controlador.setApartamentos(sga.getApartamentos());
+        controlador.setServicio(sga.getServicioReservas());
         controlador.setHuesped(sesion.getHuesped());
         controlador.setReservas(sga.reservasDe(sesion.getHuesped()));
         return vista;

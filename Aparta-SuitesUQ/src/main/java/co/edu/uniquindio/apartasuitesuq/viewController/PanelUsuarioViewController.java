@@ -1,11 +1,9 @@
 package co.edu.uniquindio.apartasuitesuq.viewController;
 
-import co.edu.uniquindio.apartasuitesuq.model.Apartamento;
-import co.edu.uniquindio.apartasuitesuq.model.Estancia;
+import co.edu.uniquindio.apartasuitesuq.model.*;
 import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ArbolBinarioBusqueda;
 import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ListaDoble;
-import co.edu.uniquindio.apartasuitesuq.model.Huesped;
-import co.edu.uniquindio.apartasuitesuq.model.Reserva;
+import co.edu.uniquindio.apartasuitesuq.model.Servicios.ServicioReservas;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -23,6 +21,11 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Locale;
 
+/**
+ * Controlador de la vista del panel principal del usuario (huésped) en JavaFX.
+ * Gestiona la visualización de los datos del perfil, el listado de reservas activas,
+ * el detalle financiero (folio de movimientos), los apartamentos favoritos y el historial de estadías.
+ */
 public class PanelUsuarioViewController {
     // PERFIL
     @FXML private Label lblIniciales;
@@ -40,13 +43,26 @@ public class PanelUsuarioViewController {
     @FXML private TableColumn<Reserva, String> colSalida;
     @FXML private TableColumn<Reserva, String> colEstado;
     @FXML private TableColumn<Reserva, String> colTotal;
+    //FOLIO
+    @FXML private Label lblTituloFolio;
+    @FXML private Label lblTotalCargos;
+    @FXML private Label lblTotalPagos;
+    @FXML private Label lblSaldoPendiente;
+    @FXML private TableView<Movimiento> tablaFolio;
+    @FXML private TableColumn<Movimiento, String> colFolioFecha;
+    @FXML private TableColumn<Movimiento, String> colFolioTipo;
+    @FXML private TableColumn<Movimiento, String> colFolioDescripcion;
+    @FXML private TableColumn<Movimiento, String> colFolioMonto;
+
+    private Reserva folioMostrado;
     // FAVORITOS
     @FXML private ListView<Apartamento> listaFavoritos;
     @FXML private ComboBox<Apartamento> cmbApartamentos;
     // HISTORIAL
-    @FXML private ListView<Estancia> listaHistorial;
+    @FXML private ListView<Reserva> listaHistorial;
     // HUESPED ACTUAL
     private Huesped huesped;
+    private ServicioReservas servicio;
 
 
     @FXML
@@ -65,13 +81,29 @@ public class PanelUsuarioViewController {
         });
         listaHistorial.setCellFactory(lv -> new ListCell<>() {
             @Override
-            protected void updateItem(Estancia e, boolean vacio) {
+            protected void updateItem(Reserva e, boolean vacio) {
                 super.updateItem(e, vacio);
                 setText(vacio || e == null ? null : e.toString());
             }
         });
-    }
+        Locale co = new Locale("es", "CO");
+        colFolioFecha.setCellValueFactory(c -> new SimpleStringProperty(
+                c.getValue().getFechayHora().toLocalDate().toString()));
+        colFolioTipo.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getTipo().toString()));
+        colFolioDescripcion.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getDescripcion()));
+        colFolioMonto.setCellValueFactory(c -> new SimpleStringProperty(
+                "$" + String.format(co, "%,.0f", c.getValue().getMonto())));
 
+        // al seleccionar una reserva se muestra su folio
+        listaReservas.getSelectionModel().selectedItemProperty().addListener((o, a, nueva) -> {
+            if (nueva != null) mostrarFolio(nueva);
+        });
+    }
+    /**
+     * Carga la colección de reservas en el componente visual {@code listaReservas}.
+     *
+     * @param reservas Estructura {@link ListaDoble} con las reservas del usuario.
+     */
     public void setReservas(ListaDoble<Reserva> reservas) {
         ObservableList<Reserva> filas = FXCollections.observableArrayList();
         for (Reserva r : reservas) {          // usa el Iterator de tu lista
@@ -79,7 +111,12 @@ public class PanelUsuarioViewController {
         }
         listaReservas.setItems(filas);
     }
-
+    /**
+     * Establece el huésped activo en el controlador y actualiza todas las etiquetas de su perfil,
+     * su lista de apartamentos favoritos y su historial de reservas.
+     *
+     * @param huesped Objeto {@link Huesped} con la información del usuario autenticado.
+     */
     public void setHuesped(Huesped huesped) {
         this.huesped = huesped;
         lblNombre.setText(huesped.getNombre());
@@ -94,6 +131,12 @@ public class PanelUsuarioViewController {
         refrescarFavoritos();
         refrescarHistorial();
     }
+    /**
+     * Pobla el selector desplegable de apartamentos ({@code cmbApartamentos}) recorriendo
+     * el árbol binario de búsqueda del catálogo en orden.
+     *
+     * @param catalogo Estructura {@link ArbolBinarioBusqueda} que contiene los apartamentos del sistema.
+     */
     public void setApartamentos(ArbolBinarioBusqueda<Apartamento> catalogo) {
         ObservableList<Apartamento> opciones = FXCollections.observableArrayList();
         for (Apartamento a : catalogo) {      // recorre el árbol con su Iterator
@@ -101,6 +144,9 @@ public class PanelUsuarioViewController {
         }
         cmbApartamentos.setItems(opciones);
     }
+    /**
+     * Sincroniza la vista {@code listaFavoritos} con el conjunto actual de favoritos del huésped.
+     */
     private void refrescarFavoritos() {
         ObservableList<Apartamento> filas = FXCollections.observableArrayList();
         for (Apartamento a : huesped.getFavoritos()) {   // usa el Iterator del Conjunto
@@ -108,10 +154,13 @@ public class PanelUsuarioViewController {
         }
         listaFavoritos.setItems(filas);
     }
+    /**
+     * Sincroniza la vista {@code listaHistorial} con el historial de reservas del huésped.
+     */
     private void refrescarHistorial() {
-        ObservableList<Estancia> filas = FXCollections.observableArrayList();
-        for (Estancia e : huesped.getHistorial()) {
-            filas.add(e);
+        ObservableList<Reserva> filas = FXCollections.observableArrayList();
+        for (Reserva r : huesped.getHistorial()) {
+            filas.add(r);
         }
         listaHistorial.setItems(filas);
     }
@@ -140,6 +189,11 @@ public class PanelUsuarioViewController {
         }
         return resultado.toUpperCase();
     }
+    /**
+     * Configura la fábrica de celdas ({@code CellFactory}) de {@code listaFavoritos} para renderizar
+     * cada apartamento como una tarjeta personalizada con código, nombre, detalles de ubicación/tarifa
+     * e ícono de favorito, ajustando su ancho automáticamente al contenedor.
+     */
     private void configurarListaFavoritos() {
         listaFavoritos.setCellFactory(lv -> new ListCell<>() {
             @Override
@@ -327,16 +381,90 @@ public class PanelUsuarioViewController {
         return badge;
     }
 
-    // Métodos de acción para conectar luego con tu lógica de negocio
+    public void setServicio(ServicioReservas servicio) {
+        this.servicio = servicio;
+    }
+
+    private void recargarReservas() {
+        setReservas(servicio.reservasDe(huesped));
+        if(folioMostrado != null) mostrarFolio(folioMostrado);
+    }
+
+    /**
+     * Manejador ejecutado al presionar el botón "Ver folio" de una reserva;
+     * despliega su detalle financiero en la sección de folio.
+     *
+     * @param r La {@link Reserva} cuyo folio se desea consultar.
+     */
     private void onVerFolio(Reserva r) {
-        System.out.println("Ver folio de: " + r.getCodigoReserva());
+        mostrarFolio(r);
     }
-
+    /**
+     * Manejador ejecutado al presionar el botón "Cancelar" en una tarjeta de reserva.
+     * Calcula el monto de devolución aplicable, solicita confirmación mediante un diálogo {@link Alert}
+     * y, si el usuario acepta, procesa la cancelación a través de {@link ServicioReservas}.
+     *
+     * @param r La {@link Reserva} que se desea cancelar.
+     */
     private void onCancelarReserva(Reserva r) {
-        System.out.println("Cancelar reserva: " + r.getCodigoReserva());
+        double devolucion = servicio.calcularDevolucion(r);
+        Alert a = new Alert(Alert.AlertType.CONFIRMATION,
+                "Se devolverían $" + String.format(new Locale("es", "CO"), "%,.0f", devolucion)
+                        + ". ¿Cancelar la reserva " + r.getCodigoReserva() + "?",
+                ButtonType.YES, ButtonType.NO);
+        a.setHeaderText("Cancelar reserva");
+        a.showAndWait().filter(b -> b == ButtonType.YES).ifPresent(b -> {
+            try {
+                servicio.cancelar(r);
+                recargarReservas();
+            } catch (RuntimeException ex) {
+                new Alert(Alert.AlertType.ERROR, ex.getMessage()).showAndWait();
+            }
+        });
     }
-
+    /**
+     * Manejador ejecutado al presionar el botón "Pagar anticipo" en una reserva pendiente.
+     * Calcula el saldo faltante para completar el anticipo, solicita confirmación al usuario
+     * y registra el pago mediante {@link ServicioReservas} para pasar la reserva a estado Confirmada.
+     *
+     * @param r La {@link Reserva} pendiente a la que se le abonará el anticipo.
+     */
     private void onPagarAnticipo(Reserva r) {
-        System.out.println("Pagar anticipo de: " + r.getCodigoReserva());
+        double monto = r.getValorAnticipo() - r.getFolio().totalPago();
+        Alert a = new Alert(Alert.AlertType.CONFIRMATION,
+                "Se registrará un pago de $" + String.format(new Locale("es", "CO"), "%,.0f", Math.max(monto, 0))
+                        + " y la reserva quedará Confirmada.", ButtonType.OK, ButtonType.CANCEL);
+        a.setHeaderText("Pagar anticipo");
+        a.showAndWait().filter(b -> b == ButtonType.OK).ifPresent(b -> {
+            try {
+                servicio.pagarAnticipo(r);
+                recargarReservas();
+            } catch (RuntimeException ex) {
+                new Alert(Alert.AlertType.ERROR, ex.getMessage()).showAndWait();
+            }
+        });
+    }
+    /**
+     * Carga y muestra en {@code tablaFolio} todos los movimientos financieros (cargos y pagos)
+     * asociados a la reserva indicada, actualizando las etiquetas resumen de total de cargos,
+     * total de pagos y saldo pendiente.
+     *
+     * @param r La {@link Reserva} cuyo folio financiero se va a visualizar.
+     */
+    private void mostrarFolio(Reserva r) {
+        folioMostrado = r;
+        ObservableList<Movimiento> filas = FXCollections.observableArrayList();
+        double cargos = 0, pagos = 0;
+        for (Movimiento m : r.getFolio().getMovimientos()) {
+            filas.add(m);
+            if (m.getTipo() == TipoMovimiento.CARGO) cargos += m.getMonto();
+            else pagos += m.getMonto();
+        }
+        tablaFolio.setItems(filas);
+        Locale co = new Locale("es", "CO");
+        lblTituloFolio.setText("Folio · " + r.getCodigoReserva());
+        lblTotalCargos.setText("$" + String.format(co, "%,.0f", cargos));
+        lblTotalPagos.setText("$" + String.format(co, "%,.0f", pagos));
+        lblSaldoPendiente.setText("$" + String.format(co, "%,.0f", r.getFolio().calcularSaldo()));
     }
 }

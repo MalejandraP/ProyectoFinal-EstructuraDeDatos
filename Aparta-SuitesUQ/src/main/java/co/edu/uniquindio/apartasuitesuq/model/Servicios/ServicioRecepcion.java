@@ -3,17 +3,20 @@ package co.edu.uniquindio.apartasuitesuq.model.Servicios;
 import co.edu.uniquindio.apartasuitesuq.model.EstadoReserva;
 import co.edu.uniquindio.apartasuitesuq.model.Reserva;
 import co.edu.uniquindio.apartasuitesuq.model.Excepciones.TransicionEstadoInvalidaException;
+import co.edu.uniquindio.apartasuitesuq.model.Servicios.ServicioReservas;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+
 public class ServicioRecepcion {
     private final ServicioPreparacion preparacion;
+    private final ServicioReservas servicioReservas;
 
     public ServicioRecepcion(ServicioPreparacion preparacion) {
         this.preparacion = preparacion;
+        this.servicioReservas = new ServicioReservas();
     }
-
 
     public void checkIn(Reserva reserva, LocalDate hoy) {
         if (reserva.getEstado() != EstadoReserva.CONFIRMADA) {
@@ -35,6 +38,6 @@ public class ServicioRecepcion {
                     "La reserva " + reserva.getCodigoReserva() + " está " + reserva.getEstado() + ", debe estar EN CURSO");
         }
         preparacion.checkOut(reserva.getApartamento(), ahora);
-        reserva.cambiarEstado(EstadoReserva.FINALIZADA);
+        servicioReservas.finalizar(reserva);
     }
 }

@@ -120,7 +120,7 @@ public class EstadisticasView {
         conflictos.getItems().clear();
         for (ConflictoCanal conflicto : estadisticas.getConflictosCanal()) {
             conflictos.getItems().add(conflicto.getSolicitud().getIdExterno() + " · "
-                    + conflicto.getSolicitud().getCodigoApartamento().getCodigo() + " · " + conflicto.getMotivo());
+                    + conflicto.getSolicitud().getApartamento().getCodigo() + " · " + conflicto.getMotivo());
         }
     }
 

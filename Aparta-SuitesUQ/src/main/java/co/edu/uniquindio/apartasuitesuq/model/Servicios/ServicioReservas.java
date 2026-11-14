@@ -169,6 +169,7 @@ public class ServicioReservas {
     public void finalizar(Reserva reserva) {
         validarReservaNoNula(reserva);
         reserva.cambiarEstado(EstadoReserva.FINALIZADA);
+        reserva.getHuesped().agregarAlHistorial(reserva);
     }
 
     /**
@@ -195,6 +196,15 @@ public class ServicioReservas {
         validarReservaNoNula(reserva);
         double devolucion = calcularDevolucion(reserva); // Se calcula antes de cambiar el estado
         reserva.cambiarEstado(EstadoReserva.CANCELADA);
+        if (devolucion > 0){
+            //movimiento contrario: el folio no se borra, se compensa
+            reserva.getFolio().registrarCargo(devolucion, "Devolución por cancelación");
+        }
+        // anula el alojamiento (y lo que no se devolvió) para que el folio cierre en 0
+        double saldo = reserva.getFolio().calcularSaldo();
+        if (saldo > 0.005) {
+            reserva.getFolio().registrarPago(saldo, "Anulación de cargos por cancelación");
+        }
         return devolucion;
     }
 
@@ -213,7 +223,21 @@ public class ServicioReservas {
                 LocalDate.now().atStartOfDay(),
                 reserva.getFechaInicio().atStartOfDay()
         );
-        return horas > 48 ? reserva.getCostoTotal() * 0.30 : 0.0;
+        if (horas <= 48) return 0.0;
+        return Math.min(reserva.getFolio().totalPago(), reserva.getValorAnticipo());
+    }
+    /** Registra en el folio lo que falte del anticipo del 30 % y confirma la reserva. */
+    public double pagarAnticipo(Reserva reserva) {
+        validarReservaNoNula(reserva);
+        if (reserva.getEstado() != EstadoReserva.PENDIENTE) {
+            throw new TransicionEstadoInvalidaException("Solo se paga el anticipo de una reserva Pendiente.");
+        }
+        double faltante = reserva.getValorAnticipo() - reserva.getFolio().totalPago();
+        if (faltante > 0.005) {
+            reserva.getFolio().registrarPago(faltante, "Anticipo 30 % por el portal");
+        }
+        reserva.cambiarEstado(EstadoReserva.CONFIRMADA);
+        return Math.max(faltante, 0);
     }
 
     // --- Gestión de acompañantes en la ListaDoble<Huesped> de la reserva ---
@@ -296,6 +320,7 @@ public class ServicioReservas {
                     + " choca con otra reserva activa de " + reserva.getApartamento().getCodigo() + ".");
         }
         arbolReservas.insertar(reserva);
+        reserva.getHuesped().agregarAlHistorial(reserva);
         actualizarContador(reserva.getCodigoReserva());
     }
 
