@@ -103,7 +103,7 @@ public class SGA {
         calendario = new CalendarioTemporadas();
         liquidador = new LiquidadorTarifas(calendario);
         servicioReservas = new ServicioReservas();
-        canalExterno = new ServicioCanalExterno(this);
+        canalExterno = new ServicioCanalExterno(servicioReservas);
         solicitudesExternasPendientes = 0;
         turnos = new ServicioTurnos();
         vencimiento = new ServicioVencimiento(r -> r.cambiarEstado(EstadoReserva.CANCELADA));
@@ -599,15 +599,20 @@ public class SGA {
      * @throws EstructuraVaciaException si no hay solicitudes pendientes
      */
     public Reserva procesarSiguienteSolicitud() {
+        SolicitudExterna s = procesarSolicitudCompleta();
+        return s.getEstado() == EstadoSolicitud.ACEPTADA ? s.getReservaCreada() : null;
+    }
+    /** Procesa la siguiente solicitud y la devuelve con su resultado (para la pantalla). */
+    public SolicitudExterna procesarSolicitudCompleta() {
         if (solicitudesExternasPendientes == 0) {
             throw new EstructuraVaciaException("No hay solicitudes del canal externo por procesar.");
         }
         solicitudesExternasPendientes--;
-        Reserva reserva = canalExterno.procesarSiguiente();
-        if (reserva != null) {
-            prepararReservaNueva(reserva);
+        SolicitudExterna s = canalExterno.procesarSolicitud();
+        if (s.getEstado() == EstadoSolicitud.ACEPTADA) {
+            prepararReservaNueva(s.getReservaCreada());
         }
-        return reserva;
+        return s;
     }
 
     public int getSolicitudesExternasPendientes() {
@@ -618,6 +623,9 @@ public class SGA {
         return canalExterno.getConflictos();
     }
 
+    public ServicioCanalExterno getCanalExterno() {
+        return canalExterno;
+    }
     // ============================================================ folio
 
     public void registrarCargo(Reserva reserva, double monto, String descripcion) {
@@ -732,6 +740,7 @@ public class SGA {
     public AnalisisGrafo getAnalisisGrafo() {
         return new AnalisisGrafo(mapa);
     }
+
 
     // ============================================================= estadísticas
 

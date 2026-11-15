@@ -10,6 +10,7 @@ public class SolicitudExterna {
     private Huesped titular;
     private EstadoSolicitud estado = EstadoSolicitud.PENDIENTE;
     private String motivoRechazo;
+    private Reserva reservaCreada;
 
     public SolicitudExterna(String idExterno, Apartamento apartamento, LocalDate entrada, LocalDate salida, int numPersonas, Huesped titular) {
         this.idExterno = idExterno;
@@ -20,9 +21,9 @@ public class SolicitudExterna {
         this.titular = titular;
     }
 
-    public void marcarAceptada() {
+    public void marcarAceptada(Reserva reserva) {
         this.estado = EstadoSolicitud.ACEPTADA;
-
+        this.reservaCreada = reserva;
     }
     public void marcarRechazada(String motivoRechazo) {
         this.estado = EstadoSolicitud.RECHAZADA;
@@ -88,5 +89,6 @@ public class SolicitudExterna {
     public String getMotivoRechazo() {
         return motivoRechazo;
     }
+    public Reserva getReservaCreada() { return reservaCreada; }
 
 }

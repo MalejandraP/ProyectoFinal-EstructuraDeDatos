@@ -12,7 +12,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 
 /** Utilidades comunes de las pantallas: estilos, textos, alertas y conversión de estructuras. */
-final class Vistas {
+ final class Vistas {
 
     static final String CSS = "/co/edu/uniquindio/apartasuitesuq/estilos.css";
 

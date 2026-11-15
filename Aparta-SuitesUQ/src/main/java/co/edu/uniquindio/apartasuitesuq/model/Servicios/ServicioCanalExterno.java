@@ -7,6 +7,9 @@ import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ListaDoble;
 import co.edu.uniquindio.apartasuitesuq.model.Excepciones.CapacidadExcedidaException;
 import co.edu.uniquindio.apartasuitesuq.model.Excepciones.FechasInvalidasException;
 import co.edu.uniquindio.apartasuitesuq.model.Excepciones.ReservaSolapadaException;
+import co.edu.uniquindio.apartasuitesuq.model.Servicios.ServicioReservas;
+
+
 
 /**
  * Servicio encargado de gestionar y procesar las solicitudes de reserva provenientes de canales externos.
@@ -15,13 +18,13 @@ import co.edu.uniquindio.apartasuitesuq.model.Excepciones.ReservaSolapadaExcepti
  * {@link ListaDoble} aquellos casos que generen conflictos de disponibilidad.
  */
 public class ServicioCanalExterno {
-    private final SGA sga;
+    private final ServicioReservas servicioReservas;
     private final Cola<SolicitudExterna> cola = new Cola<>();
     private final ListaDoble<ConflictoCanal> conflictos = new ListaDoble<>();
     private final ListaDoble<SolicitudExterna> procesadas = new ListaDoble<>();
 
-    public ServicioCanalExterno(SGA sga) {
-        this.sga = sga;
+    public ServicioCanalExterno(ServicioReservas servicioReservas) {
+        this.servicioReservas = servicioReservas;
     }
 
     public void recibirSolicitud(SolicitudExterna solicitud){
@@ -29,6 +32,7 @@ public class ServicioCanalExterno {
         cola.encolar(solicitud);
     }
     public boolean hayPendientes() { return !cola.estaVacia(); }
+
     /**
      * Extrae y procesa la siguiente solicitud pendiente en la cola (la más antigua).
      * <ul>
@@ -42,17 +46,31 @@ public class ServicioCanalExterno {
      *
      * @return La {@link Reserva} creada si la solicitud fue aceptada, o {@code null} si fue rechazada.
      */
-    public Reserva procesarSiguiente(){
-        SolicitudExterna s = cola.desencolar();
-        try{
-            sga.crearReservaExterna(s);
-            s.marcarAceptada();
+
+    public SolicitudExterna procesarSolicitud() {
+        SolicitudExterna s = cola.desencolar();      // lanza EstructuraVaciaException si no hay
+        try {
+            Reserva reserva = servicioReservas.crearReserva(s.getTitular(), s.getApartamento(),
+                    s.getEntrada(), s.getSalida(), s.getNumPersonas(), Canal.EXTERNO);
+            s.marcarAceptada(reserva);
         } catch (ReservaSolapadaException e) {
-            rechazar(s, e.getMessage());
-        } catch (FechasInvalidasException | CapacidadExcedidaException e){
-            s.marcarRechazada(e.getMessage());
+            rechazar(s, e.getMessage());             // choque: va a conflictos
+        } catch (RuntimeException e) {
+            s.marcarRechazada(e.getMessage());       // fechas, capacidad, nulos...
         }
         procesadas.agregarFinal(s);
+        return s;
+    }
+    /**
+     * Versión de {@link #procesarSolicitud()} que usa SGA.
+     *
+     * @return la {@link Reserva} creada si la solicitud fue aceptada, o {@code null} si fue rechazada
+     */
+    public Reserva procesarSiguiente(){
+        SolicitudExterna s = procesarSolicitud();
+        if(s.getEstado() ==  EstadoSolicitud.ACEPTADA){
+            return s.getReservaCreada();
+        }
         return null;
     }
     /**
@@ -84,7 +102,9 @@ public class ServicioCanalExterno {
         }
         return total;
     }
-
+    public Iterable<SolicitudExterna> getPendientes() {
+        return cola;
+    }
     public ListaDoble<SolicitudExterna> getProcesadas() { return procesadas; }
 
 }
