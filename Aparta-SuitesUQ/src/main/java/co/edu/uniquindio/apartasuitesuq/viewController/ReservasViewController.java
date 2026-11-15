@@ -55,6 +55,8 @@ public class ReservasViewController {
         vista.getBtnReservar().setOnAction(e -> crearReserva());
         vista.getBtnAnticipo().setOnAction(e -> pagarAnticipoSeleccionada());
         vista.getBtnCancelar().setOnAction(e -> cancelarSeleccionada());
+        vista.getBtnCheckIn().setOnAction(e -> realizarCheckInSeleccionada());
+        vista.getBtnCheckOut().setOnAction(e -> realizarCheckOutSeleccionada());
         vista.getBtnRefrescar().setOnAction(e -> {
             buscarDisponibles();
             recargarReservas();
@@ -80,6 +82,10 @@ public class ReservasViewController {
             vista.getCbCanal().setDisable(true);
             vista.mostrarModoHuesped("Titular: " + h.getNombre() + " · Doc: " + h.getDocumento()
                     + " (Canal Portal · anticipo 30 %)");
+            vista.getBtnCheckIn().setVisible(false);
+            vista.getBtnCheckIn().setManaged(false);
+            vista.getBtnCheckOut().setVisible(false);
+            vista.getBtnCheckOut().setManaged(false);
         } else {
             vista.getCbCanal().getItems().setAll(Canal.DIRECTA, Canal.PORTAL);
             vista.getCbCanal().setValue(Canal.DIRECTA);
@@ -305,11 +311,15 @@ public class ReservasViewController {
     private void actualizarEstadoBotones(Reserva sel) {
         if (sel == null) {
             vista.getBtnAnticipo().setDisable(true);
+            vista.getBtnCheckIn().setDisable(true);
+            vista.getBtnCheckOut().setDisable(true);
             vista.getBtnCancelar().setDisable(true);
             return;
         }
         EstadoReserva estado = sel.getEstado();
         vista.getBtnAnticipo().setDisable(estado != EstadoReserva.PENDIENTE);
+        vista.getBtnCheckIn().setDisable(estado != EstadoReserva.CONFIRMADA);
+        vista.getBtnCheckOut().setDisable(estado != EstadoReserva.ENCURSO);
         vista.getBtnCancelar().setDisable(
                 estado == EstadoReserva.CANCELADA
                         || estado == EstadoReserva.NOSHOW
@@ -347,5 +357,40 @@ public class ReservasViewController {
         alerta.setHeaderText(titulo);
         alerta.setContentText(mensaje);
         alerta.showAndWait();
+    }
+
+    private void realizarCheckInSeleccionada() {
+        Reserva seleccionada = vista.getTablaReservas().getSelectionModel().getSelectedItem();
+        if (seleccionada == null) {
+            mostrarInfo("Seleccione una reserva", "Elija una reserva confirmada para registrar el check-in.");
+            return;
+        }
+        try {
+            sga.checkIn(seleccionada);
+            mostrarInfo("Check-in registrado",
+                    "La reserva " + seleccionada.getCodigoReserva() + " pasó a EN CURSO.\nApartamento "
+                            + seleccionada.getApartamento().getCodigo() + " ahora está OCUPADO.");
+            recargarReservas();
+        } catch (RuntimeException ex) {
+            mostrarError("No se pudo realizar el check-in", ex);
+        }
+    }
+
+    private void realizarCheckOutSeleccionada() {
+        Reserva seleccionada = vista.getTablaReservas().getSelectionModel().getSelectedItem();
+        if (seleccionada == null) {
+            mostrarInfo("Seleccione una reserva", "Elija una reserva en curso para registrar el check-out.");
+            return;
+        }
+        try {
+            sga.checkOut(seleccionada);
+            mostrarInfo("Check-out registrado",
+                    "La reserva " + seleccionada.getCodigoReserva() + " pasó a FINALIZADA.\nEl apartamento "
+                            + seleccionada.getApartamento().getCodigo() + " ingresó a la cola de preparación.");
+            buscarDisponibles();
+            recargarReservas();
+        } catch (RuntimeException ex) {
+            mostrarError("No se pudo realizar el check-out", ex);
+        }
     }
 }
