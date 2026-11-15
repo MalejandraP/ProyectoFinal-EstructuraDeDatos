@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--suppress ALL -->
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fitToWidth="true" styleClass="scroll-panel-usuario">
+    <content>
+        <VBox styleClass="contenido" spacing="24">
+
+            <!-- CABECERA SUPERIOR -->
+            <HBox alignment="CENTER_LEFT" spacing="16">
+                <VBox spacing="4">
+                    <Label text="Canal externo" styleClass="titulo-pagina"/>
+                    <Label text="Solicitudes de la plataforma de terceros, atendidas una a una en orden de llegada."
+                           styleClass="texto-suave"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <HBox spacing="12" alignment="CENTER_RIGHT">
+                    <Button text="Procesar todas" styleClass="boton-secundario, boton-pill"
+                            onAction="#onProcesarTodas"/>
+                    <Button text="Procesar siguiente  →" styleClass="boton-primario, boton-pill"
+                            onAction="#onProcesarSiguiente"/>
+                </HBox>
+            </HBox>
+
+            <!-- FILA 1: PENDIENTES + CONFLICTOS (misma altura) -->
+            <HBox spacing="24" alignment="TOP_LEFT">
+
+                <!-- PENDIENTES -->
+                <VBox styleClass="tarjeta" spacing="16" HBox.hgrow="ALWAYS" maxWidth="Infinity" minWidth="420">
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label text="Pendientes (orden de llegada)" styleClass="titulo-seccion"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="lblContadorPendientes" text="0 pendientes" styleClass="chip, chip-neutro-suave"/>
+                    </HBox>
+
+                    <TableView fx:id="tablaPendientes" styleClass="tabla-moderna" prefHeight="220" minHeight="220" maxHeight="220">
+                        <placeholder>
+                            <Label text="No hay solicitudes pendientes" styleClass="texto-suave"/>
+                        </placeholder>
+                        <columns>
+                            <TableColumn fx:id="colPendId" text="ID"/>
+                            <TableColumn fx:id="colPendApto" text="APTO"/>
+                            <TableColumn fx:id="colPendEntrada" text="ENTRADA"/>
+                            <TableColumn fx:id="colPendSalida" text="SALIDA"/>
+                            <TableColumn fx:id="colPendPersonas" text="PERS."/>
+                            <TableColumn fx:id="colPendTitular" text="TITULAR"/>
+                        </columns>
+                        <columnResizePolicy>
+                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                        </columnResizePolicy>
+                    </TableView>
+                </VBox>
+
+                <!-- CONFLICTOS -->
+                <VBox styleClass="tarjeta" spacing="16" HBox.hgrow="ALWAYS" maxWidth="Infinity" minWidth="420">
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label text="⚠" styleClass="icono-seccion"/>
+                        <Label text="Conflictos de canal" styleClass="titulo-seccion"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="lblContadorConflictos" text="● 0 detectados" styleClass="chip, chip-fuera"/>
+                    </HBox>
+
+                    <TableView fx:id="tablaConflictos" styleClass="tabla-moderna" prefHeight="220" minHeight="220" maxHeight="220">
+                        <columns>
+                            <TableColumn fx:id="colConfFecha" text="FECHA" prefWidth="110"/>
+                            <TableColumn fx:id="colConfSolicitud" text="SOLICITUD" prefWidth="90"/>
+                            <TableColumn fx:id="colConfMotivo" text="MOTIVO" prefWidth="420"/>
+                        </columns>
+                        <columnResizePolicy>
+                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                        </columnResizePolicy>
+                    </TableView>
+                </VBox>
+            </HBox>
+
+            <!-- FILA 2: PROCESADAS A TODO EL ANCHO -->
+            <!-- FILA 2: PROCESADAS A TODO EL ANCHO -->
+            <VBox styleClass="tarjeta" spacing="16">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label text="✓" styleClass="icono-seccion"/>
+                    <Label text="Procesadas" styleClass="titulo-seccion"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="lblContadorProcesadas" text="0 registros recientes" styleClass="chip, chip-neutro-suave"/>
+                </HBox>
+
+                <TableView fx:id="tablaProcesadas" styleClass="tabla-moderna" prefHeight="260" minHeight="180">
+                    <columns>
+                        <TableColumn fx:id="colProcId" text="ID" prefWidth="80" minWidth="80" maxWidth="80"/>
+                        <TableColumn fx:id="colProcApto" text="APTO" prefWidth="75" minWidth="75" maxWidth="75"/>
+                        <TableColumn fx:id="colProcPersonas" text="PERS." prefWidth="65" minWidth="65" maxWidth="65"/>
+                        <TableColumn fx:id="colProcTitular" text="TITULAR" prefWidth="190" minWidth="190" maxWidth="190"/>
+                        <TableColumn fx:id="colProcEstado" text="ESTADO" prefWidth="125" minWidth="125" maxWidth="125"/>
+                        <TableColumn fx:id="colProcMotivo" text="MOTIVO" prefWidth="400" minWidth="250"/>
+                    </columns>
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                    </columnResizePolicy>
+                </TableView>
+            </VBox>
+
+        </VBox>
+    </content>
+</ScrollPane>
