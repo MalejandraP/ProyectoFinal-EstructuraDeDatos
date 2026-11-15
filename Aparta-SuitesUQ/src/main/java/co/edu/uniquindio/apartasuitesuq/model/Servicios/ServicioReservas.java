@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 /**
- * Servicio encargado de gestionar el ciclo de vida completo de las reservas (Módulo P2).
+ * Servicio encargado de gestionar el ciclo de vida completo de las reservas.
  * <p>
  * Guarda las reservas en un {@link ArbolBinarioBusqueda} ordenado por el orden natural de
  * {@link Reserva} (fecha de entrada y, si coincide, código), delegando la validación de fechas
