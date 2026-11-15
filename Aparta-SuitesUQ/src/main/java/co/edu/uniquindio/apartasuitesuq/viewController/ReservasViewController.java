@@ -55,6 +55,7 @@ public class ReservasViewController {
         vista.getBtnReservar().setOnAction(e -> crearReserva());
         vista.getBtnAnticipo().setOnAction(e -> pagarAnticipoSeleccionada());
         vista.getBtnCancelar().setOnAction(e -> cancelarSeleccionada());
+        vista.getBtnVencimientos().setOnAction(e -> procesarVencimientos());
         vista.getBtnCheckIn().setOnAction(e -> realizarCheckInSeleccionada());
         vista.getBtnCheckOut().setOnAction(e -> realizarCheckOutSeleccionada());
         vista.getBtnRefrescar().setOnAction(e -> {
@@ -75,6 +76,7 @@ public class ReservasViewController {
             actualizarEstadoBotones(sel);
         });
 
+
         if (sesion.getRol() == Rol.HUESPED && sesion.getHuesped() != null) {
             Huesped h = sesion.getHuesped();
             vista.getCbCanal().getItems().setAll(Canal.PORTAL);
@@ -86,6 +88,8 @@ public class ReservasViewController {
             vista.getBtnCheckIn().setManaged(false);
             vista.getBtnCheckOut().setVisible(false);
             vista.getBtnCheckOut().setManaged(false);
+            vista.getBtnVencimientos().setVisible(false);
+            vista.getBtnVencimientos().setManaged(false);
         } else {
             vista.getCbCanal().getItems().setAll(Canal.DIRECTA, Canal.PORTAL);
             vista.getCbCanal().setValue(Canal.DIRECTA);
@@ -391,6 +395,33 @@ public class ReservasViewController {
             recargarReservas();
         } catch (RuntimeException ex) {
             mostrarError("No se pudo realizar el check-out", ex);
+        }
+    }
+    private void procesarVencimientos() {
+        try {
+            ListaDoble<Reserva> vencidas = sga.procesarVencimientos();
+            int total = 0;
+            StringBuilder codigos = new StringBuilder();
+            for (Reserva r : vencidas) {
+                total++;
+                if (codigos.length() > 0) {
+                    codigos.append(", ");
+                }
+                codigos.append(r.getCodigoReserva());
+            }
+
+            if (total == 0) {
+                mostrarInfo("Sin reservas vencidas",
+                        "No hay reservas Pendientes que hayan superado el plazo de 24 horas.");
+            } else {
+                mostrarInfo("Vencimientos procesados",
+                        "Se cancelaron " + total + " reserva(s) pendiente(s) vencida(s): " + codigos
+                                + ".\nSus noches quedaron liberadas nuevamente.");
+                buscarDisponibles();
+                recargarReservas();
+            }
+        } catch (RuntimeException ex) {
+            mostrarError("No se pudieron procesar los vencimientos", ex);
         }
     }
 }

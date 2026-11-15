@@ -21,10 +21,7 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -90,7 +87,10 @@ public class ReservasView {
     private final Button btnCheckIn = new Button("Check-in");
     private final Button btnCheckOut = new Button("Check-out");
     private final Button btnCancelar = new Button("Cancelar reserva (ver devolución)");
+    private final Button btnVencimientos = new Button("Procesar vencimientos (24 h)");
     private final Button btnRefrescar = new Button("Actualizar lista");
+
+
     public ReservasView(SGA sga, Sesion sesion) {
         this.sga = sga;
         this.sesion = sesion;
@@ -147,6 +147,7 @@ public class ReservasView {
         listaAcompanantes.setPlaceholder(new Label("Sin acompañantes registrados (los cupos extra se asumen adultos)."));
         btnCheckIn.getStyleClass().add("boton-primario");
         btnCheckOut.getStyleClass().add("boton-primario");
+        btnVencimientos.getStyleClass().add("boton-secundario");
     }
 
     private void configurarListaAcompanantes() {
@@ -278,7 +279,8 @@ public class ReservasView {
     }
 
     private Node construirBarraAccionesReserva() {
-        HBox acciones = new HBox(12, btnAnticipo, btnCheckIn, btnCheckOut, btnCancelar, btnRefrescar);
+        FlowPane acciones = new FlowPane(10, 10,
+                btnAnticipo, btnCheckIn, btnCheckOut, btnCancelar, btnVencimientos, btnRefrescar);
         acciones.setAlignment(Pos.CENTER_LEFT);
         return acciones;
     }
@@ -349,4 +351,5 @@ public class ReservasView {
     public Button getBtnRefrescar() { return btnRefrescar; }
     public Button getBtnCheckIn() { return btnCheckIn; }
     public Button getBtnCheckOut() { return btnCheckOut; }
+    public Button getBtnVencimientos() { return btnVencimientos; }
 }
