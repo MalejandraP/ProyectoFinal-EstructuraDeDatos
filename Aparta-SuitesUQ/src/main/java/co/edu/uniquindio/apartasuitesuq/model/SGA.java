@@ -517,6 +517,14 @@ public class SGA {
         }
         return reserva;
     }
+
+    public Reserva crearReservaExterna(SolicitudExterna s) {
+        Reserva reserva = servicioReservas.crearReserva(s.getTitular(), s.getApartamento(),
+                s.getEntrada(), s.getSalida(), s.getNumPersonas(), Canal.EXTERNO);
+        liquidador.liquidar(reserva);
+        reserva.getFolio().registrarCargo(reserva.getCostoTotal(), "Alojamiento " + reserva.getEstancia());
+        return reserva;
+    }
     /** Paga el anticipo del 30 % de una reserva del portal y la confirma. */
     public void pagarAnticipo(Reserva reserva) {
         if (reserva.getEstado() != EstadoReserva.PENDIENTE) {
@@ -591,15 +599,20 @@ public class SGA {
      * @throws EstructuraVaciaException si no hay solicitudes pendientes
      */
     public Reserva procesarSiguienteSolicitud() {
+        SolicitudExterna s = procesarSolicitudCompleta();
+        return s.getEstado() == EstadoSolicitud.ACEPTADA ? s.getReservaCreada() : null;
+    }
+    /** Procesa la siguiente solicitud y la devuelve con su resultado (para la pantalla). */
+    public SolicitudExterna procesarSolicitudCompleta() {
         if (solicitudesExternasPendientes == 0) {
             throw new EstructuraVaciaException("No hay solicitudes del canal externo por procesar.");
         }
         solicitudesExternasPendientes--;
-        Reserva reserva = canalExterno.procesarSiguiente();
-        if (reserva != null) {
-            prepararReservaNueva(reserva);
+        SolicitudExterna s = canalExterno.procesarSolicitud();
+        if (s.getEstado() == EstadoSolicitud.ACEPTADA) {
+            prepararReservaNueva(s.getReservaCreada());
         }
-        return reserva;
+        return s;
     }
 
     public int getSolicitudesExternasPendientes() {
@@ -610,6 +623,9 @@ public class SGA {
         return canalExterno.getConflictos();
     }
 
+    public ServicioCanalExterno getCanalExterno() {
+        return canalExterno;
+    }
     // ============================================================ folio
 
     public void registrarCargo(Reserva reserva, double monto, String descripcion) {
@@ -724,6 +740,7 @@ public class SGA {
     public AnalisisGrafo getAnalisisGrafo() {
         return new AnalisisGrafo(mapa);
     }
+
 
     // ============================================================= estadísticas
 

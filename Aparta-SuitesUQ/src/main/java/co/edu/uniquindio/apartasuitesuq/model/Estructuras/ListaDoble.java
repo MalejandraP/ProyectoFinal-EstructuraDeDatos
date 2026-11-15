@@ -118,7 +118,7 @@ public class ListaDoble<T> implements Iterable<T> {
      */
     public void eliminarFinal(){
         if(estaVacia())
-            throw new EstructuraVaciaException("No hay elemntos en la lista") ;
+            throw new EstructuraVaciaException("No hay elementos en la lista") ;
 
         if(tam == 1){
             inicio = fin = null;
@@ -217,11 +217,10 @@ public class ListaDoble<T> implements Iterable<T> {
      *
      * @param datoBuscar El elemento que se desea buscar.
      * @return {@code true} si el elemento existe en la lista; {@code false} en caso contrario.
-     * @throws EstructuraVaciaException Si la lista se encuentra vacía al realizar la búsqueda.
      */
     public boolean buscar(T datoBuscar){
         if (estaVacia() ) {
-            throw new EstructuraVaciaException("No hay elementos en la lista");
+            return false;
         }
         Nodo aux = inicio;
         while (aux != null) {
@@ -254,6 +253,4 @@ public class ListaDoble<T> implements Iterable<T> {
         }
 
     }
-
-
 }

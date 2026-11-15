@@ -92,7 +92,7 @@ public class FolioViewController {
         Movimiento ultima = folio.ultimaOperacion();
         lblUltimaOperacion.setText(ultima == null ? "—"
                 : ultima.getTipo() + " " + dinero(ultima.getMonto()) + " · " + ultima.getDescripcion());
-        btnDeshacer.setDisable(ultima == null);
+        btnDeshacer.setDisable(ultima == null || estaCerrada(r));
     }
 
     @FXML
@@ -127,9 +127,9 @@ public class FolioViewController {
     @FXML
     private void onDeshacer() {
         if (actual == null) return;
-        if (actual.getEstado() == EstadoReserva.CANCELADA || actual.getEstado() == EstadoReserva.NOSHOW) {
+        if (estaCerrada(actual)) {
             aviso("La reserva " + actual.getCodigoReserva() + " está "
-                    + actual.getEstado().getDescripcion() + ": no admite nuevos movimientos.");
+                    + actual.getEstado().getDescripcion() + ": no admite deshacer.");
             return;
         }
         try {
@@ -155,5 +155,10 @@ public class FolioViewController {
             opciones.add(r);
         }
         cmbReservas.setItems(opciones);
+    }
+
+    private boolean estaCerrada(Reserva r) {
+        EstadoReserva e = r.getEstado();
+        return e == EstadoReserva.CANCELADA || e == EstadoReserva.NOSHOW;
     }
 }

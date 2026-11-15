@@ -10,6 +10,7 @@ public class SolicitudExterna {
     private Huesped titular;
     private EstadoSolicitud estado = EstadoSolicitud.PENDIENTE;
     private String motivoRechazo;
+    private Reserva reservaCreada;
 
     public SolicitudExterna(String idExterno, Apartamento apartamento, LocalDate entrada, LocalDate salida, int numPersonas, Huesped titular) {
         this.idExterno = idExterno;
@@ -20,9 +21,9 @@ public class SolicitudExterna {
         this.titular = titular;
     }
 
-    public void marcarAceptada() {
+    public void marcarAceptada(Reserva reserva) {
         this.estado = EstadoSolicitud.ACEPTADA;
-
+        this.reservaCreada = reserva;
     }
     public void marcarRechazada(String motivoRechazo) {
         this.estado = EstadoSolicitud.RECHAZADA;
@@ -33,63 +34,36 @@ public class SolicitudExterna {
         return idExterno;
     }
 
-    public void setIdExterno(String idExterno) {
-        this.idExterno = idExterno;
-    }
-
     public Apartamento getApartamento() {
         return apartamento;
     }
 
-    public void setApartamento(Apartamento apartamento) {
-        this.apartamento = apartamento;
-    }
 
     public LocalDate getEntrada() {
         return entrada;
     }
 
-    public void setEntrada(LocalDate entrada) {
-        this.entrada = entrada;
-    }
 
     public LocalDate getSalida() {
         return salida;
-    }
-
-    public void setSalida(LocalDate salida) {
-        this.salida = salida;
     }
 
     public int getNumPersonas() {
         return numPersonas;
     }
 
-    public void setNumPersonas(int numPersonas) {
-        this.numPersonas = numPersonas;
-    }
-
     public Huesped getTitular() {
         return titular;
-    }
-
-    public void setTitular(Huesped titular) {
-        this.titular = titular;
     }
 
     public EstadoSolicitud getEstado() {
         return estado;
     }
 
-    public void setEstado(EstadoSolicitud estado) {
-        this.estado = estado;
-    }
 
     public String getMotivoRechazo() {
         return motivoRechazo;
     }
+    public Reserva getReservaCreada() { return reservaCreada; }
 
-    public void setMotivoRechazo(String motivoRechazo) {
-        this.motivoRechazo = motivoRechazo;
-    }
 }

@@ -33,25 +33,6 @@ public class ListaCircular<T> implements Iterable<T> {
             this.siguiente = null;
         }
     }
-
-    public void agregarInicio(T dato){
-        Nodo nuevoNodo = new Nodo(dato);
-        if(estaVacia()){
-            inicio = nuevoNodo;
-            inicio.siguiente = inicio;
-            actual = inicio;
-        } else {
-            Nodo aux = inicio;
-            while(aux.siguiente != inicio){
-                aux = aux.siguiente;
-            }
-            nuevoNodo.siguiente = inicio;
-            aux.siguiente = nuevoNodo;
-            inicio = nuevoNodo;
-        }
-        tam++;
-    }
-
     /**
      * Método para agregar un elemento a la lista, crea un nuevo nodo con el dato ingresado.
      * Si la lista está vacía, asigna el nodo cómo el inicio y redefine el actual como el nodo ingresado, sino, lo agrega al final de la lista.
@@ -73,45 +54,6 @@ public class ListaCircular<T> implements Iterable<T> {
         }
         tam++;
     }
-    public void eliminarInicio(){
-        if(estaVacia()){
-            throw new EstructuraVaciaException("La lista esta vacía");
-        }
-        if(tam == 1){
-            inicio = null;
-            actual = null;
-        } else {
-            Nodo aux = inicio;
-            while(aux.siguiente != inicio){
-                aux = aux.siguiente;
-            }
-            if(actual == inicio){
-                actual = inicio.siguiente;
-            }
-            inicio = inicio.siguiente;
-            aux.siguiente = inicio;
-        }
-        tam--;
-    }
-    public void eliminarFinal() {
-        if(estaVacia()){
-            throw new EstructuraVaciaException("La lista esta vacía");
-        }
-        if(tam == 1){
-            inicio = null;
-            actual = null;
-        } else {
-            Nodo aux = inicio;
-            while (aux.siguiente.siguiente != inicio) {
-                aux = aux.siguiente;
-            }
-            if(actual == aux.siguiente){
-                actual = inicio;
-            }
-            aux.siguiente = inicio;
-        }
-        tam--;
-    }
 
     /**
      * Busca un elemento dentro de la lista.
@@ -132,27 +74,6 @@ public class ListaCircular<T> implements Iterable<T> {
         return false;
     }
 
-    /**
-     * Retorna la posición del elemento dentro de la lista.
-     * Si no existe retorna -1.
-     */
-    public int localizar(T datoBuscar) {
-        if(estaVacia())
-            throw new EstructuraVaciaException("La lista está vacía");
-
-        Nodo aux = inicio;
-        int count = 0;
-
-        do{
-            if (aux.dato.equals(datoBuscar)) {
-                return count;
-            }
-            count++;
-            aux = aux.siguiente;
-        } while (aux != inicio);
-
-        return -1;
-    }
 
     /**
      * Retorna el dato del atributo datoActual, dato en el que está parada actualmente la lista.
@@ -198,12 +119,13 @@ public class ListaCircular<T> implements Iterable<T> {
                     inicio = null;
                     actual = null;
                 } else {
-                    eliminado.siguiente = aux.siguiente;
+                    Nodo siguiente = eliminado.siguiente;
+                    aux.siguiente = siguiente;
                     if(eliminado == inicio){
-                        inicio = eliminado.siguiente;
+                        inicio = siguiente;
                     }
                     if (eliminado == actual){
-                        actual = eliminado.siguiente;
+                        actual = siguiente;
                     }
                 }
                 tam--;

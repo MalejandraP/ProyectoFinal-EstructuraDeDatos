@@ -46,6 +46,7 @@ public class VentanaPrincipal {
         INICIO("Inicio"),
         MAPA("Mapa y preparación"),
         RESERVAS("Reservas"),
+        CANAL_EXTERNO("Canal externo"),
         CALENDARIO("Calendario de ocupación"),
         MI_PANEL("Mi panel"),
         FOLIO("Folio"),
@@ -90,10 +91,10 @@ public class VentanaPrincipal {
             case HUESPED:
                 return new Pantalla[]{Pantalla.MI_PANEL, Pantalla.RESERVAS, Pantalla.COTIZAR};
             case RECEPCIONISTA:
-                return new Pantalla[]{Pantalla.INICIO, Pantalla.MAPA, Pantalla.RESERVAS,
+                return new Pantalla[]{Pantalla.INICIO, Pantalla.MAPA, Pantalla.RESERVAS, Pantalla.CANAL_EXTERNO,
                         Pantalla.CALENDARIO, Pantalla.FOLIO, Pantalla.COTIZAR};
             default:
-                return new Pantalla[]{Pantalla.INICIO, Pantalla.MAPA, Pantalla.RESERVAS,
+                return new Pantalla[]{Pantalla.INICIO, Pantalla.MAPA, Pantalla.RESERVAS, Pantalla.CANAL_EXTERNO,
                         Pantalla.CALENDARIO, Pantalla.COTIZAR, Pantalla.TEMPORADAS,
                         Pantalla.ESTADISTICAS, Pantalla.CARGA, Pantalla.FOLIO};
         }
@@ -220,7 +221,7 @@ public class VentanaPrincipal {
             case FOLIO:
                 return crearFolio();
             case COTIZAR:
-                return new CotizacionView(sga, sesion, () -> navegar(Pantalla.MI_PANEL)).getVista();
+                return new CotizacionView(sga, sesion).getVista();
             case TEMPORADAS:
                 return new TemporadasTarifasView(sga).getVista();
             case ESTADISTICAS:
@@ -233,6 +234,9 @@ public class VentanaPrincipal {
 
             case CALENDARIO:
                 return new CalendarioOcupacionView(sga).getVista();
+
+            case CANAL_EXTERNO:
+                return new CanalExternoView(sga).getVista();
             default:
                 throw new IllegalArgumentException("Pantalla desconocida: " + pantalla);
         }
@@ -342,7 +346,7 @@ public class VentanaPrincipal {
         controlador.setServicio(sga.getServicioReservas());
         controlador.setHuesped(sesion.getHuesped());
         controlador.setReservas(sga.reservasDe(sesion.getHuesped()));
-        controlador.setAlSolicitarReserva(() -> navegar(Pantalla.COTIZAR));
+        controlador.setAlSolicitarReserva(() -> navegar(Pantalla.RESERVAS));
         return vista;
     }
 
