@@ -110,7 +110,7 @@ public class Pila<T> implements Iterable<T> {
      */
     public int localizar(T datoBuscar) {
         if (estaVacia()){
-            throw new EstructuraVaciaException("La pila está vacía");
+            return -1;
         }
         Nodo aux = cima;
         int count = 0;
@@ -125,7 +125,7 @@ public class Pila<T> implements Iterable<T> {
     }
 
     /**
-     * Retorna los elementos de la lista como String.
+     * Retorna los elementos de la pila como String.
      */
     public String mostrar() {
         String listaString = "[";
@@ -153,18 +153,6 @@ public class Pila<T> implements Iterable<T> {
         }
         return false;
     }
-
-
-    /**
-     * Sobrescribe el dato almacenado actualmente en el nodo cima de la pila.
-     *
-     * @param cima El nuevo valor que reemplazará al dato en la cima.
-     * @throws NullPointerException Si la pila está vacía ({@code cima == null}).
-     */
-    public void setCima(T cima) {
-        this.cima.dato = cima;
-    }
-
 
 
     /**
