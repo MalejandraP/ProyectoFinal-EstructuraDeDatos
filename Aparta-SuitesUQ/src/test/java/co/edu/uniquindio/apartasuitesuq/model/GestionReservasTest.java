@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * catálogos jerárquicos, búsqueda ordenada de disponibilidad y exención
  * tarifaria para acompañantes menores de 6 años.
  */
-class GestionReservasP2Test {
+class GestionReservasTest {
 
     private SGA sga;
     private Apartamento a101;
