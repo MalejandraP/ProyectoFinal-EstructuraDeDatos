@@ -34,57 +34,32 @@ public class SolicitudExterna {
         return idExterno;
     }
 
-    public void setIdExterno(String idExterno) {
-        this.idExterno = idExterno;
-    }
-
     public Apartamento getApartamento() {
         return apartamento;
     }
 
-    public void setApartamento(Apartamento apartamento) {
-        this.apartamento = apartamento;
-    }
 
     public LocalDate getEntrada() {
         return entrada;
     }
 
-    public void setEntrada(LocalDate entrada) {
-        this.entrada = entrada;
-    }
 
     public LocalDate getSalida() {
         return salida;
-    }
-
-    public void setSalida(LocalDate salida) {
-        this.salida = salida;
     }
 
     public int getNumPersonas() {
         return numPersonas;
     }
 
-    public void setNumPersonas(int numPersonas) {
-        this.numPersonas = numPersonas;
-    }
-
     public Huesped getTitular() {
         return titular;
-    }
-
-    public void setTitular(Huesped titular) {
-        this.titular = titular;
     }
 
     public EstadoSolicitud getEstado() {
         return estado;
     }
 
-    public void setEstado(EstadoSolicitud estado) {
-        this.estado = estado;
-    }
 
     public String getMotivoRechazo() {
         return motivoRechazo;
