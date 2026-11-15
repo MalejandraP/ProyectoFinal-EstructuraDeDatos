@@ -87,9 +87,10 @@ public class ReservasView {
     // Tabla y acciones de gestión
     private final TableView<Reserva> tablaReservas = new TableView<>();
     private final Button btnAnticipo = new Button("Pagar anticipo (30 %) y confirmar");
+    private final Button btnCheckIn = new Button("Check-in");
+    private final Button btnCheckOut = new Button("Check-out");
     private final Button btnCancelar = new Button("Cancelar reserva (ver devolución)");
     private final Button btnRefrescar = new Button("Actualizar lista");
-
     public ReservasView(SGA sga, Sesion sesion) {
         this.sga = sga;
         this.sesion = sesion;
@@ -144,6 +145,8 @@ public class ReservasView {
         txtNombreAcompanante.setPrefWidth(220);
         listaAcompanantes.setPrefHeight(105);
         listaAcompanantes.setPlaceholder(new Label("Sin acompañantes registrados (los cupos extra se asumen adultos)."));
+        btnCheckIn.getStyleClass().add("boton-primario");
+        btnCheckOut.getStyleClass().add("boton-primario");
     }
 
     private void configurarListaAcompanantes() {
@@ -275,11 +278,10 @@ public class ReservasView {
     }
 
     private Node construirBarraAccionesReserva() {
-        HBox acciones = new HBox(12, btnAnticipo, btnCancelar, btnRefrescar);
+        HBox acciones = new HBox(12, btnAnticipo, btnCheckIn, btnCheckOut, btnCancelar, btnRefrescar);
         acciones.setAlignment(Pos.CENTER_LEFT);
         return acciones;
     }
-
     private VBox etiquetarCampo(String etiqueta, Node control) {
         VBox caja = new VBox(4, Vistas.texto(etiqueta, "texto-suave"), control);
         HBox.setHgrow(caja, Priority.NEVER);
@@ -345,4 +347,6 @@ public class ReservasView {
     public Button getBtnAnticipo() { return btnAnticipo; }
     public Button getBtnCancelar() { return btnCancelar; }
     public Button getBtnRefrescar() { return btnRefrescar; }
+    public Button getBtnCheckIn() { return btnCheckIn; }
+    public Button getBtnCheckOut() { return btnCheckOut; }
 }
