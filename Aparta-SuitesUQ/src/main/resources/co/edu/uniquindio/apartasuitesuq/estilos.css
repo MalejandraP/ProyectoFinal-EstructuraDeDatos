@@ -290,7 +290,9 @@
 /* 2. Versión compacta de los botones para que quepan sin cortarse */
 .boton-primario.boton-sm,
 .boton-secundario.boton-sm {
-    -fx-padding: 6 12 6 12;
+    -fx-pref-height: 32;
+    -fx-min-height: 32;
+    -fx-padding: 0 12 0 12;
     -fx-font-size: 12px;
     -fx-background-radius: 8;
 }

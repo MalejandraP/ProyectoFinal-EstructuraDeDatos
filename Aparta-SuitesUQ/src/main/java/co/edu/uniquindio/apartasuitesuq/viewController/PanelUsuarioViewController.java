@@ -73,6 +73,7 @@ public class PanelUsuarioViewController {
     private void initialize() {
         configurarListaReservas();
         configurarListaFavoritos();
+        configurarListaHistorial();
         listaFavoritos.prefHeightProperty().bind(
                 javafx.beans.binding.Bindings.max(72,
                         javafx.beans.binding.Bindings.size(listaFavoritos.getItems()).multiply(72))
@@ -82,13 +83,6 @@ public class PanelUsuarioViewController {
                 return a == null ? "" : a.getCodigo() + " · " + a.getNombre();
             }
             @Override public Apartamento fromString(String s) { return null; }
-        });
-        listaHistorial.setCellFactory(lv -> new ListCell<>() {
-            @Override
-            protected void updateItem(Reserva e, boolean vacio) {
-                super.updateItem(e, vacio);
-                setText(vacio || e == null ? null : e.toString());
-            }
         });
         Locale co = new Locale("es", "CO");
         colFolioFecha.setCellValueFactory(c -> new SimpleStringProperty(
@@ -166,6 +160,7 @@ public class PanelUsuarioViewController {
         for (Reserva r : huesped.getHistorial()) {
             filas.add(r);
         }
+        filas.sort((r1, r2) -> r2.getFechaInicio().compareTo(r1.getFechaInicio()));
         listaHistorial.setItems(filas);
     }
 
@@ -252,6 +247,88 @@ public class PanelUsuarioViewController {
                 }
             }
         });
+    }
+    private void configurarListaHistorial() {
+        Locale colombia = new Locale("es", "CO");
+        DateTimeFormatter fmtDia = DateTimeFormatter.ofPattern("d", colombia);
+        DateTimeFormatter fmtMesAnio = DateTimeFormatter.ofPattern("MMM yyyy", colombia);
+
+        listaHistorial.setCellFactory(lv -> new ListCell<>() {
+            @Override
+            protected void updateItem(Reserva r, boolean vacio) {
+                super.updateItem(r, vacio);
+                if (vacio || r == null) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    Label lblCodigo = new Label(r.getCodigoReserva());
+                    lblCodigo.getStyleClass().add("texto-fuerte");
+
+                    String infoApto = r.getApartamento() != null
+                            ? " · " + r.getApartamento().getCodigo() + " " + r.getApartamento().getNombre()
+                            : "";
+                    Label lblApto = new Label(infoApto);
+                    lblApto.getStyleClass().add("texto-suave");
+
+                    HBox filaSuperior = new HBox(lblCodigo, lblApto);
+                    filaSuperior.setAlignment(Pos.CENTER_LEFT);
+
+                    // Línea 2: Huésped + Fechas y noches
+                    long noches = ChronoUnit.DAYS.between(r.getFechaInicio(), r.getFechaFin());
+                    String mesFin = r.getFechaFin().format(fmtMesAnio).replace(".", "");
+                    String nombreHuesped = r.getHuesped() != null ? r.getHuesped().getNombre() + " · " : "";
+
+                    String textoFechas = String.format("%s%s - %s %s · %d %s",
+                            nombreHuesped,
+                            r.getFechaInicio().format(fmtDia),
+                            r.getFechaFin().format(fmtDia),
+                            mesFin,
+                            noches,
+                            noches == 1 ? "noche" : "noches");
+
+                    Label lblFechas = new Label(textoFechas);
+                    lblFechas.getStyleClass().add("texto-suave");
+                    lblFechas.setStyle("-fx-font-size: 11px;");
+                    lblFechas.setWrapText(true);
+
+                    VBox columnaIzquierda = new VBox(3, filaSuperior, lblFechas);
+                    HBox.setHgrow(columnaIzquierda, Priority.ALWAYS);
+
+                    // Lado derecho: reutilizando .chip y .chip-neutro / .chip-fuera
+                    String estadoStr = r.getEstado() != null ? r.getEstado().toString() : "Finalizada";
+                    Label badgeEstado = new Label(capitalizar(estadoStr));
+                    badgeEstado.getStyleClass().addAll("chip",
+                            estadoStr.toUpperCase().contains("CANCELADA") ? "chip-fuera" : "chip-neutro");
+                    badgeEstado.setStyle("-fx-padding: 3 8 3 8; -fx-font-size: 11px;");
+                    badgeEstado.setMinWidth(Region.USE_PREF_SIZE);
+
+                    String montoFmt = "$" + String.format(colombia, "%,.0f", r.getCostoTotal());
+                    Label lblMonto = new Label(montoFmt);
+                    lblMonto.getStyleClass().add("texto-fuerte");
+                    lblMonto.setStyle("-fx-font-size: 12px;");
+                    lblMonto.setMinWidth(Region.USE_PREF_SIZE);
+
+                    VBox columnaDerecha = new VBox(4, badgeEstado, lblMonto);
+                    columnaDerecha.setAlignment(Pos.CENTER_RIGHT);
+
+                    // Tarjeta reutilizando directamente .caja-info
+                    HBox tarjeta = new HBox(10, columnaIzquierda, columnaDerecha);
+                    tarjeta.setAlignment(Pos.CENTER_LEFT);
+                    tarjeta.getStyleClass().add("caja-info");
+
+                    tarjeta.prefWidthProperty().bind(lv.widthProperty().subtract(18));
+                    tarjeta.maxWidthProperty().bind(lv.widthProperty().subtract(18));
+
+                    setText(null);
+                    setGraphic(tarjeta);
+                }
+            }
+        });
+    }
+
+    private String capitalizar(String texto) {
+        if (texto == null || texto.isEmpty()) return "";
+        return texto.substring(0, 1).toUpperCase() + texto.substring(1).toLowerCase();
     }
     private void configurarListaReservas() {
         Locale colombia = new Locale("es", "CO");
@@ -475,4 +552,6 @@ public class PanelUsuarioViewController {
     private void onSolicitarReserva() {
         if (alSolicitarReserva != null) alSolicitarReserva.run();
     }
+
+
 }
