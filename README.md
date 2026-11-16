@@ -87,14 +87,11 @@ Aparta-SuitesUQ/src/main/resources/co/edu/uniquindio/apartasuitesuq/
 
 - [Diagrama de clases](docs/diagrama-clases.md)
 - [Diagrama de estructuras propias](docs/diagrama-estructuras.md)
-- [Guion de la demostración](docs/guion-demo.md)
-- [Trazabilidad de la GUI](docs/trazabilidad-gui.md) (funcionalidad → pantalla → componente → fx:id)
+
 
 ## Equipo
 
-| Integrante | Parte |
-| --- | --- |
-| Alejandra | P1 – estructuras lineales, folio, canal externo y turnos |
-| Camila | P2 – árbol binario de búsqueda y servicio de reservas |
-| Alejandro | P3 – grafo del edificio, cola de prioridad, preparación y vencimientos |
-| Jerónimo | P4 – modelo de dominio, estancia, temporadas, liquidación, fachada, carga de datos, estadísticas, ventana principal y documentación |
+Alejandro Rivera
+Jerónimo Valderrama
+Maria Camila Flórez 
+María Alejandra Pinzón
