@@ -12,7 +12,7 @@ import javafx.util.StringConverter;
 
 import java.util.Locale;
 
-public class FolioViewController {
+public class FolioViewController implements ControladorPantalla {
 
     @FXML private Label lblTitulo, lblSubtitulo, lblEstadoReserva, lblUltimaOperacion;
     @FXML private Label lblTotalCargos, lblTotalPagos, lblSaldo;
@@ -25,10 +25,46 @@ public class FolioViewController {
     @FXML private ToggleGroup grupoTipo;
     @FXML private ToggleButton btnCargo, btnPago;
     @FXML private TextField txtMonto, txtDescripcion;
+    @FXML private Label lblTurnoActual;
+    @FXML private ListView<Recepcionista> listaTurnos;
 
     private static final Locale CO = new Locale("es", "CO");
     private Reserva actual;
     private SGA sga;
+    private PrincipalViewController principal;
+
+    /** Lo llama la ventana principal al abrir la pantalla; si viene de Reservas, abre esa reserva. */
+    @Override
+    public void inicializar(PrincipalViewController principal) {
+        this.principal = principal;
+        setSga(principal.getSga());
+        Reserva elegida = principal.tomarReservaParaFolio();
+        if (elegida != null) {
+            cmbReservas.setValue(elegida);
+        } else if (!cmbReservas.getItems().isEmpty()) {
+            cmbReservas.getSelectionModel().selectFirst();
+        }
+        mostrarTurnos();
+    }
+
+    /** Turno actual y rotación de recepcionistas, recorriendo la lista circular. */
+    private void mostrarTurnos() {
+        boolean hay = sga.getTurnos().hayRecepcionistas();
+        lblTurnoActual.setText(hay ? "En turno: " + sga.turnoActual().getNombre() : "No hay recepcionistas registrados");
+        listaTurnos.setItems(VistaUtil.lista(sga.getTurnos().getTurnos()));
+        if (hay) {
+            listaTurnos.getSelectionModel().select(sga.turnoActual());
+        }
+    }
+
+    @FXML
+    private void onPasarTurno() {
+        if (sga.getTurnos().hayRecepcionistas()) {
+            sga.pasarTurno();
+            mostrarTurnos();
+            principal.refrescarTurno();
+        }
+    }
 
     @FXML
     private void initialize() {
@@ -147,7 +183,7 @@ public class FolioViewController {
     private void aviso(String texto) {
         new Alert(Alert.AlertType.WARNING, texto).showAndWait();
     }
-    /** Lo llama VentanaPrincipal al abrir la pantalla. */
+    /** Carga las reservas del árbol en el selector. */
     public void setSga(SGA sga) {
         this.sga = sga;
         ObservableList<Reserva> opciones = FXCollections.observableArrayList();

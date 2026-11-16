@@ -1,298 +1,281 @@
-/* ===== Paleta ===== */
+/* =====================================================================
+   SGA · Aparta-Suites UQ — Hoja de estilos única de la aplicación
+   A. Paleta general (Hospitality Color Design System)
+   B. Paleta semántica del semáforo de estados (Status System Design)
+   ===================================================================== */
+
 .root {
-    -color-primario:      #2C3539;
-    -color-secundario:    #C2A68C;
-    -color-terciario:     #8A9A86;
-    -color-fondo:         #F9F8F6;
-    -color-tarjeta:       #FFFFFF;
-    -color-borde:         #E6E2DB;
-    -color-caja:          #F4F1EC;
-    -color-boton-suave:   #EFECE7;
-    -color-texto:         #2C3539;
-    -color-texto-suave:   #5F686C;
+    /* A. Paleta general */
+    -areia:            #D3C7AD;   /* Primary: fondos de contraste, seleccionados */
+    -azul:             #28374A;   /* Secondary: botón primario, titulares, sidebar */
+    -terra:            #754437;   /* Tertiary: botón secundario, acentos cálidos */
+    -verde-opaco:      #6B6751;   /* Accent: etiquetas, bordes de énfasis, filtros */
+    -blanco:           #FFFFFF;
+    -hueso:            #F9F8F6;   /* fondo general de ventana */
+    -borde:            #E6E2DB;
+    -caja:             #F3EFE7;
+    -texto:            #28374A;
+    -texto-suave:      #6B6751;
 
-    /* Estados operativos */
-    -color-preparado-bg:  #DDE8D8;  -color-preparado-tx: #1F3A1B;  -color-preparado-punto: #4C8A3F;
-    -color-ocupado-bg:    #DCE5EC;  -color-ocupado-tx:   #1F3748;  -color-ocupado-punto:   #3C6E96;
-    -color-pendiente-bg:  #F5E2A8;  -color-pendiente-tx: #4F3B00;  -color-pendiente-punto: #C99700;
-    -color-fuera-bg:      #F6D9D6;  -color-fuera-tx:     #7A1A13;  -color-fuera-punto:     #B3261E;
+    /* B. Semáforo de estados (punto sólido + badge al 15 %) */
+    -preparado:        #5A7D60;   -preparado-bg: rgba(90, 125, 96, 0.15);
+    -ocupado:          #3D5B78;   -ocupado-bg:   rgba(61, 91, 120, 0.15);
+    -pendiente:        #C99A45;   -pendiente-bg: rgba(201, 154, 69, 0.15);
+    -fuera:            #A84A3F;   -fuera-bg:     rgba(168, 74, 63, 0.15);
 
-    -fx-font-family: "Hanken Grotesk", "System";
+    -fx-font-family: "Hanken Grotesk", "Helvetica Neue", "System";
     -fx-font-size: 14px;
-    -fx-text-fill: -color-texto;
+    -fx-text-fill: -texto;
+    -fx-background-color: -hueso;
 }
 
-/* ===== Estructura general ===== */
-.contenido { -fx-background-color: -color-fondo; -fx-padding: 32; }
+/* ============================== Estructura ============================== */
+.contenido { -fx-background-color: -hueso; -fx-padding: 28 32 32 32; }
 
-.sidebar { -fx-background-color: -color-primario; -fx-padding: 24 16 24 16; }
-.marca-titulo    { -fx-text-fill: -color-fondo; -fx-font-size: 15px; -fx-font-weight: bold; }
-.marca-subtitulo { -fx-text-fill: #B9BEC0; -fx-font-size: 12px; }
+.sidebar { -fx-background-color: -azul; -fx-padding: 24 16 20 16; }
+.marca-titulo    { -fx-text-fill: -blanco; -fx-font-size: 17px; -fx-font-weight: bold; }
+.marca-subtitulo { -fx-text-fill: -areia; -fx-font-size: 12px; }
+.marca-seccion   { -fx-text-fill: derive(-areia, -25%); -fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 14 12 4 12; }
 
 .nav-item {
     -fx-background-color: transparent;
-    -fx-text-fill: #E8E4DD;
+    -fx-text-fill: #E9E4D8;
     -fx-alignment: CENTER_LEFT;
+    -fx-min-height: 44;
     -fx-pref-height: 44;
-    -fx-padding: 0 12 0 12;
+    -fx-padding: 0 14 0 14;
     -fx-background-radius: 12;
     -fx-cursor: hand;
 }
-.nav-item:hover   { -fx-background-color: #38444A; }
-.nav-item-activo  { -fx-background-color: -color-secundario; -fx-text-fill: -color-primario; -fx-font-weight: bold; }
+.nav-item:hover  { -fx-background-color: derive(-azul, 18%); }
+.nav-item-activo { -fx-background-color: -areia; -fx-text-fill: -azul; -fx-font-weight: bold; }
+
+.encabezado {
+    -fx-background-color: -blanco;
+    -fx-border-color: transparent transparent -borde transparent;
+    -fx-padding: 12 24 12 24;
+}
+.avatar {
+    -fx-background-color: -areia;
+    -fx-text-fill: -azul;
+    -fx-background-radius: 999;
+    -fx-min-width: 40; -fx-min-height: 40; -fx-pref-width: 40; -fx-pref-height: 40;
+    -fx-alignment: CENTER;
+    -fx-font-weight: bold;
+}
 
 .scroll-pane { -fx-background-color: transparent; -fx-padding: 0; }
-.scroll-pane > .viewport { -fx-background-color: -color-fondo; }
-/* ===== Textos ===== */
-.titulo-pagina   { -fx-font-size: 28px; -fx-font-weight: bold; }
-.titulo-seccion  { -fx-font-size: 16px; -fx-font-weight: bold; }
-.texto-suave     { -fx-text-fill: -color-texto-suave; -fx-font-size: 13px; }
-.texto-fuerte    { -fx-font-weight: bold; }
-.monto-pago      { -fx-text-fill: #2F4A2B; -fx-font-weight: bold; }
+.scroll-pane > .viewport { -fx-background-color: -hueso; }
 
-/* ===== Tarjetas ===== */
+/* ================================ Textos ================================ */
+.titulo-pagina  { -fx-text-fill: -azul; -fx-font-size: 26px; -fx-font-weight: bold; }
+.titulo-seccion { -fx-text-fill: -azul; -fx-font-size: 16px; -fx-font-weight: bold; }
+.texto-suave    { -fx-text-fill: -texto-suave; -fx-font-size: 13px; }
+.texto-fuerte   { -fx-text-fill: -azul; -fx-font-weight: bold; }
+.texto-error    { -fx-text-fill: -fuera; -fx-font-size: 13px; }
+.monto-pago     { -fx-text-fill: -preparado; -fx-font-weight: bold; }
+.saldo-grande   { -fx-text-fill: -azul; -fx-font-size: 28px; -fx-font-weight: bold; }
+.numero-grande  { -fx-text-fill: -azul; -fx-font-size: 26px; -fx-font-weight: bold; }
+
+/* =============================== Tarjetas =============================== */
 .tarjeta {
-    -fx-background-color: -color-tarjeta;
-    -fx-background-radius: 16;
-    -fx-border-color: -color-borde;
-    -fx-border-radius: 16;
+    -fx-background-color: -blanco;
+    -fx-background-radius: 12;
+    -fx-border-color: -borde;
+    -fx-border-radius: 12;
     -fx-padding: 18;
 }
-.tarjeta-seleccionada { -fx-border-color: -color-primario; -fx-border-width: 2; }
-.caja-info { -fx-background-color: -color-caja; -fx-background-radius: 12; -fx-padding: 12; }
-/* Quita bordes y fondo del ListView contenedor */
-.lista-tarjetas {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
-    -fx-padding: 0;
+.tarjeta-seleccionada { -fx-border-color: -azul; -fx-border-width: 2; }
+.caja-info { -fx-background-color: -caja; -fx-background-radius: 12; -fx-padding: 12; }
+
+/* Tarjeta de apartamento del tablero de Inicio */
+.tarjeta-apto { -fx-pref-width: 260; -fx-min-width: 260; -fx-max-width: 260; }
+.tarjeta-apto:hover { -fx-border-color: -verde-opaco; }
+.tarjeta-apto-codigo { -fx-text-fill: -azul; -fx-font-size: 18px; -fx-font-weight: bold; }
+.contexto-apto { -fx-background-color: -caja; -fx-background-radius: 10; -fx-padding: 8 10 8 10; -fx-font-size: 12px; }
+
+/* ===================== Semáforo: chips, puntos y tiles ===================== */
+.chip, .badge-estado {
+    -fx-padding: 4 10 4 10;
+    -fx-background-radius: 999;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+.chip-preparado, .badge-confirmada  { -fx-background-color: -preparado-bg; -fx-text-fill: -preparado; }
+.chip-ocupado,   .badge-encurso     { -fx-background-color: -ocupado-bg;   -fx-text-fill: -ocupado; }
+.chip-pendiente, .badge-pendiente   { -fx-background-color: -pendiente-bg; -fx-text-fill: -azul; }
+.chip-fuera,     .badge-cancelada   { -fx-background-color: -fuera-bg;     -fx-text-fill: -fuera; }
+.chip-neutro,    .badge-finalizada  { -fx-background-color: rgba(107, 103, 81, 0.15); -fx-text-fill: -verde-opaco; }
+
+.punto-preparado { -fx-fill: -preparado; }
+.punto-ocupado   { -fx-fill: -ocupado; }
+.punto-pendiente { -fx-fill: -pendiente; }
+.punto-fuera     { -fx-fill: -fuera; }
+
+.tile-resumen   { -fx-background-color: -blanco; -fx-background-radius: 12; -fx-border-color: -borde; -fx-border-radius: 12; -fx-padding: 14 16 14 16; -fx-min-width: 130; }
+.tile-preparado { -fx-background-color: -preparado-bg; -fx-border-color: transparent; }
+.tile-ocupado   { -fx-background-color: -ocupado-bg;   -fx-border-color: transparent; }
+.tile-pendiente { -fx-background-color: -pendiente-bg; -fx-border-color: transparent; }
+.tile-fuera     { -fx-background-color: -fuera-bg;     -fx-border-color: transparent; }
+
+/* ================================ Botones ================================ */
+.boton-primario, .boton-secundario, .boton-contorno {
+    -fx-min-height: 44;
+    -fx-pref-height: 44;
+    -fx-padding: 0 18 0 18;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+.boton-primario   { -fx-background-color: -azul;  -fx-text-fill: -blanco; }
+.boton-primario:hover   { -fx-background-color: derive(-azul, 15%); }
+.boton-secundario { -fx-background-color: -terra; -fx-text-fill: -blanco; }
+.boton-secundario:hover { -fx-background-color: derive(-terra, 12%); }
+.boton-contorno   { -fx-background-color: -blanco; -fx-border-color: -azul; -fx-border-width: 1.5; -fx-text-fill: -azul; }
+.boton-contorno:hover   { -fx-background-color: -caja; }
+.boton-primario:pressed, .boton-secundario:pressed, .boton-contorno:pressed { -fx-opacity: 0.85; }
+.boton-primario:disabled, .boton-secundario:disabled, .boton-contorno:disabled { -fx-opacity: 0.45; }
+
+/* Versión compacta (dentro de tarjetas y listas) */
+.boton-sm {
+    -fx-min-height: 32;
+    -fx-pref-height: 32;
+    -fx-padding: 0 12 0 12;
+    -fx-font-size: 12px;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
 }
 
-/* Cada fila de la lista */
-.lista-tarjetas .list-cell {
-    -fx-background-color: transparent;
-    -fx-padding: 0 0 8 0; /* Espacio de 8px entre tarjetas */
+/* ====================== Filtros (ToggleButton) y campos ====================== */
+.filtro {
+    -fx-background-color: -blanco;
+    -fx-border-color: -borde;
+    -fx-text-fill: -verde-opaco;
+    -fx-background-radius: 999;
+    -fx-border-radius: 999;
+    -fx-min-height: 36;
+    -fx-padding: 0 14 0 14;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
 }
+.filtro:selected { -fx-background-color: -verde-opaco; -fx-border-color: -verde-opaco; -fx-text-fill: -blanco; }
 
-.lista-tarjetas .list-cell:empty {
-    -fx-padding: 0;
+.campo-busqueda, .text-field, .combo-box, .date-picker, .spinner {
+    -fx-background-color: -blanco;
+    -fx-border-color: #D9D4CB;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-min-height: 40;
 }
+.campo-busqueda { -fx-pref-height: 44; -fx-padding: 0 14 0 14; }
+.campo-busqueda:focused, .text-field:focused { -fx-border-color: -azul; }
+.date-picker > .text-field, .spinner > .text-field, .combo-box .text-field { -fx-border-color: transparent; -fx-background-color: transparent; }
 
-/* La tarjeta interior beige de cada apartamento */
+/* ================================= Tablas ================================= */
+.table-view {
+    -fx-background-color: -blanco;
+    -fx-border-color: -borde;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-table-cell-border-color: #EEEAE3;
+    -fx-min-height: 180;
+}
+.table-view .column-header-background { -fx-background-color: -caja; -fx-background-radius: 12 12 0 0; }
+.table-view .column-header { -fx-background-color: transparent; }
+.table-view .column-header .label { -fx-text-fill: -verde-opaco; -fx-font-size: 12px; -fx-font-weight: bold; }
+.table-row-cell:selected { -fx-background-color: -areia; }
+.table-row-cell:selected .text { -fx-fill: -azul; }
+.list-view { -fx-background-radius: 12; -fx-border-radius: 12; -fx-border-color: -borde; -fx-min-height: 120; }
+.list-view .list-cell:filled:selected { -fx-background-color: -areia; -fx-text-fill: -azul; }
+.combo-box .list-cell { -fx-background-color: transparent; -fx-text-fill: -texto; }
+.combo-box-popup .list-view .list-cell:filled:hover { -fx-background-color: -caja; }
+
+/* ================== Panel de usuario (pantalla del equipo) ================== */
+.scroll-panel-usuario { -fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent; }
+.scroll-panel-usuario > .viewport { -fx-background-color: transparent; }
+
+.lista-tarjetas { -fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0; }
+.lista-tarjetas .list-cell { -fx-background-color: transparent; -fx-padding: 0 0 8 0; }
+.lista-tarjetas .list-cell:empty { -fx-padding: 0; }
+.lista-tarjetas .scroll-bar:horizontal { -fx-opacity: 0; -fx-max-height: 0; -fx-pref-height: 0; }
+
 .item-favorito {
-    -fx-background-color: #F5F2EB;
+    -fx-background-color: -caja;
     -fx-background-radius: 10;
     -fx-padding: 12 14 12 14;
     -fx-border-color: transparent;
     -fx-border-radius: 10;
 }
+.lista-tarjetas .list-cell:filled:selected .item-favorito { -fx-border-color: -terra; -fx-border-width: 1.5; }
+.fav-codigo  { -fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: -azul; }
+.fav-nombre  { -fx-font-size: 13px; -fx-text-fill: -texto; }
+.fav-detalle { -fx-font-size: 11px; -fx-text-fill: -texto-suave; }
+.fav-corazon { -fx-font-size: 16px; -fx-text-fill: -terra; }
 
-/* Efecto visual cuando el usuario selecciona una fila para quitarla */
-.lista-tarjetas .list-cell:filled:selected .item-favorito {
-    -fx-border-color: #7D5A44;
-    -fx-border-width: 1.5;
-}
-.lista-tarjetas .scroll-bar:horizontal {
-    -fx-opacity: 0;
-    -fx-max-height: 0;
-    -fx-pref-height: 0;
-}
-/* Tipografía dentro de la tarjeta */
-.fav-codigo {
-    -fx-font-weight: bold;
-    -fx-font-size: 13px;
-    -fx-text-fill: #2B2B2B;
-}
-
-.fav-nombre {
-    -fx-font-size: 13px;
-    -fx-text-fill: #4A4A4A;
-}
-
-.fav-detalle {
-    -fx-font-size: 11px;
-    -fx-text-fill: #7A756D;
-}
-
-.fav-corazon {
-    -fx-font-size: 16px;
-    -fx-text-fill: #7D5A44; /* Tono café/terracota del diseño */
-}
-/* Tarjeta blanca de cada reserva */
 .item-reserva {
-    -fx-background-color: #FFFFFF;
+    -fx-background-color: -blanco;
     -fx-background-radius: 12;
-    -fx-border-color: #E6E2DA;
+    -fx-border-color: -borde;
     -fx-border-radius: 12;
     -fx-border-width: 1;
     -fx-padding: 16 20 16 20;
 }
+.lista-tarjetas .list-cell:filled:selected .item-reserva { -fx-border-color: -azul; -fx-border-width: 1.5; }
+.res-codigo         { -fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: -azul; }
+.res-apto           { -fx-font-size: 14px; -fx-text-fill: -texto; }
+.res-fechas         { -fx-font-size: 12px; -fx-text-fill: -texto-suave; }
+.res-etiqueta-monto { -fx-font-size: 11px; -fx-text-fill: -texto-suave; }
+.res-valor-monto    { -fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: -azul; }
 
-.lista-tarjetas .list-cell:filled:selected .item-reserva {
-    -fx-border-color: #2B2B2B;
-    -fx-border-width: 1.5;
+/* ================================ Pestañas ================================ */
+.tab-pane > .tab-header-area > .headers-region > .tab {
+    -fx-background-color: transparent;
+    -fx-background-radius: 10 10 0 0;
+    -fx-padding: 8 16 8 16;
 }
+.tab-pane > .tab-header-area > .headers-region > .tab:selected { -fx-background-color: -blanco; -fx-border-color: -borde -borde transparent -borde; -fx-border-radius: 10 10 0 0; }
+.tab-pane > .tab-header-area > .headers-region > .tab .tab-label { -fx-text-fill: -verde-opaco; -fx-font-weight: bold; }
+.tab-pane > .tab-header-area > .headers-region > .tab:selected .tab-label { -fx-text-fill: -azul; }
+.tab-pane > .tab-header-area > .tab-header-background { -fx-background-color: transparent; -fx-border-color: transparent transparent -borde transparent; }
+.tab-pane > .tab-content-area { -fx-background-color: transparent; }
 
-.res-codigo {
-    -fx-font-weight: bold;
-    -fx-font-size: 14px;
-    -fx-text-fill: #2B2B2B;
-}
+.text-area { -fx-background-radius: 12; -fx-border-radius: 12; -fx-border-color: #D9D4CB; }
+.text-area .content { -fx-background-color: -blanco; -fx-background-radius: 12; }
+.texto-codigo { -fx-font-family: "Menlo", "Consolas", monospace; -fx-font-size: 12px; }
 
-.res-apto {
-    -fx-font-size: 14px;
-    -fx-text-fill: #4A4A4A;
-}
-
-.res-fechas {
-    -fx-font-size: 12px;
-    -fx-text-fill: #7A756D;
-}
-
-.res-etiqueta-monto {
+/* ======================= Calendario de ocupación (C) ======================= */
+.celda {
+    -fx-min-width: 30; -fx-pref-width: 30; -fx-min-height: 30; -fx-pref-height: 30;
+    -fx-alignment: CENTER;
+    -fx-background-radius: 6;
     -fx-font-size: 11px;
-    -fx-text-fill: #8C877E;
-}
-
-.res-valor-monto {
-    -fx-font-weight: bold;
-    -fx-font-size: 14px;
-    -fx-text-fill: #2B2B2B;
-}
-
-/* Badges de estado (píldoras superiores derechas) */
-.badge-estado {
-    -fx-padding: 4 10 4 10;
-    -fx-background-radius: 12;
-    -fx-font-size: 11px;
-    -fx-font-weight: bold;
-}
-
-.badge-confirmada {
-    -fx-background-color: #E2EFE3;
-    -fx-text-fill: #2E6F3E;
-}
-
-.badge-pendiente {
-    -fx-background-color: #FDF3D7;
-    -fx-text-fill: #9A6B16;
-}
-
-.badge-encurso {
-    -fx-background-color: #E3ECF8;
-    -fx-text-fill: #2C5282;
-}
-
-.badge-cancelada {
-    -fx-background-color: #FBE4E4;
-    -fx-text-fill: #9B2C2C;
-}
-/* ===== Chips de estado (Label) ===== */
-.chip {
-    -fx-padding: 5 10 5 10;
-    -fx-background-radius: 999;
-    -fx-font-size: 12px;
-    -fx-font-weight: bold;
-}
-.chip-preparado { -fx-background-color: -color-preparado-bg; -fx-text-fill: -color-preparado-tx; }
-.chip-ocupado   { -fx-background-color: -color-ocupado-bg;   -fx-text-fill: -color-ocupado-tx; }
-.chip-pendiente { -fx-background-color: -color-pendiente-bg; -fx-text-fill: -color-pendiente-tx; }
-.chip-fuera     { -fx-background-color: -color-fuera-bg;     -fx-text-fill: -color-fuera-tx; }
-.chip-neutro    { -fx-background-color: #E3E0DA;             -fx-text-fill: -color-texto; }
-
-/* Punto de color (Circle) */
-.punto-preparado { -fx-fill: -color-preparado-punto; }
-.punto-ocupado   { -fx-fill: -color-ocupado-punto; }
-.punto-pendiente { -fx-fill: -color-pendiente-punto; }
-.punto-fuera     { -fx-fill: -color-fuera-punto; }
-
-/* Tiles del resumen superior */
-.tile-resumen   { -fx-background-radius: 16; -fx-padding: 14 16 14 16; }
-.tile-preparado { -fx-background-color: -color-preparado-bg; }
-.tile-ocupado   { -fx-background-color: -color-ocupado-bg; }
-.tile-pendiente { -fx-background-color: -color-pendiente-bg; }
-.tile-fuera     { -fx-background-color: -color-fuera-bg; }
-
-/* ===== Botones ===== */
-.boton-primario, .boton-secundario, .boton-contorno {
-    -fx-pref-height: 44;
-    -fx-padding: 0 18 0 18;
-    -fx-background-radius: 12;
-    -fx-font-weight: bold;
     -fx-cursor: hand;
 }
-.boton-primario   { -fx-background-color: -color-primario;    -fx-text-fill: -color-fondo; }
-.boton-primario:hover { -fx-background-color: #3B4A50; }
-.boton-secundario { -fx-background-color: -color-boton-suave; -fx-text-fill: -color-texto; }
-.boton-secundario:hover { -fx-background-color: #E3DFD8; }
-.boton-contorno   { -fx-background-color: transparent; -fx-border-color: -color-primario; -fx-border-radius: 12; -fx-text-fill: -color-primario; }
-.boton-primario:pressed, .boton-secundario:pressed { -fx-opacity: 0.85; }
+.celda-cabecera { -fx-background-color: -caja; -fx-text-fill: -verde-opaco; -fx-font-weight: bold; -fx-min-height: 38; -fx-pref-height: 38; -fx-text-alignment: center; -fx-cursor: default; }
+.celda-apto     { -fx-min-width: 210; -fx-pref-width: 210; -fx-alignment: CENTER_LEFT; -fx-padding: 0 10 0 10; -fx-background-color: -blanco; -fx-text-fill: -azul; -fx-font-weight: bold; -fx-cursor: default; }
+.celda-ocupada   { -fx-background-color: #3D5B78; -fx-text-fill: -blanco; }
+.celda-bloqueada { -fx-background-color: #A84A3F; -fx-text-fill: -blanco; }
+.celda-libre     { -fx-background-color: rgba(90, 125, 96, 0.18); }
+.celda-hoy       { -fx-border-color: -terra; -fx-border-width: 2; -fx-border-radius: 6; }
+.celda-seleccionada { -fx-border-color: -azul; -fx-border-width: 3; -fx-border-radius: 6; }
 
-/* ===== Filtros (ToggleButton) y búsqueda ===== */
-.filtro {
-    -fx-background-color: -color-boton-suave;
-    -fx-text-fill: -color-texto;
-    -fx-background-radius: 999;
-    -fx-pref-height: 40;
-    -fx-padding: 0 16 0 16;
-    -fx-font-weight: bold;
-}
-.filtro:selected { -fx-background-color: -color-primario; -fx-text-fill: -color-fondo; }
+/* ============================ Mapa del edificio (F) ============================ */
+.lienzo-mapa { -fx-background-color: #FBFAF7; -fx-background-radius: 10; -fx-border-color: -borde; -fx-border-radius: 10; }
 
-.campo-busqueda {
-    -fx-background-color: -color-tarjeta;
-    -fx-border-color: #D9D4CB;
-    -fx-background-radius: 12;
-    -fx-border-radius: 12;
-    -fx-pref-height: 44;
-    -fx-padding: 0 14 0 14;
-}
-.campo-busqueda:focused { -fx-border-color: -color-primario; }
-.scroll-panel-usuario {
-    -fx-background-color: transparent;
-    -fx-background: transparent;
-    -fx-border-color: transparent;
+/* ===================== Canal externo (pantalla del equipo) ===================== */
+.boton-pill { -fx-background-radius: 999; -fx-border-radius: 999; }
+.chip-neutro-suave { -fx-background-color: rgba(107, 103, 81, 0.12); -fx-text-fill: -verde-opaco; }
+.icono-seccion { -fx-text-fill: -terra; -fx-font-size: 16px; -fx-font-weight: bold; }
+.badge-codigo-solicitud {
+    -fx-border-color: -verde-opaco; -fx-border-radius: 999; -fx-background-radius: 999;
+    -fx-padding: 2 8 2 8; -fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: -azul;
 }
 
-.scroll-panel-usuario > .viewport {
-    -fx-background-color: transparent;
-}
-
-/* ===== Tabla del folio ===== */
-.table-view { -fx-background-color: transparent; -fx-table-cell-border-color: #EEEAE3; }
-.table-view .column-header { -fx-background-color: transparent; }
-.table-view .column-header .label { -fx-text-fill: -color-texto-suave; -fx-font-size: 12px; -fx-font-weight: bold; }
-.table-row-cell:selected { -fx-background-color: -color-caja; }
-.table-row-cell:selected .text { -fx-fill: -color-texto; }
-.saldo-grande { -fx-font-size: 28px; -fx-font-weight: bold; }
-
-/* 1. Devolver color oscuro a los títulos y textos del perfil */
-.titulo-pagina {
-    -fx-text-fill: #2B2B2B;
-    -fx-font-weight: bold;
-    -fx-font-size: 24px;
-}
-
-.titulo-seccion {
-    -fx-text-fill: #2B2B2B;
-    -fx-font-weight: bold;
-    -fx-font-size: 15px;
-}
-
-.texto-fuerte {
-    -fx-text-fill: #2B2B2B;
-    -fx-font-weight: bold;
-}
-
-.texto-suave {
-    -fx-text-fill: #7A756D;
-}
-
-/* 2. Versión compacta de los botones para que quepan sin cortarse */
-.boton-primario.boton-sm,
-.boton-secundario.boton-sm {
-    -fx-pref-height: 32;
-    -fx-min-height: 32;
-    -fx-padding: 0 12 0 12;
-    -fx-font-size: 12px;
-    -fx-background-radius: 8;
-}
+/* ================================ Gráficos ================================ */
+.chart-title { -fx-text-fill: -azul; -fx-font-size: 15px; -fx-font-weight: bold; }
+.chart-plot-background { -fx-background-color: #FBFAF7; }
+.axis-label, .axis { -fx-tick-label-fill: -verde-opaco; -fx-text-fill: -verde-opaco; }
+.chart-bar, .default-color0.chart-bar { -fx-bar-fill: #3D5B78; -fx-background-radius: 4 4 0 0; }
+.grafico-temporada .chart-bar { -fx-bar-fill: #6B6751; }
+.grafico-ingresos .chart-bar { -fx-bar-fill: #754437; }

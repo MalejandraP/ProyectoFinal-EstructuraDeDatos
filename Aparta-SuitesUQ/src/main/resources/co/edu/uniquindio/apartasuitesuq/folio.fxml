@@ -3,9 +3,10 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="co.edu.uniquindio.apartasuitesuq.viewController.FolioViewController"
-      styleClass="contenido" spacing="20">
+      fitToWidth="true">
+<VBox styleClass="contenido" spacing="20">
 
     <!-- Encabezado -->
     <HBox alignment="CENTER_LEFT" spacing="12">
@@ -24,7 +25,7 @@
         <VBox styleClass="tarjeta" spacing="14" HBox.hgrow="ALWAYS">
             <Label text="Movimientos" styleClass="titulo-seccion"/>
 
-            <TableView fx:id="tablaMovimientos" VBox.vgrow="ALWAYS">
+            <TableView fx:id="tablaMovimientos" VBox.vgrow="ALWAYS" prefHeight="420">
                 <columns>
                     <TableColumn fx:id="colFecha" text="Fecha"/>
                     <TableColumn fx:id="colTipo" text="Tipo"/>
@@ -34,6 +35,7 @@
                 <columnResizePolicy>
                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
                 </columnResizePolicy>
+                <placeholder><Label text="Elige una reserva para ver sus movimientos"/></placeholder>
             </TableView>
 
             <HBox styleClass="caja-info" alignment="CENTER_LEFT" spacing="16">
@@ -89,6 +91,17 @@
                 <Button text="Registrar" styleClass="boton-primario" maxWidth="Infinity"
                         onAction="#onRegistrar"/>
             </VBox>
+
+            <!-- Turnos de recepción (lista circular) -->
+            <VBox styleClass="tarjeta" spacing="10">
+                <Label text="Turno de recepción" styleClass="titulo-seccion"/>
+                <Label fx:id="lblTurnoActual" styleClass="texto-fuerte"/>
+                <Label text="Rotación (lista circular)" styleClass="texto-suave"/>
+                <ListView fx:id="listaTurnos" prefHeight="120"/>
+                <Button text="Pasar al siguiente turno" styleClass="boton-contorno" maxWidth="Infinity"
+                        onAction="#onPasarTurno"/>
+            </VBox>
         </VBox>
     </HBox>
 </VBox>
+</ScrollPane>

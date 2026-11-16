@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!-- B. Panel de reservas: disponibilidad, cotización, creación, grupos grandes y ciclo de vida -->
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="co.edu.uniquindio.apartasuitesuq.viewController.ReservasViewController"
+            fitToWidth="true">
+    <VBox styleClass="contenido" spacing="18">
+
+        <HBox spacing="12" alignment="CENTER_LEFT">
+            <VBox spacing="2">
+                <Label text="Reservas" styleClass="titulo-pagina"/>
+                <Label text="Se cobra por persona y por noche con la tarifa de la temporada de cada noche; los menores de 6 años no pagan."
+                       styleClass="texto-suave" wrapText="true"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="btnVencimientos" text="Procesar vencimientos (24 h)" styleClass="boton-contorno"
+                    onAction="#onProcesarVencimientos"/>
+            <Button text="Actualizar" styleClass="boton-primario" onAction="#onActualizar"/>
+        </HBox>
+
+        <TabPane fx:id="pestanas" tabClosingPolicy="UNAVAILABLE">
+
+            <!-- ============================ NUEVA RESERVA ============================ -->
+            <Tab fx:id="tabNueva" text="Nueva reserva">
+                <HBox spacing="18">
+                    <padding><Insets top="16"/></padding>
+
+                    <!-- Columna izquierda: disponibilidad y titular -->
+                    <VBox spacing="18" HBox.hgrow="ALWAYS" minWidth="520">
+                        <VBox styleClass="tarjeta" spacing="12">
+                            <Label text="1. Disponibilidad" styleClass="titulo-seccion"/>
+                            <FlowPane hgap="10" vgap="10" alignment="CENTER_LEFT">
+                                <VBox spacing="4"><Label text="Entrada" styleClass="texto-suave"/><DatePicker fx:id="dpEntrada" prefWidth="150"/></VBox>
+                                <VBox spacing="4"><Label text="Salida" styleClass="texto-suave"/><DatePicker fx:id="dpSalida" prefWidth="150"/></VBox>
+                                <VBox spacing="4"><Label text="Personas" styleClass="texto-suave"/><Spinner fx:id="spPersonas" prefWidth="90" editable="true"/></VBox>
+                                <VBox spacing="4"><Label text="Ordenar por" styleClass="texto-suave"/><ComboBox fx:id="cbOrden" prefWidth="160"/></VBox>
+                                <Button text="Buscar disponibles" styleClass="boton-primario" onAction="#onBuscarDisponibles"/>
+                            </FlowPane>
+                            <TableView fx:id="tablaDisponibles" prefHeight="240">
+                                <columns>
+                                    <TableColumn fx:id="colDispCodigo" text="Código"/>
+                                    <TableColumn fx:id="colDispNombre" text="Nombre"/>
+                                    <TableColumn fx:id="colDispUbicacion" text="Bloque / piso"/>
+                                    <TableColumn fx:id="colDispDormitorios" text="Dorm."/>
+                                    <TableColumn fx:id="colDispCapacidad" text="Capacidad"/>
+                                    <TableColumn fx:id="colDispTarifa" text="Tarifa base"/>
+                                    <TableColumn fx:id="colDispReservas" text="Reservas"/>
+                                </columns>
+                                <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+                                <placeholder><Label text="Busca disponibilidad para un rango de fechas"/></placeholder>
+                            </TableView>
+                            <Label fx:id="lblSeleccionado" styleClass="caja-info" maxWidth="Infinity" wrapText="true"/>
+                        </VBox>
+
+                        <VBox styleClass="tarjeta" spacing="12">
+                            <Label text="2. Titular y ocupantes" styleClass="titulo-seccion"/>
+                            <Label fx:id="lblTitularHuesped" styleClass="caja-info" maxWidth="Infinity" wrapText="true"/>
+                            <GridPane fx:id="formTitular" hgap="10" vgap="8">
+                                <columnConstraints>
+                                    <ColumnConstraints minWidth="110"/>
+                                    <ColumnConstraints hgrow="ALWAYS"/>
+                                </columnConstraints>
+                                <Label text="Documento" styleClass="texto-suave"/>
+                                <HBox spacing="8" GridPane.columnIndex="1">
+                                    <TextField fx:id="txtDocumento" HBox.hgrow="ALWAYS" promptText="Documento del titular"/>
+                                    <Button text="Buscar" styleClass="boton-contorno, boton-sm" onAction="#onBuscarTitular"/>
+                                </HBox>
+                                <Label text="Nombre" styleClass="texto-suave" GridPane.rowIndex="1"/>
+                                <TextField fx:id="txtNombre" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                                <Label text="Nacimiento" styleClass="texto-suave" GridPane.rowIndex="2"/>
+                                <DatePicker fx:id="dpNacimiento" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                                <Label text="Teléfono" styleClass="texto-suave" GridPane.rowIndex="3"/>
+                                <TextField fx:id="txtTelefono" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                                <Label text="Correo" styleClass="texto-suave" GridPane.rowIndex="4"/>
+                                <TextField fx:id="txtCorreo" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                                <Label text="Canal" styleClass="texto-suave" GridPane.rowIndex="5"/>
+                                <ComboBox fx:id="cbCanal" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+                            </GridPane>
+                            <Label text="Acompañantes con fecha de nacimiento (los que no se registren se cobran como adultos)"
+                                   styleClass="texto-suave" wrapText="true"/>
+                            <ListView fx:id="listaOcupantes" prefHeight="110"/>
+                            <HBox spacing="8" alignment="CENTER_LEFT">
+                                <TextField fx:id="txtNombreOcupante" promptText="Nombre" HBox.hgrow="ALWAYS"/>
+                                <DatePicker fx:id="dpNacimientoOcupante" promptText="Nacimiento" prefWidth="150"/>
+                                <Button text="Agregar" styleClass="boton-primario, boton-sm" onAction="#onAgregarOcupante"/>
+                                <Button text="Quitar" styleClass="boton-secundario, boton-sm" onAction="#onQuitarOcupante"/>
+                            </HBox>
+                        </VBox>
+                    </VBox>
+
+                    <!-- Columna derecha: cotización -->
+                    <VBox styleClass="tarjeta" spacing="12" minWidth="420" prefWidth="460">
+                        <Label text="3. Cotización noche por noche" styleClass="titulo-seccion"/>
+                        <Label text="Recorre la estancia con su Iterator y liquida recursivamente cada noche."
+                               styleClass="texto-suave" wrapText="true"/>
+                        <Button text="Cotizar" styleClass="boton-contorno" maxWidth="Infinity" onAction="#onCotizar"/>
+                        <GridPane hgap="12" vgap="8">
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="ALWAYS"/>
+                                <ColumnConstraints hgrow="ALWAYS"/>
+                            </columnConstraints>
+                            <VBox styleClass="caja-info" spacing="2">
+                                <Label text="Total" styleClass="texto-suave"/>
+                                <Label fx:id="lblTotal" text="—" styleClass="saldo-grande"/>
+                            </VBox>
+                            <VBox styleClass="caja-info" spacing="2" GridPane.columnIndex="1">
+                                <Label text="Anticipo 30 %" styleClass="texto-suave"/>
+                                <Label fx:id="lblAnticipo" text="—" styleClass="saldo-grande"/>
+                            </VBox>
+                        </GridPane>
+                        <Label fx:id="lblResumenCotizacion" styleClass="texto-suave" wrapText="true"/>
+                        <TableView fx:id="tablaDesglose" prefHeight="300" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="colNoche" text="Noche"/>
+                                <TableColumn fx:id="colTemporada" text="Temporada"/>
+                                <TableColumn fx:id="colTarifa" text="Tarifa/persona"/>
+                                <TableColumn fx:id="colPagan" text="Pagan"/>
+                                <TableColumn fx:id="colSinCobro" text="Sin cobro"/>
+                                <TableColumn fx:id="colSubtotal" text="Subtotal"/>
+                            </columns>
+                            <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+                            <placeholder><Label text="Elige un apartamento y presiona «Cotizar»"/></placeholder>
+                        </TableView>
+                        <Button fx:id="btnReservar" text="Crear reserva" styleClass="boton-primario" maxWidth="Infinity"
+                                onAction="#onCrearReserva"/>
+                    </VBox>
+                </HBox>
+            </Tab>
+
+            <!-- ============================ GRUPOS GRANDES ============================ -->
+            <Tab fx:id="tabGrupos" text="Grupos grandes">
+                <VBox spacing="18">
+                    <padding><Insets top="16"/></padding>
+                    <VBox styleClass="tarjeta" spacing="12">
+                        <Label text="Grupo que no cabe en un solo apartamento" styleClass="titulo-seccion"/>
+                        <Label text="Se busca con backtracking la combinación de apartamentos libres que aloja a todo el grupo con la menor cantidad de apartamentos."
+                               styleClass="texto-suave" wrapText="true"/>
+                        <FlowPane hgap="10" vgap="10" alignment="CENTER_LEFT">
+                            <VBox spacing="4"><Label text="Entrada" styleClass="texto-suave"/><DatePicker fx:id="dpGrupoEntrada" prefWidth="150"/></VBox>
+                            <VBox spacing="4"><Label text="Salida" styleClass="texto-suave"/><DatePicker fx:id="dpGrupoSalida" prefWidth="150"/></VBox>
+                            <VBox spacing="4"><Label text="Personas" styleClass="texto-suave"/><Spinner fx:id="spGrupoPersonas" prefWidth="90" editable="true"/></VBox>
+                            <VBox spacing="4"><Label text="Documento del titular" styleClass="texto-suave"/><TextField fx:id="txtGrupoDocumento" prefWidth="180"/></VBox>
+                            <VBox spacing="4"><Label text="Canal" styleClass="texto-suave"/><ComboBox fx:id="cbGrupoCanal" prefWidth="130"/></VBox>
+                            <Button text="Buscar combinación" styleClass="boton-primario" onAction="#onBuscarGrupo"/>
+                        </FlowPane>
+                        <TableView fx:id="tablaGrupo" prefHeight="200">
+                            <columns>
+                                <TableColumn fx:id="colGrupoCodigo" text="Código"/>
+                                <TableColumn fx:id="colGrupoNombre" text="Nombre"/>
+                                <TableColumn fx:id="colGrupoCapacidad" text="Capacidad"/>
+                                <TableColumn fx:id="colGrupoTarifa" text="Tarifa base"/>
+                            </columns>
+                            <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+                            <placeholder><Label text="Sin combinación calculada"/></placeholder>
+                        </TableView>
+                        <Label fx:id="lblGrupoResumen" styleClass="caja-info" maxWidth="Infinity" wrapText="true"/>
+                        <Button fx:id="btnReservarGrupo" text="Reservar la combinación" styleClass="boton-primario"
+                                onAction="#onReservarGrupo"/>
+                    </VBox>
+                </VBox>
+            </Tab>
+
+            <!-- ========================= RESERVAS REGISTRADAS ========================= -->
+            <Tab fx:id="tabRegistradas" text="Reservas registradas">
+                <VBox spacing="14">
+                    <padding><Insets top="16"/></padding>
+                    <FlowPane hgap="10" vgap="10" alignment="CENTER_LEFT">
+                        <TextField fx:id="txtBuscarCodigo" promptText="Código (ej. RES-3)" prefWidth="180"
+                                   onAction="#onBuscarReserva"/>
+                        <Button text="Buscar por código" styleClass="boton-contorno" onAction="#onBuscarReserva"/>
+                        <Label text="Orden:" styleClass="texto-suave"/>
+                        <ToggleButton fx:id="tgPorFecha" text="Fecha de entrada (árbol)" selected="true" styleClass="filtro">
+                            <toggleGroup><ToggleGroup fx:id="grupoOrden"/></toggleGroup>
+                        </ToggleButton>
+                        <ToggleButton fx:id="tgPorCodigo" text="Código" styleClass="filtro" toggleGroup="$grupoOrden"/>
+                    </FlowPane>
+                    <TableView fx:id="tablaReservas" prefHeight="330">
+                        <columns>
+                            <TableColumn fx:id="colResCodigo" text="Código"/>
+                            <TableColumn fx:id="colResTitular" text="Titular"/>
+                            <TableColumn fx:id="colResApto" text="Apto"/>
+                            <TableColumn fx:id="colResEntrada" text="Entrada"/>
+                            <TableColumn fx:id="colResSalida" text="Salida"/>
+                            <TableColumn fx:id="colResNoches" text="Noches"/>
+                            <TableColumn fx:id="colResPersonas" text="Pers."/>
+                            <TableColumn fx:id="colResCanal" text="Canal"/>
+                            <TableColumn fx:id="colResEstado" text="Estado"/>
+                            <TableColumn fx:id="colResTotal" text="Total"/>
+                            <TableColumn fx:id="colResPagado" text="Pagado"/>
+                            <TableColumn fx:id="colResSaldo" text="Saldo"/>
+                        </columns>
+                        <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+                        <placeholder><Label text="No hay reservas"/></placeholder>
+                    </TableView>
+                    <Label fx:id="lblDetalleReserva" styleClass="caja-info" maxWidth="Infinity" wrapText="true"/>
+                    <FlowPane hgap="8" vgap="8">
+                        <Button fx:id="btnConfirmar" text="Confirmar" styleClass="boton-contorno" onAction="#onConfirmar"/>
+                        <Button fx:id="btnAnticipo" text="Pagar anticipo 30 %" styleClass="boton-primario" onAction="#onPagarAnticipo"/>
+                        <Button fx:id="btnCheckIn" text="Iniciar estancia (check-in)" styleClass="boton-primario" onAction="#onCheckIn"/>
+                        <Button fx:id="btnCheckOut" text="Finalizar (check-out)" styleClass="boton-primario" onAction="#onCheckOut"/>
+                        <Button fx:id="btnNoShow" text="Marcar No-show" styleClass="boton-contorno" onAction="#onNoShow"/>
+                        <Button fx:id="btnCancelar" text="Cancelar reserva" styleClass="boton-secundario" onAction="#onCancelar"/>
+                        <Button fx:id="btnFolio" text="Ver folio" styleClass="boton-contorno" onAction="#onVerFolio"/>
+                    </FlowPane>
+                </VBox>
+            </Tab>
+        </TabPane>
+    </VBox>
+</ScrollPane>

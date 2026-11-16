@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+
+<!-- F. Mapa interactivo del edificio: grafo con estados en tiempo real, rutas Dijkstra y análisis -->
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="co.edu.uniquindio.apartasuitesuq.viewController.MapaViewController"
+            fitToWidth="true">
+    <VBox styleClass="contenido" spacing="18">
+        <HBox spacing="12" alignment="CENTER_LEFT">
+            <VBox spacing="2">
+                <Label text="Mapa del edificio" styleClass="titulo-pagina"/>
+                <Label text="Nodos: apartamentos, recepción, escaleras y zonas de aseo. Aristas: pasillos en metros."
+                       styleClass="texto-suave"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Actualizar estados" styleClass="boton-primario" onAction="#onActualizar"/>
+        </HBox>
+
+        <HBox spacing="18">
+            <!-- Lienzo -->
+            <VBox styleClass="tarjeta" spacing="10" HBox.hgrow="ALWAYS" minWidth="560">
+                <Pane fx:id="lienzo" styleClass="lienzo-mapa" prefHeight="540" minHeight="460"/>
+                <FlowPane hgap="14" vgap="6">
+                    <HBox spacing="5" alignment="CENTER_LEFT"><Circle radius="6" styleClass="punto-preparado"/><Label text="Preparado" styleClass="texto-suave"/></HBox>
+                    <HBox spacing="5" alignment="CENTER_LEFT"><Circle radius="6" styleClass="punto-ocupado"/><Label text="Ocupado" styleClass="texto-suave"/></HBox>
+                    <HBox spacing="5" alignment="CENTER_LEFT"><Circle radius="6" styleClass="punto-pendiente"/><Label text="Pendiente / En preparación" styleClass="texto-suave"/></HBox>
+                    <HBox spacing="5" alignment="CENTER_LEFT"><Circle radius="6" styleClass="punto-fuera"/><Label text="Fuera de servicio" styleClass="texto-suave"/></HBox>
+                    <Label text="━ ruta   ┅ pasillo cerrado" styleClass="texto-suave"/>
+                </FlowPane>
+            </VBox>
+
+            <!-- Panel lateral -->
+            <VBox spacing="14" minWidth="330" prefWidth="350" maxWidth="360">
+                <VBox styleClass="tarjeta" spacing="8">
+                    <Label text="Selección" styleClass="titulo-seccion"/>
+                    <Label fx:id="lblSeleccion" text="Haz clic en un nodo del mapa." styleClass="texto-suave" wrapText="true"/>
+                </VBox>
+
+                <VBox styleClass="tarjeta" spacing="8">
+                    <Label text="Rutas (Dijkstra)" styleClass="titulo-seccion"/>
+                    <ComboBox fx:id="cbDestino" promptText="Apartamento destino" maxWidth="Infinity"/>
+                    <Button text="Ruta desde recepción" styleClass="boton-primario" maxWidth="Infinity" onAction="#onRutaDestino"/>
+                    <Button text="Ruta de preparación (pendientes)" styleClass="boton-contorno" maxWidth="Infinity"
+                            onAction="#onRutaPreparacion"/>
+                    <Button text="Quitar ruta" styleClass="boton-contorno, boton-sm" onAction="#onQuitarRuta"/>
+                    <Label fx:id="lblRuta" styleClass="caja-info" maxWidth="Infinity" wrapText="true"/>
+                </VBox>
+
+                <VBox fx:id="cajaPasillos" styleClass="tarjeta" spacing="8">
+                    <Label text="Pasillos (administrador)" styleClass="titulo-seccion"/>
+                    <ComboBox fx:id="cbPasillo" promptText="Elige un pasillo" maxWidth="Infinity"/>
+                    <HBox spacing="8">
+                        <Button text="Cerrar pasillo" styleClass="boton-secundario" HBox.hgrow="ALWAYS" maxWidth="Infinity"
+                                onAction="#onCerrarPasillo"/>
+                        <Button text="Abrir pasillo" styleClass="boton-contorno" HBox.hgrow="ALWAYS" maxWidth="Infinity"
+                                onAction="#onAbrirPasillo"/>
+                    </HBox>
+                    <Label fx:id="lblInalcanzables" styleClass="caja-info" maxWidth="Infinity" wrapText="true"/>
+                </VBox>
+
+                <VBox fx:id="cajaAnalisis" styleClass="tarjeta" spacing="8">
+                    <Label text="Análisis del grafo (administrador)" styleClass="titulo-seccion"/>
+                    <Label fx:id="lblConectividad" styleClass="texto-suave" wrapText="true"/>
+                    <FlowPane hgap="6" vgap="6">
+                        <Button text="Recorrido BFS" styleClass="boton-contorno, boton-sm" onAction="#onBfs"/>
+                        <Button text="Recorrido DFS" styleClass="boton-contorno, boton-sm" onAction="#onDfs"/>
+                        <Button text="Agrupar por bloque" styleClass="boton-contorno, boton-sm" onAction="#onAgruparBloques"/>
+                    </FlowPane>
+                    <Label fx:id="lblAnalisis" styleClass="caja-info" maxWidth="Infinity" wrapText="true"/>
+                </VBox>
+            </VBox>
+        </HBox>
+    </VBox>
+</ScrollPane>

@@ -14,6 +14,7 @@ import co.edu.uniquindio.apartasuitesuq.model.Estructuras.AnalisisGrafo;
 import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ArbolBinarioBusqueda;
 import co.edu.uniquindio.apartasuitesuq.model.Estructuras.MapaEdificio;
 import co.edu.uniquindio.apartasuitesuq.model.Estructuras.Recorrido;
+import co.edu.uniquindio.apartasuitesuq.model.Servicios.AsignacionGrupos;
 import co.edu.uniquindio.apartasuitesuq.model.Servicios.ColaPreparacion;
 import co.edu.uniquindio.apartasuitesuq.model.Servicios.ConsultaEntradasReservas;
 import co.edu.uniquindio.apartasuitesuq.model.Servicios.LiquidadorTarifas;
@@ -69,6 +70,8 @@ public class SGA {
     private ServicioPreparacion preparacion;
     private ServicioRecepcion recepcion;
     private ServicioVencimiento vencimiento;
+    private ListaDoble<ColaPreparacion.Item> enPreparacion;
+    private ListaDoble<RegistroPreparacion> preparacionesTerminadas;
 
     /** Crea un sistema vacío que usa la fecha y hora del equipo. */
     public SGA() {
@@ -106,6 +109,8 @@ public class SGA {
         canalExterno = new ServicioCanalExterno(servicioReservas);
         solicitudesExternasPendientes = 0;
         turnos = new ServicioTurnos();
+        enPreparacion = new ListaDoble<>();
+        preparacionesTerminadas = new ListaDoble<>();
         vencimiento = new ServicioVencimiento(r -> r.cambiarEstado(EstadoReserva.CANCELADA));
         colaPreparacion = new ColaPreparacion(
                 new ConsultaEntradasReservas(() -> servicioReservas.getReservas(), this::hoy,
@@ -158,6 +163,8 @@ public class SGA {
         preparacion = otro.preparacion;
         recepcion = otro.recepcion;
         vencimiento = otro.vencimiento;
+        enPreparacion = otro.enPreparacion;
+        preparacionesTerminadas = otro.preparacionesTerminadas;
     }
 
     // ===================================================================== tiempo
@@ -526,13 +533,99 @@ public class SGA {
         return reserva;
     }
     /** Paga el anticipo del 30 % de una reserva del portal y la confirma. */
-    public void pagarAnticipo(Reserva reserva) {
+    /**
+     * Paga lo que falte del anticipo del 30 % (descontando abonos previos) y confirma la reserva.
+     * @return el valor pagado ahora
+     */
+    public double pagarAnticipo(Reserva reserva) {
         if (reserva.getEstado() != EstadoReserva.PENDIENTE) {
             throw new TransicionEstadoInvalidaException("La reserva " + reserva.getCodigoReserva()
                     + " no está pendiente de anticipo.");
         }
-        reserva.getFolio().registrarPago(reserva.getValorAnticipo(), "Anticipo 30 %");
-        reserva.cambiarEstado(EstadoReserva.CONFIRMADA);
+        return servicioReservas.pagarAnticipo(reserva);
+    }
+
+    /** Confirma una reserva Pendiente sin registrar pago (decisión de recepción). */
+    public void confirmarReserva(Reserva reserva) {
+        servicioReservas.confirmar(reserva);
+    }
+
+    /**
+     * @return todas las reservas ordenadas por código (RES-1, RES-2, ... RES-10), copiando el
+     *         recorrido del árbol a un arreglo y ordenándolo por inserción
+     */
+    public ListaDoble<Reserva> reservasOrdenadasPorCodigo() {
+        ListaDoble<Reserva> todas = servicioReservas.getReservas();
+        Reserva[] arreglo = new Reserva[todas.tamanio()];
+        int i = 0;
+        for (Reserva reserva : todas) {
+            arreglo[i++] = reserva;
+        }
+        ordenarPorInsercion(arreglo, Comparator.comparingInt((Reserva r) -> numeroDeCodigo(r.getCodigoReserva()))
+                .thenComparing(Reserva::getCodigoReserva));
+        ListaDoble<Reserva> resultado = new ListaDoble<>();
+        for (Reserva reserva : arreglo) {
+            resultado.agregarFinal(reserva);
+        }
+        return resultado;
+    }
+
+    private static int numeroDeCodigo(String codigo) {
+        String digitos = codigo.replaceAll("[^0-9]", "");
+        try {
+            return digitos.isEmpty() ? Integer.MAX_VALUE : Integer.parseInt(digitos);
+        } catch (NumberFormatException e) {
+            return Integer.MAX_VALUE;
+        }
+    }
+
+    // ============================================================ grupos grandes
+
+    /**
+     * Combinación con el menor número de apartamentos libres que aloja a todo el grupo
+     * (backtracking de {@code AsignacionGrupos}).
+     * @return la combinación, o una lista vacía si ni todos los libres juntos alcanzan
+     */
+    public ListaDoble<Apartamento> asignarGrupoGrande(LocalDate entrada, LocalDate salida, int personas) {
+        if (personas < 1) {
+            throw new CapacidadExcedidaException("El grupo debe tener al menos una persona.");
+        }
+        ListaDoble<Apartamento> libres = buscarDisponibles(entrada, salida, 1, OrdenApartamentos.porCapacidad());
+        ListaDoble<Apartamento> combinacion = AsignacionGrupos.asignarGrupo(libres, personas);
+        return combinacion == null ? new ListaDoble<>() : combinacion;
+    }
+
+    /**
+     * Reserva todos los apartamentos de una combinación, repartiendo el grupo según la capacidad
+     * de cada uno. Si alguna reserva falla, se deshacen las ya creadas.
+     */
+    public ListaDoble<Reserva> reservarGrupo(Huesped titular, ListaDoble<Apartamento> combinacion,
+                                             LocalDate entrada, LocalDate salida, int personas, Canal canal) {
+        int capacidadTotal = 0;
+        for (Apartamento apartamento : combinacion) {
+            capacidadTotal += apartamento.getCapacidadMaxima();
+        }
+        if (combinacion.estaVacia() || capacidadTotal < personas) {
+            throw new CapacidadExcedidaException("La combinación aloja " + capacidadTotal + " de " + personas + " personas.");
+        }
+        ListaDoble<Reserva> creadas = new ListaDoble<>();
+        int faltan = personas;
+        try {
+            for (Apartamento apartamento : combinacion) {
+                if (faltan <= 0) {
+                    break;
+                }
+                int aqui = Math.min(faltan, apartamento.getCapacidadMaxima());
+                creadas.agregarFinal(crearReserva(titular, apartamento.getCodigo(), entrada, salida, null, aqui, canal));
+                faltan -= aqui;
+            }
+        } catch (RuntimeException ex) {
+            for (Reserva reserva : creadas) {
+                servicioReservas.desindexar(reserva);
+            }
+            throw ex;
+        }
+        return creadas;
     }
 
     /** @return lo que se le devolvería al huésped si cancela ahora */
@@ -657,6 +750,11 @@ public class SGA {
         recepcion.checkOut(reserva, ahora());
     }
 
+    /** @return el historial de apartamentos fuera de servicio (motivo, desde, hasta) */
+    public co.edu.uniquindio.apartasuitesuq.model.Servicios.RegistroFueraDeServicio historialFueraDeServicio() {
+        return preparacion.historialFueraDeServicio();
+    }
+
     public Recepcionista turnoActual() {
         return turnos.turnoActual();
     }
@@ -673,11 +771,53 @@ public class SGA {
 
     /** Saca de la cola el apartamento más prioritario y lo pone En preparación. */
     public ColaPreparacion.Item iniciarSiguientePreparacion() {
-        return preparacion.iniciarSiguiente();
+        if (colaPreparacion.estaVacia()) {
+            throw new EstructuraVaciaException("No hay apartamentos en la cola de preparación.");
+        }
+        ColaPreparacion.Item item = preparacion.iniciarSiguiente();
+        enPreparacion.agregarFinal(item);
+        return item;
     }
 
+    /** Deja el apartamento Preparado y registra cuánto tardó su preparación. */
     public void terminarPreparacion(ColaPreparacion.Item item) {
-        preparacion.terminarPreparacion(item, ahora());
+        LocalDateTime fin = ahora();
+        preparacion.terminarPreparacion(item, fin);
+        enPreparacion.eliminar(item);
+        preparacionesTerminadas.agregarFinal(
+                new RegistroPreparacion(item.getApartamento().getCodigo(), item.getIngreso(), fin));
+    }
+
+    /**
+     * @return la cola de preparación en orden de atención (prioridad, hora clave, código), sin
+     *         desencolarla: el heap se copia a un arreglo y se ordena por inserción
+     */
+    public ListaDoble<ColaPreparacion.Item> colaEnOrden() {
+        ColaPreparacion.Item[] items = new ColaPreparacion.Item[colaPreparacion.tamano()];
+        int i = 0;
+        for (ColaPreparacion.Item item : colaPreparacion) {
+            items[i++] = item;
+        }
+        ordenarPorInsercion(items, Comparator.comparingInt(ColaPreparacion.Item::getPrioridad)
+                .thenComparing(ColaPreparacion.Item::getHoraClave)
+                .thenComparing(item -> item.getApartamento().getCodigo()));
+        ListaDoble<ColaPreparacion.Item> resultado = new ListaDoble<>();
+        for (ColaPreparacion.Item item : items) {
+            if (item.getApartamento().getEstadoOperativo() == EstadoApartamento.PENDIENTEDEPREPARACION) {
+                resultado.agregarFinal(item); // los ya despachados se descartan al desencolar
+            }
+        }
+        return resultado;
+    }
+
+    /** @return los apartamentos que el personal está preparando ahora */
+    public ListaDoble<ColaPreparacion.Item> getEnPreparacion() {
+        return enPreparacion;
+    }
+
+    /** @return el tiempo de cada preparación terminada, por apartamento */
+    public ListaDoble<RegistroPreparacion> getPreparacionesTerminadas() {
+        return preparacionesTerminadas;
     }
 
     public void ponerFueraDeServicio(String codigoApartamento, String motivo) {
@@ -741,6 +881,301 @@ public class SGA {
         return new AnalisisGrafo(mapa);
     }
 
+    /** @return los pasillos del grafo, con su longitud y si están cerrados */
+    public ListaDoble<Pasillo> getPasillos() {
+        ListaDoble<Pasillo> pasillos = new ListaDoble<>();
+        mapa.getGrafo().recorrerPasillos((a, b, metros, cerrado) -> pasillos.agregarFinal(new Pasillo(a, b, metros, cerrado)));
+        return pasillos;
+    }
+
+    public void cerrarPasillo(String nodoA, String nodoB) {
+        mapa.getGrafo().cerrarPasillo(nodoA, nodoB);
+    }
+
+    public void abrirPasillo(String nodoA, String nodoB) {
+        mapa.getGrafo().abrirPasillo(nodoA, nodoB);
+    }
+
+    /** @return nodos que no se pueden alcanzar desde recepción con los pasillos cerrados actuales */
+    public Recorrido<String> inalcanzables() {
+        return mapa.getRecepcion() == null ? new Recorrido<>() : getAnalisisGrafo().inalcanzablesDesdeRecepcion();
+    }
+
+    /** @return el orden en que BFS visita el edificio desde recepción */
+    public Recorrido<String> recorridoBfs() {
+        return mapa.getRecepcion() == null ? new Recorrido<>() : mapa.getGrafo().bfs(mapa.getRecepcion());
+    }
+
+    /** @return el orden en que DFS (recursivo) visita el edificio desde recepción */
+    public Recorrido<String> recorridoDfs() {
+        return mapa.getRecepcion() == null ? new Recorrido<>() : mapa.getGrafo().dfs(mapa.getRecepcion());
+    }
+
+    /**
+     * Agrupa por bloque con BFS: recorre el edificio desde recepción pasando solo por zonas
+     * comunes y apartamentos del bloque, y devuelve los apartamentos alcanzados en orden de visita.
+     */
+    public Recorrido<String> recorridoBloque(String bloque) {
+        Recorrido<String> resultado = new Recorrido<>();
+        if (mapa.getRecepcion() == null) {
+            return resultado;
+        }
+        for (String nodo : mapa.getGrafo().bfs(mapa.getRecepcion(), codigo -> {
+            Apartamento apartamento = buscarApartamento(codigo);
+            return apartamento == null || apartamento.getBloque().equalsIgnoreCase(bloque);
+        })) {
+            Apartamento apartamento = buscarApartamento(nodo);
+            if (apartamento != null) {
+                resultado.agregar(nodo);
+            }
+        }
+        return resultado;
+    }
+
+    // ===================================================== gestión de catálogos
+
+    /** Modifica los datos de un apartamento (el código es la clave del árbol y no cambia). */
+    public void modificarApartamento(String codigo, String nombre, String bloque, int piso, int dormitorios,
+                                     int capacidad, String caracteristicas) {
+        Apartamento apartamento = obtenerApartamento(codigo);
+        apartamento.setNombre(nombre);
+        apartamento.setBloque(bloque);
+        apartamento.setPiso(piso);
+        apartamento.setNumeroDormitorios(dormitorios);
+        apartamento.setCapacidadMaxima(capacidad);
+        apartamento.setCaracteristicas(caracteristicas);
+    }
+
+    /** Modifica el perfil de un huésped (el documento es la clave del árbol y no cambia). */
+    public void modificarHuesped(String documento, String nombre, LocalDate fechaNacimiento, String telefono,
+                                 String correo, String rutaFoto) {
+        Huesped huesped = buscarHuesped(documento);
+        if (huesped == null) {
+            throw new IllegalArgumentException("No existe el huésped " + documento + ".");
+        }
+        huesped.setNombre(nombre);
+        huesped.setFechaNacimiento(fechaNacimiento);
+        huesped.setTelefono(telefono);
+        huesped.setCorreo(correo);
+        huesped.setRutaFoto(rutaFoto);
+    }
+
+    /** Modifica nombre y, si se indica, contraseña de un empleado (el id es la clave). */
+    public void modificarEmpleado(String id, String nombre, String contrasenaNueva) {
+        Empleado empleado = buscarEmpleado(id);
+        if (empleado == null) {
+            throw new IllegalArgumentException("No existe el empleado " + id + ".");
+        }
+        empleado.setNombre(nombre);
+        if (contrasenaNueva != null && !contrasenaNueva.isBlank()) {
+            empleado.setContrasena(contrasenaNueva);
+        }
+    }
+
+
+    // ======================================================== tablero de inicio
+
+    /** @return la reserva En curso del apartamento (el grupo alojado ahora) o null */
+    public Reserva reservaEnCurso(Apartamento apartamento) {
+        for (Reserva reserva : reservasDe(apartamento)) {
+            if (reserva.getEstado() == EstadoReserva.ENCURSO) {
+                return reserva;
+            }
+        }
+        return null;
+    }
+
+    /** @return la reserva Confirmada que entra hoy al apartamento o null */
+    public Reserva entradaDeHoy(Apartamento apartamento) {
+        for (Reserva reserva : reservasDe(apartamento)) {
+            if (reserva.getEstado() == EstadoReserva.CONFIRMADA && hoy().equals(reserva.getFechaInicio())) {
+                return reserva;
+            }
+        }
+        return null;
+    }
+
+    /** @return las reservas Confirmadas que entran hoy (los check-ins pendientes del día) */
+    public ListaDoble<Reserva> entradasDeHoy() {
+        ListaDoble<Reserva> resultado = new ListaDoble<>();
+        for (Reserva reserva : servicioReservas.getReservas()) {
+            if (reserva.getEstado() == EstadoReserva.CONFIRMADA && hoy().equals(reserva.getFechaInicio())) {
+                resultado.agregarFinal(reserva);
+            }
+        }
+        return resultado;
+    }
+
+    /**
+     * @return la reserva que ocupa el apartamento esa noche (cualquier estado salvo Cancelada y
+     *         No-show, que liberaron sus noches), o null si la noche está libre
+     */
+    public Reserva ocupacionEn(Apartamento apartamento, LocalDate noche) {
+        for (Reserva reserva : reservasDe(apartamento)) {
+            if (reserva.getEstado() != EstadoReserva.CANCELADA && reserva.getEstado() != EstadoReserva.NOSHOW
+                    && reserva.ocupaNoche(noche)) {
+                return reserva;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @return true si el apartamento estuvo o está Fuera de servicio esa noche (según el historial
+     *         de bloqueos; un bloqueo vigente cubre desde su inicio en adelante)
+     */
+    public boolean bloqueadaEn(Apartamento apartamento, LocalDate noche) {
+        for (co.edu.uniquindio.apartasuitesuq.model.Servicios.RegistroFueraDeServicio.Registro registro
+                : preparacion.historialFueraDeServicio()) {
+            if (registro.getCodigoApartamento().equalsIgnoreCase(apartamento.getCodigo())
+                    && !noche.isBefore(registro.getDesde().toLocalDate())
+                    && (registro.getHasta() == null || noche.isBefore(registro.getHasta().toLocalDate()))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** @return la próxima reserva Pendiente o Confirmada del apartamento desde hoy, o null */
+    public Reserva proximaReserva(Apartamento apartamento) {
+        for (Reserva reserva : reservasDe(apartamento)) { // ordenadas por fecha de entrada
+            if ((reserva.getEstado() == EstadoReserva.PENDIENTE || reserva.getEstado() == EstadoReserva.CONFIRMADA)
+                    && !reserva.getFechaInicio().isBefore(hoy())) {
+                return reserva;
+            }
+        }
+        return null;
+    }
+
+    /** @return cuántos apartamentos hay en cada estado, indexado por {@code EstadoApartamento.ordinal()} */
+    public int[] contarPorEstado() {
+        int[] conteo = new int[EstadoApartamento.values().length];
+        for (Apartamento apartamento : apartamentos) {
+            conteo[apartamento.getEstadoOperativo().ordinal()]++;
+        }
+        return conteo;
+    }
+
+    /** @return porcentaje de apartamentos Ocupados en este momento */
+    public double ocupacionActual() {
+        int total = apartamentos.getTamano();
+        return total == 0 ? 0 : contarPorEstado()[EstadoApartamento.OCUPADO.ordinal()] * 100.0 / total;
+    }
+
+    /**
+     * @return prioridad del apartamento en la cola de preparación: 1 si tiene entrada hoy,
+     *         2 si no; 0 si no está en la cola
+     */
+    public int prioridadPreparacion(Apartamento apartamento) {
+        for (ColaPreparacion.Item item : colaPreparacion) {
+            if (item.getApartamento().equals(apartamento)) {
+                return item.getPrioridad();
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Filtra el catálogo (recorrido inorden del árbol, así que sale ordenado por código).
+     *
+     * @param estados estados aceptados; null o vacío = todos
+     * @param bloque  bloque exacto; null = todos
+     * @param piso    piso exacto; null = todos
+     */
+    public ListaDoble<Apartamento> filtrarApartamentos(EstadoApartamento[] estados, String bloque, Integer piso) {
+        ListaDoble<Apartamento> resultado = new ListaDoble<>();
+        for (Apartamento apartamento : apartamentos) {
+            boolean estadoOk = estados == null || estados.length == 0;
+            if (!estadoOk) {
+                for (EstadoApartamento estado : estados) {
+                    if (apartamento.getEstadoOperativo() == estado) {
+                        estadoOk = true;
+                        break;
+                    }
+                }
+            }
+            if (estadoOk && (bloque == null || apartamento.getBloque().equalsIgnoreCase(bloque))
+                    && (piso == null || apartamento.getPiso() == piso)) {
+                resultado.agregarFinal(apartamento);
+            }
+        }
+        return resultado;
+    }
+
+    /** @return los apartamentos de las reservas activas del huésped con ese documento (sin repetir) */
+    public ListaDoble<Apartamento> apartamentosDeHuesped(String documento) {
+        ListaDoble<Apartamento> resultado = new ListaDoble<>();
+        Huesped huesped = buscarHuesped(documento);
+        if (huesped == null) {
+            return resultado;
+        }
+        for (Reserva reserva : reservasDe(huesped)) {
+            if (reserva.estaActiva() && !resultado.buscar(reserva.getApartamento())) {
+                resultado.agregarFinal(reserva.getApartamento());
+            }
+        }
+        return resultado;
+    }
+
+    /** @return los bloques distintos del catálogo, en orden de aparición (inorden) */
+    public ListaDoble<String> bloques() {
+        ListaDoble<String> resultado = new ListaDoble<>();
+        for (Apartamento apartamento : apartamentos) {
+            if (!resultado.buscar(apartamento.getBloque())) {
+                resultado.agregarFinal(apartamento.getBloque());
+            }
+        }
+        return resultado;
+    }
+
+    /** @return los pisos distintos del catálogo */
+    public ListaDoble<Integer> pisos() {
+        ListaDoble<Integer> resultado = new ListaDoble<>();
+        for (Apartamento apartamento : apartamentos) {
+            if (!resultado.buscar(apartamento.getPiso())) {
+                resultado.agregarFinal(apartamento.getPiso());
+            }
+        }
+        return resultado;
+    }
+
+    /**
+     * Check-in desde el tablero: busca la reserva Confirmada que entra hoy al apartamento.
+     * @throws TransicionEstadoInvalidaException si no hay entrada hoy o el apartamento no está Preparado
+     */
+    public Reserva checkInDeHoy(String codigoApartamento) {
+        Apartamento apartamento = obtenerApartamento(codigoApartamento);
+        Reserva reserva = entradaDeHoy(apartamento);
+        if (reserva == null) {
+            throw new TransicionEstadoInvalidaException("El apartamento " + apartamento.getCodigo()
+                    + " no tiene una reserva confirmada que entre hoy.");
+        }
+        checkIn(reserva);
+        return reserva;
+    }
+
+    /**
+     * Check-out desde el tablero: finaliza la reserva En curso del apartamento.
+     * @throws TransicionEstadoInvalidaException si el apartamento no tiene un grupo alojado
+     */
+    public Reserva checkOutApartamento(String codigoApartamento) {
+        Apartamento apartamento = obtenerApartamento(codigoApartamento);
+        Reserva reserva = reservaEnCurso(apartamento);
+        if (reserva == null) {
+            throw new TransicionEstadoInvalidaException("El apartamento " + apartamento.getCodigo()
+                    + " no tiene un grupo alojado.");
+        }
+        checkOut(reserva);
+        return reserva;
+    }
+
+    /** @return ruta más corta (Dijkstra) desde recepción hasta el apartamento, con su distancia */
+    public Recorrido<String> rutaHacia(String codigoApartamento) {
+        if (mapa.getRecepcion() == null) {
+            throw new IllegalStateException("El mapa del edificio no tiene recepción.");
+        }
+        return getAnalisisGrafo().rutaDesdeRecepcion(obtenerApartamento(codigoApartamento).getCodigo());
+    }
 
     // ============================================================= estadísticas
 

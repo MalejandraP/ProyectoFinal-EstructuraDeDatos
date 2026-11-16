@@ -3,7 +3,6 @@ package co.edu.uniquindio.apartasuitesuq.viewController;
 import co.edu.uniquindio.apartasuitesuq.model.*;
 import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ArbolBinarioBusqueda;
 import co.edu.uniquindio.apartasuitesuq.model.Estructuras.ListaDoble;
-import co.edu.uniquindio.apartasuitesuq.model.Servicios.ServicioReservas;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -26,7 +25,7 @@ import java.util.Locale;
  * Gestiona la visualización de los datos del perfil, el listado de reservas activas,
  * el detalle financiero (folio de movimientos), los apartamentos favoritos y el historial de estadías.
  */
-public class PanelUsuarioViewController {
+public class PanelUsuarioViewController implements ControladorPantalla {
     // PERFIL
     @FXML private Label lblIniciales;
     @FXML private Label lblNombre;
@@ -62,7 +61,18 @@ public class PanelUsuarioViewController {
     @FXML private ListView<Reserva> listaHistorial;
     // HUESPED ACTUAL
     private Huesped huesped;
-    private ServicioReservas servicio;
+    private SGA sga;
+    @FXML private javafx.scene.image.ImageView imgFoto;
+
+    /** Lo llama la ventana principal: carga el huésped de la sesión y sus datos desde la fachada. */
+    @Override
+    public void inicializar(PrincipalViewController principal) {
+        this.sga = principal.getSga();
+        setApartamentos(sga.getApartamentos());
+        setHuesped(principal.getSesion().getHuesped());
+        setReservas(sga.reservasDe(huesped));
+        setAlSolicitarReserva(() -> principal.navegar(Pantalla.RESERVAS));
+    }
     private Runnable alSolicitarReserva;
     public void setAlSolicitarReserva(Runnable accion) {
         this.alSolicitarReserva = accion; }
@@ -122,10 +132,16 @@ public class PanelUsuarioViewController {
         lblCedula.setText(huesped.getCedula());
         lblTelefono.setText(huesped.getTelefono());
         lblCorreo.setText(huesped.getCorreo());
-        DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("d MMM yyyy", new Locale("es", "ES"));
-        // Si el usuario tiene fecha de nacimiento (ej. LocalDate):
-        String fechaFormateada = huesped.getFechaNacimiento().format(formatoFecha).replace(".", "");
-        lblNacimiento.setText(fechaFormateada);
+        lblNacimiento.setText(huesped.getFechaNacimiento() == null ? "—"
+                : VistaUtil.fecha(huesped.getFechaNacimiento()) + " (" + huesped.getEdad() + " años)");
+        // Fotografía opcional: si no hay archivo se muestran las iniciales
+        boolean conFoto = false;
+        if (huesped.tieneFoto() && new java.io.File(huesped.getRutaFoto()).isFile()) {
+            imgFoto.setImage(new javafx.scene.image.Image(new java.io.File(huesped.getRutaFoto()).toURI().toString(), true));
+            conFoto = true;
+        }
+        imgFoto.setVisible(conFoto);
+        lblIniciales.setVisible(!conFoto);
         refrescarFavoritos();
         refrescarHistorial();
     }
@@ -372,7 +388,9 @@ public class PanelUsuarioViewController {
                     String totalFormateado = "$" + String.format(colombia, "%,.0f", r.getCostoTotal());
                     VBox bloqueTotal = crearBloqueMonto("Total", totalFormateado);
 
-                    HBox filaMontos = new HBox(24, bloqueTotal);
+                    HBox filaMontos = new HBox(24, bloqueTotal,
+                            crearBloqueMonto("Pagado", VistaUtil.dinero(r.getFolio().totalPago())),
+                            crearBloqueMonto("Saldo del folio", VistaUtil.dinero(sga.saldoDe(r))));
                     String estadoStr = r.getEstado().toString().toUpperCase();
 
                     if (estadoStr.contains("PENDIENTE")) {
@@ -462,12 +480,8 @@ public class PanelUsuarioViewController {
         return badge;
     }
 
-    public void setServicio(ServicioReservas servicio) {
-        this.servicio = servicio;
-    }
-
     private void recargarReservas() {
-        setReservas(servicio.reservasDe(huesped));
+        setReservas(sga.reservasDe(huesped));
         if(folioMostrado != null) mostrarFolio(folioMostrado);
     }
 
@@ -488,20 +502,16 @@ public class PanelUsuarioViewController {
      * @param r La {@link Reserva} que se desea cancelar.
      */
     private void onCancelarReserva(Reserva r) {
-        double devolucion = servicio.calcularDevolucion(r);
-        Alert a = new Alert(Alert.AlertType.CONFIRMATION,
-                "Se devolverían $" + String.format(new Locale("es", "CO"), "%,.0f", devolucion)
-                        + ". ¿Cancelar la reserva " + r.getCodigoReserva() + "?",
-                ButtonType.YES, ButtonType.NO);
-        a.setHeaderText("Cancelar reserva");
-        a.showAndWait().filter(b -> b == ButtonType.YES).ifPresent(b -> {
+        double devolucion = sga.calcularDevolucion(r);   // se muestra antes de cancelar
+        if (VistaUtil.confirmar("Cancelar reserva " + r.getCodigoReserva(),
+                "Se devolverían " + VistaUtil.dinero(devolucion) + ". ¿Cancelar la reserva?")) {
             try {
-                servicio.cancelar(r);
+                sga.cancelarReserva(r);
                 recargarReservas();
             } catch (RuntimeException ex) {
-                new Alert(Alert.AlertType.ERROR, ex.getMessage()).showAndWait();
+                VistaUtil.error("No se pudo cancelar", ex);
             }
-        });
+        }
     }
     /**
      * Manejador ejecutado al presionar el botón "Pagar anticipo" en una reserva pendiente.
@@ -511,19 +521,16 @@ public class PanelUsuarioViewController {
      * @param r La {@link Reserva} pendiente a la que se le abonará el anticipo.
      */
     private void onPagarAnticipo(Reserva r) {
-        double monto = r.getValorAnticipo() - r.getFolio().totalPago();
-        Alert a = new Alert(Alert.AlertType.CONFIRMATION,
-                "Se registrará un pago de $" + String.format(new Locale("es", "CO"), "%,.0f", Math.max(monto, 0))
-                        + " y la reserva quedará Confirmada.", ButtonType.OK, ButtonType.CANCEL);
-        a.setHeaderText("Pagar anticipo");
-        a.showAndWait().filter(b -> b == ButtonType.OK).ifPresent(b -> {
+        double monto = Math.max(0, r.getValorAnticipo() - r.getFolio().totalPago());
+        if (VistaUtil.confirmar("Pagar anticipo de " + r.getCodigoReserva(),
+                "Se registrará un pago de " + VistaUtil.dinero(monto) + " y la reserva quedará Confirmada.")) {
             try {
-                servicio.pagarAnticipo(r);
+                sga.pagarAnticipo(r);
                 recargarReservas();
             } catch (RuntimeException ex) {
-                new Alert(Alert.AlertType.ERROR, ex.getMessage()).showAndWait();
+                VistaUtil.error("No se pudo pagar el anticipo", ex);
             }
-        });
+        }
     }
     /**
      * Carga y muestra en {@code tablaFolio} todos los movimientos financieros (cargos y pagos)

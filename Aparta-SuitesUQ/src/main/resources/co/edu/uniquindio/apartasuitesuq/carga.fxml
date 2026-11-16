@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!-- J. Carga de datos: escenario de prueba desde archivo plano -->
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="co.edu.uniquindio.apartasuitesuq.viewController.CargaDatosViewController"
+            fitToWidth="true">
+    <VBox styleClass="contenido" spacing="18">
+        <VBox spacing="2">
+            <Label text="Carga de datos" styleClass="titulo-pagina"/>
+            <Label text="Reemplaza todos los datos del sistema por un escenario. Si el archivo tiene un error, el sistema queda como estaba y se indica la línea."
+                   styleClass="texto-suave" wrapText="true"/>
+        </VBox>
+        <HBox spacing="10">
+            <Button text="Cargar escenario de prueba" styleClass="boton-primario" onAction="#onCargarEjemplo"/>
+            <Button text="Cargar desde archivo…" styleClass="boton-secundario" onAction="#onCargarArchivo"/>
+        </HBox>
+        <VBox styleClass="tarjeta" spacing="8">
+            <Label text="Resultado" styleClass="titulo-seccion"/>
+            <Label fx:id="lblResultado" styleClass="caja-info" maxWidth="Infinity" wrapText="true"/>
+        </VBox>
+        <VBox styleClass="tarjeta" spacing="8">
+            <Label text="Datos actuales" styleClass="titulo-seccion"/>
+            <Label fx:id="lblResumen" wrapText="true"/>
+        </VBox>
+        <VBox styleClass="tarjeta" spacing="8">
+            <Label text="Formato del archivo plano" styleClass="titulo-seccion"/>
+            <TextArea fx:id="txtFormato" editable="false" prefRowCount="16" wrapText="false" styleClass="texto-codigo"/>
+        </VBox>
+    </VBox>
+</ScrollPane>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!-- Ventana principal: menú lateral por rol, encabezado con usuario/rol/turno y botón Atrás (Pila) -->
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="co.edu.uniquindio.apartasuitesuq.viewController.PrincipalViewController">
+
+    <left>
+        <VBox styleClass="sidebar" spacing="4" prefWidth="240" minWidth="240">
+            <Label text="Aparta-Suites UQ" styleClass="marca-titulo"/>
+            <Label text="Sistema de Gestión de Alojamiento" styleClass="marca-subtitulo"/>
+
+            <Label fx:id="lblSeccionHuesped" text="MI CUENTA" styleClass="marca-seccion"/>
+            <Button fx:id="btnMiPanel" text="Mi panel" userData="MI_PANEL" styleClass="nav-item"
+                    maxWidth="Infinity" onAction="#onNavegar"/>
+
+            <Label fx:id="lblSeccionOperacion" text="RECEPCIÓN" styleClass="marca-seccion"/>
+            <Button fx:id="btnInicio" text="Inicio" userData="INICIO" styleClass="nav-item"
+                    maxWidth="Infinity" onAction="#onNavegar"/>
+            <Button fx:id="btnReservas" text="Reservas" userData="RESERVAS" styleClass="nav-item"
+                    maxWidth="Infinity" onAction="#onNavegar"/>
+            <Button fx:id="btnCanalExterno" text="Canal externo" userData="CANAL_EXTERNO" styleClass="nav-item"
+                    maxWidth="Infinity" onAction="#onNavegar"/>
+            <Button fx:id="btnCalendario" text="Calendario de ocupación" userData="CALENDARIO" styleClass="nav-item"
+                    maxWidth="Infinity" onAction="#onNavegar"/>
+            <Button fx:id="btnPreparacion" text="Preparación" userData="PREPARACION" styleClass="nav-item"
+                    maxWidth="Infinity" onAction="#onNavegar"/>
+            <Button fx:id="btnMapa" text="Mapa del edificio" userData="MAPA" styleClass="nav-item"
+                    maxWidth="Infinity" onAction="#onNavegar"/>
+            <Button fx:id="btnFolio" text="Folio y turnos" userData="FOLIO" styleClass="nav-item"
+                    maxWidth="Infinity" onAction="#onNavegar"/>
+
+            <Label fx:id="lblSeccionAdmin" text="ADMINISTRACIÓN" styleClass="marca-seccion"/>
+            <Button fx:id="btnAdministracion" text="Catálogos y estados" userData="ADMINISTRACION" styleClass="nav-item"
+                    maxWidth="Infinity" onAction="#onNavegar"/>
+            <Button fx:id="btnTemporadas" text="Temporadas y tarifas" userData="TEMPORADAS" styleClass="nav-item"
+                    maxWidth="Infinity" onAction="#onNavegar"/>
+            <Button fx:id="btnEstadisticas" text="Estadísticas" userData="ESTADISTICAS" styleClass="nav-item"
+                    maxWidth="Infinity" onAction="#onNavegar"/>
+            <Button fx:id="btnCarga" text="Carga de datos" userData="CARGA" styleClass="nav-item"
+                    maxWidth="Infinity" onAction="#onNavegar"/>
+
+            <Region VBox.vgrow="ALWAYS"/>
+            <Button text="Cerrar sesión" styleClass="nav-item" maxWidth="Infinity" onAction="#onCerrarSesion"/>
+        </VBox>
+    </left>
+
+    <center>
+        <VBox>
+        <HBox styleClass="encabezado" spacing="14" alignment="CENTER_LEFT">
+            <Button fx:id="btnAtras" text="← Atrás" styleClass="boton-contorno, boton-sm" onAction="#onAtras"/>
+            <VBox spacing="2">
+                <Label fx:id="lblTitulo" styleClass="titulo-seccion"/>
+                <Label fx:id="lblHistorial" styleClass="texto-suave"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <HBox fx:id="cajaTurno" spacing="10" alignment="CENTER_LEFT">
+                <Label fx:id="lblTurno" styleClass="texto-suave"/>
+                <Button text="Pasar turno" styleClass="boton-contorno, boton-sm" onAction="#onPasarTurno"/>
+            </HBox>
+            <Separator orientation="VERTICAL"/>
+            <Label fx:id="lblAvatar" styleClass="avatar"/>
+            <VBox spacing="2">
+                <Label fx:id="lblUsuario" styleClass="texto-fuerte"/>
+                <Label fx:id="lblRol" styleClass="chip, chip-neutro"/>
+            </VBox>
+        </HBox>
+        <StackPane fx:id="contenedor" VBox.vgrow="ALWAYS"/>
+        </VBox>
+    </center>
+</BorderPane>

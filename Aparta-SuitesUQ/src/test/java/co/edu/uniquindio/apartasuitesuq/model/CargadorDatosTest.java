@@ -44,7 +44,7 @@ class CargadorDatosTest {
         assertEquals(8, contar(sga.getApartamentos()));
         assertEquals(7, contar(sga.getHuespedes()));
         assertEquals(4, contar(sga.getEmpleados()));
-        assertEquals(9, contar(sga.getReservas()));
+        assertEquals(11, contar(sga.getReservas()));
         assertEquals(8, contar(sga.getCalendario().getPeriodos()));
         assertEquals(12, sga.getMapa().getGrafo().tamano());
         assertEquals("REC", sga.getMapa().getRecepcion());
@@ -105,7 +105,7 @@ class CargadorDatosTest {
         assertDoesNotThrow(real::cargarEscenarioDeEjemplo);
         Reserva nueva = real.crearReserva(real.buscarHuesped("1094000001"), "A103",
                 real.hoy().plusDays(40), real.hoy().plusDays(41), null, 1, Canal.DIRECTA);
-        assertEquals("RES-10", nueva.getCodigoReserva());
+        assertEquals("RES-12", nueva.getCodigoReserva());
     }
 
     @Test

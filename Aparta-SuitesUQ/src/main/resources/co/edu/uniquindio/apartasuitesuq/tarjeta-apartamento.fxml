@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+
+<!-- Tarjeta de un apartamento en el tablero de Inicio -->
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="co.edu.uniquindio.apartasuitesuq.viewController.TarjetaApartamentoViewController"
+      styleClass="tarjeta, tarjeta-apto" spacing="8">
+    <HBox spacing="8" alignment="CENTER_LEFT">
+        <Circle fx:id="punto" radius="6"/>
+        <Label fx:id="lblCodigo" styleClass="tarjeta-apto-codigo" minWidth="-Infinity"/>
+    </HBox>
+    <Label fx:id="lblEstado" styleClass="chip"/>
+    <Label fx:id="lblNombre" styleClass="texto-fuerte" wrapText="true"/>
+    <Label fx:id="lblUbicacion" styleClass="texto-suave"/>
+    <Label fx:id="lblCapacidad" styleClass="texto-suave"/>
+    <Label fx:id="lblContexto" styleClass="contexto-apto" wrapText="true" maxWidth="Infinity"/>
+    <FlowPane hgap="6" vgap="6">
+        <Button text="Detalle" styleClass="boton-contorno, boton-sm" onAction="#onDetalle"/>
+        <Button fx:id="btnCheckIn" text="Check-in" styleClass="boton-primario, boton-sm" onAction="#onCheckIn"/>
+        <Button fx:id="btnCheckOut" text="Check-out" styleClass="boton-secundario, boton-sm" onAction="#onCheckOut"/>
+        <Button fx:id="btnRuta" text="Ver ruta" styleClass="boton-contorno, boton-sm" onAction="#onVerRuta"/>
+        <Button fx:id="btnHuesped" text="Ficha del huésped" styleClass="boton-contorno, boton-sm"
+                onAction="#onVerHuesped"/>
+    </FlowPane>
+</VBox>

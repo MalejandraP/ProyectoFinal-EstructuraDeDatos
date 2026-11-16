@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!-- H. Administración: gestión jerárquica sobre árboles binarios de búsqueda y estado operativo -->
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="co.edu.uniquindio.apartasuitesuq.viewController.AdministracionViewController"
+            fitToWidth="true">
+    <VBox styleClass="contenido" spacing="18">
+        <VBox spacing="2">
+            <Label text="Administración" styleClass="titulo-pagina"/>
+            <Label text="Los catálogos son árboles binarios de búsqueda: alta, búsqueda y baja son recursivas y la tabla se llena con el recorrido inorden."
+                   styleClass="texto-suave" wrapText="true"/>
+        </VBox>
+
+        <TabPane tabClosingPolicy="UNAVAILABLE">
+
+            <!-- ============================== APARTAMENTOS ============================== -->
+            <Tab text="Apartamentos">
+                <HBox spacing="18">
+                    <padding><Insets top="16"/></padding>
+                    <VBox styleClass="tarjeta" spacing="12" HBox.hgrow="ALWAYS" minWidth="520">
+                        <FlowPane hgap="8" vgap="8" alignment="CENTER_LEFT">
+                            <TextField fx:id="txtBuscarApto" promptText="Código" prefWidth="140" onAction="#onBuscarApto"/>
+                            <Button text="Buscar en el árbol" styleClass="boton-contorno, boton-sm" onAction="#onBuscarApto"/>
+                            <Label fx:id="lblArbolAptos" styleClass="texto-suave"/>
+                        </FlowPane>
+                        <TableView fx:id="tablaApartamentos" prefHeight="330">
+                            <columns>
+                                <TableColumn fx:id="colAptoCodigo" text="Código"/>
+                                <TableColumn fx:id="colAptoNombre" text="Nombre"/>
+                                <TableColumn fx:id="colAptoBloque" text="Bloque"/>
+                                <TableColumn fx:id="colAptoPiso" text="Piso"/>
+                                <TableColumn fx:id="colAptoDormitorios" text="Dorm."/>
+                                <TableColumn fx:id="colAptoCapacidad" text="Cap."/>
+                                <TableColumn fx:id="colAptoEstado" text="Estado"/>
+                                <TableColumn fx:id="colAptoReservas" text="Reservas"/>
+                            </columns>
+                            <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+                        </TableView>
+                        <FlowPane hgap="8" vgap="8" alignment="CENTER_LEFT">
+                            <Label text="Recorridos recursivos:" styleClass="texto-suave"/>
+                            <Button text="Inorden" styleClass="boton-contorno, boton-sm" onAction="#onInorden"/>
+                            <Button text="Preorden" styleClass="boton-contorno, boton-sm" onAction="#onPreorden"/>
+                            <Button text="Postorden" styleClass="boton-contorno, boton-sm" onAction="#onPostorden"/>
+                        </FlowPane>
+                        <Label fx:id="lblRecorrido" styleClass="caja-info" maxWidth="Infinity" wrapText="true"/>
+                        <Label text="La altura depende del orden de inserción: el árbol no se balancea, así que si los códigos llegan ordenados (como en el escenario) queda como una lista."
+                               styleClass="texto-suave" wrapText="true"/>
+                    </VBox>
+                    <VBox styleClass="tarjeta" spacing="10" minWidth="340" prefWidth="360">
+                        <Label text="Ficha del apartamento" styleClass="titulo-seccion"/>
+                        <GridPane hgap="10" vgap="8">
+                            <columnConstraints><ColumnConstraints minWidth="110"/><ColumnConstraints hgrow="ALWAYS"/></columnConstraints>
+                            <Label text="Código" styleClass="texto-suave"/>
+                            <TextField fx:id="txtAptoCodigo" GridPane.columnIndex="1"/>
+                            <Label text="Nombre" styleClass="texto-suave" GridPane.rowIndex="1"/>
+                            <TextField fx:id="txtAptoNombre" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                            <Label text="Bloque" styleClass="texto-suave" GridPane.rowIndex="2"/>
+                            <TextField fx:id="txtAptoBloque" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                            <Label text="Piso" styleClass="texto-suave" GridPane.rowIndex="3"/>
+                            <TextField fx:id="txtAptoPiso" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                            <Label text="Dormitorios" styleClass="texto-suave" GridPane.rowIndex="4"/>
+                            <TextField fx:id="txtAptoDormitorios" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                            <Label text="Capacidad" styleClass="texto-suave" GridPane.rowIndex="5"/>
+                            <TextField fx:id="txtAptoCapacidad" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+                            <Label text="Tarifa base (alta)" styleClass="texto-suave" GridPane.rowIndex="6"/>
+                            <TextField fx:id="txtAptoTarifa" promptText="Por persona por noche" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+                            <Label text="Características" styleClass="texto-suave" GridPane.rowIndex="7"/>
+                            <TextArea fx:id="txtAptoCaracteristicas" prefRowCount="3" wrapText="true" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
+                        </GridPane>
+                        <HBox spacing="8">
+                            <Button text="Nuevo" styleClass="boton-contorno" onAction="#onNuevoApto"/>
+                            <Button text="Guardar" styleClass="boton-primario" HBox.hgrow="ALWAYS" maxWidth="Infinity" onAction="#onGuardarApto"/>
+                            <Button text="Eliminar" styleClass="boton-secundario" onAction="#onEliminarApto"/>
+                        </HBox>
+                        <Label text="Las tarifas por temporada se definen en «Temporadas y tarifas»." styleClass="texto-suave" wrapText="true"/>
+                    </VBox>
+                </HBox>
+            </Tab>
+
+            <!-- =============================== HUÉSPEDES =============================== -->
+            <Tab text="Huéspedes">
+                <HBox spacing="18">
+                    <padding><Insets top="16"/></padding>
+                    <VBox styleClass="tarjeta" spacing="12" HBox.hgrow="ALWAYS" minWidth="520">
+                        <FlowPane hgap="8" vgap="8" alignment="CENTER_LEFT">
+                            <TextField fx:id="txtBuscarHuesped" promptText="Documento" prefWidth="160" onAction="#onBuscarHuesped"/>
+                            <Button text="Buscar en el árbol" styleClass="boton-contorno, boton-sm" onAction="#onBuscarHuesped"/>
+                            <Label fx:id="lblArbolHuespedes" styleClass="texto-suave"/>
+                        </FlowPane>
+                        <TableView fx:id="tablaHuespedes" prefHeight="380">
+                            <columns>
+                                <TableColumn fx:id="colHuesDocumento" text="Documento"/>
+                                <TableColumn fx:id="colHuesNombre" text="Nombre"/>
+                                <TableColumn fx:id="colHuesNacimiento" text="Nacimiento"/>
+                                <TableColumn fx:id="colHuesTelefono" text="Teléfono"/>
+                                <TableColumn fx:id="colHuesCorreo" text="Correo"/>
+                                <TableColumn fx:id="colHuesReservas" text="Reservas"/>
+                            </columns>
+                            <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+                        </TableView>
+                    </VBox>
+                    <VBox styleClass="tarjeta" spacing="10" minWidth="340" prefWidth="360">
+                        <Label text="Perfil del huésped" styleClass="titulo-seccion"/>
+                        <GridPane hgap="10" vgap="8">
+                            <columnConstraints><ColumnConstraints minWidth="110"/><ColumnConstraints hgrow="ALWAYS"/></columnConstraints>
+                            <Label text="Documento" styleClass="texto-suave"/>
+                            <TextField fx:id="txtHuesDocumento" GridPane.columnIndex="1"/>
+                            <Label text="Nombre" styleClass="texto-suave" GridPane.rowIndex="1"/>
+                            <TextField fx:id="txtHuesNombre" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                            <Label text="Nacimiento" styleClass="texto-suave" GridPane.rowIndex="2"/>
+                            <DatePicker fx:id="dpHuesNacimiento" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                            <Label text="Teléfono" styleClass="texto-suave" GridPane.rowIndex="3"/>
+                            <TextField fx:id="txtHuesTelefono" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                            <Label text="Correo" styleClass="texto-suave" GridPane.rowIndex="4"/>
+                            <TextField fx:id="txtHuesCorreo" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                            <Label text="Foto (opcional)" styleClass="texto-suave" GridPane.rowIndex="5"/>
+                            <HBox spacing="6" GridPane.rowIndex="5" GridPane.columnIndex="1">
+                                <TextField fx:id="txtHuesFoto" HBox.hgrow="ALWAYS"/>
+                                <Button text="Elegir…" styleClass="boton-contorno, boton-sm" onAction="#onElegirFoto"/>
+                            </HBox>
+                        </GridPane>
+                        <HBox spacing="8">
+                            <Button text="Nuevo" styleClass="boton-contorno" onAction="#onNuevoHuesped"/>
+                            <Button text="Guardar" styleClass="boton-primario" HBox.hgrow="ALWAYS" maxWidth="Infinity" onAction="#onGuardarHuesped"/>
+                            <Button text="Eliminar" styleClass="boton-secundario" onAction="#onEliminarHuesped"/>
+                        </HBox>
+                    </VBox>
+                </HBox>
+            </Tab>
+
+            <!-- =============================== EMPLEADOS =============================== -->
+            <Tab text="Empleados">
+                <HBox spacing="18">
+                    <padding><Insets top="16"/></padding>
+                    <VBox styleClass="tarjeta" spacing="12" HBox.hgrow="ALWAYS" minWidth="520">
+                        <FlowPane hgap="8" vgap="8" alignment="CENTER_LEFT">
+                            <TextField fx:id="txtBuscarEmpleado" promptText="Id" prefWidth="140" onAction="#onBuscarEmpleado"/>
+                            <Button text="Buscar en el árbol" styleClass="boton-contorno, boton-sm" onAction="#onBuscarEmpleado"/>
+                            <Label fx:id="lblArbolEmpleados" styleClass="texto-suave"/>
+                        </FlowPane>
+                        <TableView fx:id="tablaEmpleados" prefHeight="300">
+                            <columns>
+                                <TableColumn fx:id="colEmpId" text="Id"/>
+                                <TableColumn fx:id="colEmpNombre" text="Nombre"/>
+                                <TableColumn fx:id="colEmpRol" text="Rol"/>
+                            </columns>
+                            <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+                        </TableView>
+                    </VBox>
+                    <VBox styleClass="tarjeta" spacing="10" minWidth="340" prefWidth="360">
+                        <Label text="Empleado" styleClass="titulo-seccion"/>
+                        <GridPane hgap="10" vgap="8">
+                            <columnConstraints><ColumnConstraints minWidth="110"/><ColumnConstraints hgrow="ALWAYS"/></columnConstraints>
+                            <Label text="Id" styleClass="texto-suave"/>
+                            <TextField fx:id="txtEmpId" GridPane.columnIndex="1"/>
+                            <Label text="Nombre" styleClass="texto-suave" GridPane.rowIndex="1"/>
+                            <TextField fx:id="txtEmpNombre" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                            <Label text="Rol" styleClass="texto-suave" GridPane.rowIndex="2"/>
+                            <ComboBox fx:id="cbEmpRol" maxWidth="Infinity" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                            <Label text="Contraseña" styleClass="texto-suave" GridPane.rowIndex="3"/>
+                            <PasswordField fx:id="pfEmpContrasena" promptText="Vacía = no cambia" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                        </GridPane>
+                        <HBox spacing="8">
+                            <Button text="Nuevo" styleClass="boton-contorno" onAction="#onNuevoEmpleado"/>
+                            <Button text="Guardar" styleClass="boton-primario" HBox.hgrow="ALWAYS" maxWidth="Infinity" onAction="#onGuardarEmpleado"/>
+                            <Button text="Eliminar" styleClass="boton-secundario" onAction="#onEliminarEmpleado"/>
+                        </HBox>
+                        <Label text="Los recepcionistas nuevos entran a la rotación de turnos." styleClass="texto-suave" wrapText="true"/>
+                    </VBox>
+                </HBox>
+            </Tab>
+
+            <!-- ============================ ESTADO OPERATIVO ============================ -->
+            <Tab text="Estado operativo">
+                <HBox spacing="18">
+                    <padding><Insets top="16"/></padding>
+                    <VBox styleClass="tarjeta" spacing="12" HBox.hgrow="ALWAYS" minWidth="520">
+                        <TableView fx:id="tablaEstados" prefHeight="300">
+                            <columns>
+                                <TableColumn fx:id="colEstCodigo" text="Código"/>
+                                <TableColumn fx:id="colEstNombre" text="Nombre"/>
+                                <TableColumn fx:id="colEstEstado" text="Estado"/>
+                                <TableColumn fx:id="colEstMotivo" text="Motivo"/>
+                            </columns>
+                            <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+                        </TableView>
+                        <Label text="Historial de fuera de servicio" styleClass="titulo-seccion"/>
+                        <TableView fx:id="tablaHistorial" prefHeight="180">
+                            <columns>
+                                <TableColumn fx:id="colHistApto" text="Apto"/>
+                                <TableColumn fx:id="colHistMotivo" text="Motivo"/>
+                                <TableColumn fx:id="colHistDesde" text="Desde"/>
+                                <TableColumn fx:id="colHistHasta" text="Hasta"/>
+                            </columns>
+                            <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+                            <placeholder><Label text="Ningún apartamento ha estado fuera de servicio"/></placeholder>
+                        </TableView>
+                    </VBox>
+                    <VBox styleClass="tarjeta" spacing="10" minWidth="340" prefWidth="360">
+                        <Label text="Cambiar estado" styleClass="titulo-seccion"/>
+                        <Label fx:id="lblAptoEstado" text="Selecciona un apartamento" styleClass="texto-fuerte" wrapText="true"/>
+                        <Label text="Motivo (obligatorio para fuera de servicio)" styleClass="texto-suave" wrapText="true"/>
+                        <TextArea fx:id="txtMotivo" prefRowCount="3" wrapText="true"/>
+                        <Button text="Poner fuera de servicio" styleClass="boton-secundario" maxWidth="Infinity" onAction="#onFueraDeServicio"/>
+                        <Button text="Volver a servicio" styleClass="boton-primario" maxWidth="Infinity" onAction="#onVolverAServicio"/>
+                        <Label text="Al volver a servicio el apartamento queda Pendiente de preparación y entra a la cola. Los demás cambios (Ocupado, En preparación, Preparado) los hacen el check-in, el check-out y la preparación."
+                               styleClass="texto-suave" wrapText="true"/>
+                    </VBox>
+                </HBox>
+            </Tab>
+        </TabPane>
+    </VBox>
+</ScrollPane>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!-- Pantalla de ingreso: empleados con id y contraseña, huéspedes con su documento -->
+<HBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="co.edu.uniquindio.apartasuitesuq.viewController.LoginViewController">
+
+    <!-- Marca -->
+    <VBox styleClass="sidebar" spacing="14" prefWidth="400" minWidth="340">
+        <padding><Insets top="56" right="40" bottom="40" left="40"/></padding>
+        <Label text="Aparta-Suites UQ" styleClass="marca-titulo" style="-fx-font-size: 30px;"/>
+        <Label text="Sistema de Gestión de Alojamiento · Salento, Quindío" styleClass="marca-subtitulo"
+               wrapText="true"/>
+        <Region prefHeight="24"/>
+        <Label text="HUÉSPED" styleClass="marca-seccion"/>
+        <Label text="Consulta tus reservas, el saldo de tu folio, tus favoritos y cotiza nuevas estancias."
+               styleClass="marca-subtitulo" wrapText="true"/>
+        <Label text="RECEPCIÓN" styleClass="marca-seccion"/>
+        <Label text="Reservas, llegadas y salidas, cola de preparación, mapa del edificio y folios."
+               styleClass="marca-subtitulo" wrapText="true"/>
+        <Label text="ADMINISTRACIÓN" styleClass="marca-seccion"/>
+        <Label text="Catálogos, temporadas y tarifas, estadísticas y carga de escenarios."
+               styleClass="marca-subtitulo" wrapText="true"/>
+    </VBox>
+
+    <!-- Formulario -->
+    <StackPane styleClass="contenido" HBox.hgrow="ALWAYS">
+        <VBox styleClass="tarjeta" spacing="14" maxWidth="420" maxHeight="-Infinity">
+            <padding><Insets top="32" right="32" bottom="32" left="32"/></padding>
+            <Label text="Iniciar sesión" styleClass="titulo-pagina"/>
+            <Label text="¿Cómo vas a ingresar?" styleClass="texto-suave"/>
+            <HBox spacing="8">
+                <ToggleButton fx:id="tgEmpleado" text="Empleado" selected="true" styleClass="filtro">
+                    <toggleGroup><ToggleGroup fx:id="grupoTipo"/></toggleGroup>
+                </ToggleButton>
+                <ToggleButton fx:id="tgHuesped" text="Huésped" styleClass="filtro" toggleGroup="$grupoTipo"/>
+            </HBox>
+
+            <Label fx:id="lblUsuario" text="Id del empleado" styleClass="texto-suave"/>
+            <TextField fx:id="txtUsuario" promptText="Ej.: admin o R1" styleClass="campo-busqueda"/>
+
+            <VBox fx:id="cajaContrasena" spacing="6">
+                <Label text="Contraseña" styleClass="texto-suave"/>
+                <PasswordField fx:id="txtContrasena" promptText="Contraseña" styleClass="campo-busqueda"/>
+            </VBox>
+
+            <Label fx:id="lblError" styleClass="texto-error" wrapText="true"/>
+            <Button fx:id="btnIngresar" text="Ingresar" styleClass="boton-primario" maxWidth="Infinity"
+                    defaultButton="true" onAction="#onIngresar"/>
+
+            <Separator/>
+            <Button text="Cargar escenario de prueba" styleClass="boton-contorno" maxWidth="Infinity"
+                    onAction="#onCargarEscenario"/>
+            <Label fx:id="lblResumen" styleClass="texto-suave" wrapText="true"/>
+        </VBox>
+    </StackPane>
+</HBox>

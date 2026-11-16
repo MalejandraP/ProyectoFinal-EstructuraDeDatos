@@ -52,9 +52,9 @@ En la pantalla de ingreso, **Cargar escenario de prueba** llena el sistema con
 
 ```
 Aparta-SuitesUQ/src/main/java/co/edu/uniquindio/apartasuitesuq/
-├── HelloApplication.java      punto de entrada (pantalla de ingreso)
-├── view/                      ventana principal por rol, cotización, temporadas, estadísticas, carga
-├── viewController/            panel de usuario y folio (FXML)
+├── HelloApplication.java      punto de entrada: abre login.fxml
+├── controller/                DatosPrueba (fachada compartida) y Sesion (usuario y rol)
+├── viewController/            un controlador por pantalla FXML (MVC: sin reglas de negocio)
 └── model/
     ├── SGA.java               fachada: único punto de acceso de la GUI al modelo
     ├── CargadorDatos.java     carga de escenarios desde archivo plano
@@ -62,8 +62,14 @@ Aparta-SuitesUQ/src/main/java/co/edu/uniquindio/apartasuitesuq/
     ├── Estructuras/           estructuras propias genéricas + grafo del edificio
     ├── Servicios/             reservas, canal externo, turnos, preparación, recepción,
     │                          vencimientos, liquidación de tarifas, asignación de grupos
-    ├── Excepciones/           excepciones propias
-    └── ViewPrueba/            vistas del mapa, tablero y panel de preparación
+    └── Excepciones/           excepciones propias
+
+Aparta-SuitesUQ/src/main/resources/co/edu/uniquindio/apartasuitesuq/
+├── *.fxml                     login, principal, inicio, reservas, canal-externo, calendario,
+│                              preparacion, mapa, folio, panel-usuario, administracion,
+│                              temporadas, estadisticas, carga y diálogos
+├── estilos.css                sistema de diseño (paleta general + semáforo de estados)
+└── datos/escenario.txt        escenario de prueba
 ```
 
 ## Conceptos de Java exigidos
@@ -82,6 +88,7 @@ Aparta-SuitesUQ/src/main/java/co/edu/uniquindio/apartasuitesuq/
 - [Diagrama de clases](docs/diagrama-clases.md)
 - [Diagrama de estructuras propias](docs/diagrama-estructuras.md)
 - [Guion de la demostración](docs/guion-demo.md)
+- [Trazabilidad de la GUI](docs/trazabilidad-gui.md) (funcionalidad → pantalla → componente → fx:id)
 
 ## Equipo
 

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!-- I. Estadísticas: ocupación, ingresos, canales, conflictos y tiempos de preparación -->
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="co.edu.uniquindio.apartasuitesuq.viewController.EstadisticasViewController"
+            fitToWidth="true">
+    <VBox styleClass="contenido" spacing="18">
+        <VBox spacing="2">
+            <Label text="Estadísticas" styleClass="titulo-pagina"/>
+            <Label text="Calculadas recorriendo el árbol de reservas y cada estancia noche por noche."
+                   styleClass="texto-suave"/>
+        </VBox>
+        <FlowPane hgap="10" vgap="10" alignment="CENTER_LEFT">
+            <Label text="Periodo desde" styleClass="texto-suave" minWidth="-Infinity"/>
+            <DatePicker fx:id="dpDesde" prefWidth="150"/>
+            <Label text="hasta (sin incluir)" styleClass="texto-suave" minWidth="-Infinity"/>
+            <DatePicker fx:id="dpHasta" prefWidth="150"/>
+            <Button text="Actualizar" styleClass="boton-primario" minWidth="-Infinity" onAction="#onActualizar"/>
+        </FlowPane>
+
+        <HBox spacing="12">
+            <VBox styleClass="tile-resumen" spacing="4" HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                <Label text="Ocupación del periodo" styleClass="texto-suave"/>
+                <Label fx:id="lblOcupacion" styleClass="numero-grande"/>
+            </VBox>
+            <VBox styleClass="tile-resumen" spacing="4" HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                <Label text="Ingresos del periodo" styleClass="texto-suave"/>
+                <Label fx:id="lblIngresos" styleClass="numero-grande"/>
+            </VBox>
+            <VBox styleClass="tile-resumen, tile-fuera" spacing="4" HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                <Label text="Conflictos de canal" styleClass="texto-suave"/>
+                <Label fx:id="lblConflictos" styleClass="numero-grande"/>
+            </VBox>
+            <VBox styleClass="tile-resumen, tile-preparado" spacing="4" HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                <Label text="Tiempo promedio de preparación" styleClass="texto-suave"/>
+                <Label fx:id="lblPreparacion" styleClass="numero-grande"/>
+            </VBox>
+        </HBox>
+
+        <GridPane hgap="16" vgap="16">
+            <columnConstraints>
+                <ColumnConstraints hgrow="ALWAYS" percentWidth="50"/>
+                <ColumnConstraints hgrow="ALWAYS" percentWidth="50"/>
+            </columnConstraints>
+            <VBox styleClass="tarjeta">
+                <BarChart fx:id="graficoOcupacionApto" title="Ocupación por apartamento (%)" legendVisible="false"
+                          animated="false" prefHeight="300">
+                    <xAxis><CategoryAxis/></xAxis>
+                    <yAxis><NumberAxis label="Porcentaje"/></yAxis>
+                </BarChart>
+            </VBox>
+            <VBox styleClass="tarjeta" GridPane.columnIndex="1">
+                <BarChart fx:id="graficoOcupacionTemporada" styleClass="grafico-temporada" title="Ocupación por temporada (%)" legendVisible="false"
+                          animated="false" prefHeight="300">
+                    <xAxis><CategoryAxis/></xAxis>
+                    <yAxis><NumberAxis label="Porcentaje"/></yAxis>
+                </BarChart>
+            </VBox>
+            <VBox styleClass="tarjeta" GridPane.rowIndex="1">
+                <BarChart fx:id="graficoIngresos" styleClass="grafico-ingresos" title="Ingresos por mes (COP)" legendVisible="false"
+                          animated="false" prefHeight="300">
+                    <xAxis><CategoryAxis/></xAxis>
+                    <yAxis><NumberAxis/></yAxis>
+                </BarChart>
+            </VBox>
+            <VBox styleClass="tarjeta" spacing="10" GridPane.rowIndex="1" GridPane.columnIndex="1">
+                <Label text="Reservas por canal y estado" styleClass="titulo-seccion"/>
+                <TableView fx:id="tablaCanales" prefHeight="200">
+                    <columns>
+                        <TableColumn fx:id="colCanal" text="Canal"/>
+                        <TableColumn fx:id="colCanalTotal" text="Total"/>
+                        <TableColumn fx:id="colPendiente" text="Pend."/>
+                        <TableColumn fx:id="colConfirmada" text="Conf."/>
+                        <TableColumn fx:id="colEnCurso" text="En curso"/>
+                        <TableColumn fx:id="colFinalizada" text="Final."/>
+                        <TableColumn fx:id="colCancelada" text="Cancel."/>
+                        <TableColumn fx:id="colNoShow" text="No-show"/>
+                    </columns>
+                    <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+                </TableView>
+            </VBox>
+        </GridPane>
+
+        <HBox spacing="16">
+            <VBox styleClass="tarjeta" spacing="10" HBox.hgrow="ALWAYS">
+                <Label text="Conflictos del canal externo" styleClass="titulo-seccion"/>
+                <TableView fx:id="tablaConflictos" prefHeight="180">
+                    <columns>
+                        <TableColumn fx:id="colConfSolicitud" text="Solicitud"/>
+                        <TableColumn fx:id="colConfApto" text="Apto"/>
+                        <TableColumn fx:id="colConfMotivo" text="Motivo"/>
+                    </columns>
+                    <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+                    <placeholder><Label text="Sin conflictos de canal"/></placeholder>
+                </TableView>
+            </VBox>
+            <VBox styleClass="tarjeta" spacing="10" HBox.hgrow="ALWAYS">
+                <Label text="Tiempos de preparación por apartamento" styleClass="titulo-seccion"/>
+                <TableView fx:id="tablaTiempos" prefHeight="180">
+                    <columns>
+                        <TableColumn fx:id="colTiempoApto" text="Apto"/>
+                        <TableColumn fx:id="colTiempoMinutos" text="Minutos"/>
+                    </columns>
+                    <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+                    <placeholder><Label text="Aún no hay preparaciones terminadas"/></placeholder>
+                </TableView>
+            </VBox>
+        </HBox>
+    </VBox>
+</ScrollPane>

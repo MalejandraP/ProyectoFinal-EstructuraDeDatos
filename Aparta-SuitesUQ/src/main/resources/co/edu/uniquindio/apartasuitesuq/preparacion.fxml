@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!-- E. Panel de preparación: cola de prioridad, despacho, ruta sugerida y tiempos -->
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="co.edu.uniquindio.apartasuitesuq.viewController.PreparacionViewController"
+            fitToWidth="true">
+    <VBox styleClass="contenido" spacing="18">
+        <HBox spacing="12" alignment="CENTER_LEFT">
+            <VBox spacing="2">
+                <Label text="Preparación de apartamentos" styleClass="titulo-pagina"/>
+                <Label text="Prioridad 1: entrada hoy (por hora estimada de llegada). Prioridad 2: el resto."
+                       styleClass="texto-suave"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Actualizar" styleClass="boton-primario" onAction="#onActualizar"/>
+        </HBox>
+
+        <HBox spacing="12">
+            <VBox styleClass="tile-resumen, tile-pendiente" spacing="4" HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                <Label text="En cola" styleClass="texto-suave"/>
+                <Label fx:id="lblEnCola" styleClass="numero-grande"/>
+            </VBox>
+            <VBox styleClass="tile-resumen" spacing="4" HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                <Label text="En preparación" styleClass="texto-suave"/>
+                <Label fx:id="lblEnPreparacion" styleClass="numero-grande"/>
+            </VBox>
+            <VBox styleClass="tile-resumen, tile-preparado" spacing="4" HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                <Label text="Tiempo promedio de preparación" styleClass="texto-suave"/>
+                <Label fx:id="lblPromedio" styleClass="numero-grande"/>
+            </VBox>
+        </HBox>
+
+        <HBox spacing="18">
+            <VBox styleClass="tarjeta" spacing="12" HBox.hgrow="ALWAYS" minWidth="460">
+                <Label text="Cola de preparación (orden de atención)" styleClass="titulo-seccion"/>
+                <TableView fx:id="tablaCola" prefHeight="260">
+                    <columns>
+                        <TableColumn fx:id="colOrden" text="#"/>
+                        <TableColumn fx:id="colPrioridad" text="Prioridad"/>
+                        <TableColumn fx:id="colApto" text="Apartamento"/>
+                        <TableColumn fx:id="colMotivo" text="Motivo"/>
+                        <TableColumn fx:id="colIngreso" text="En cola desde"/>
+                    </columns>
+                    <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+                    <placeholder><Label text="No hay apartamentos pendientes de preparación"/></placeholder>
+                </TableView>
+                <Button fx:id="btnDespachar" text="Despachar siguiente (pasa a En preparación)" styleClass="boton-primario"
+                        maxWidth="Infinity" onAction="#onDespachar"/>
+            </VBox>
+
+            <VBox styleClass="tarjeta" spacing="12" minWidth="360" prefWidth="380">
+                <Label text="En preparación" styleClass="titulo-seccion"/>
+                <TableView fx:id="tablaEnPreparacion" prefHeight="200">
+                    <columns>
+                        <TableColumn fx:id="colEnPrepApto" text="Apartamento"/>
+                        <TableColumn fx:id="colEnPrepDesde" text="En cola desde"/>
+                    </columns>
+                    <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+                    <placeholder><Label text="Nadie está preparando un apartamento"/></placeholder>
+                </TableView>
+                <Button text="Marcar como Preparado" styleClass="boton-secundario" maxWidth="Infinity"
+                        onAction="#onTerminar"/>
+            </VBox>
+        </HBox>
+
+        <HBox spacing="18">
+            <VBox styleClass="tarjeta" spacing="10" HBox.hgrow="ALWAYS">
+                <Label text="Ruta sugerida para recorrer los pendientes" styleClass="titulo-seccion"/>
+                <Label text="Ruta más corta desde recepción (Dijkstra) pasando por cada apartamento en el orden de la cola."
+                       styleClass="texto-suave" wrapText="true"/>
+                <Label fx:id="lblRuta" styleClass="caja-info" maxWidth="Infinity" wrapText="true"/>
+                <Label fx:id="lblDistancia" styleClass="texto-fuerte"/>
+                <Button text="Ver en el mapa" styleClass="boton-contorno" onAction="#onVerEnMapa"/>
+            </VBox>
+            <VBox styleClass="tarjeta" spacing="10" minWidth="360" prefWidth="380">
+                <Label text="Tiempos registrados por apartamento" styleClass="titulo-seccion"/>
+                <TableView fx:id="tablaTiempos" prefHeight="200">
+                    <columns>
+                        <TableColumn fx:id="colTiempoApto" text="Apto"/>
+                        <TableColumn fx:id="colTiempoFin" text="Terminado"/>
+                        <TableColumn fx:id="colTiempoMinutos" text="Minutos"/>
+                    </columns>
+                    <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+                    <placeholder><Label text="Aún no hay preparaciones terminadas"/></placeholder>
+                </TableView>
+            </VBox>
+        </HBox>
+    </VBox>
+</ScrollPane>

@@ -3,7 +3,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<ScrollPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="co.edu.uniquindio.apartasuitesuq.viewController.CanalExternoViewController"
             fitToWidth="true" styleClass="scroll-panel-usuario">
     <content>
         <VBox styleClass="contenido" spacing="24">
@@ -23,6 +24,20 @@
                             onAction="#onProcesarSiguiente"/>
                 </HBox>
             </HBox>
+
+            <!-- NUEVA SOLICITUD (simula la llegada desde la plataforma de terceros) -->
+            <VBox styleClass="tarjeta" spacing="12">
+                <Label text="Registrar solicitud entrante" styleClass="titulo-seccion"/>
+                <FlowPane hgap="10" vgap="10" alignment="CENTER_LEFT">
+                    <VBox spacing="4"><Label text="Id externo" styleClass="texto-suave"/><TextField fx:id="txtIdExterno" prefWidth="120"/></VBox>
+                    <VBox spacing="4"><Label text="Apartamento" styleClass="texto-suave"/><ComboBox fx:id="cbApartamento" prefWidth="200"/></VBox>
+                    <VBox spacing="4"><Label text="Entrada" styleClass="texto-suave"/><DatePicker fx:id="dpEntrada" prefWidth="145"/></VBox>
+                    <VBox spacing="4"><Label text="Salida" styleClass="texto-suave"/><DatePicker fx:id="dpSalida" prefWidth="145"/></VBox>
+                    <VBox spacing="4"><Label text="Personas" styleClass="texto-suave"/><Spinner fx:id="spPersonas" prefWidth="90" editable="true"/></VBox>
+                    <VBox spacing="4"><Label text="Titular" styleClass="texto-suave"/><ComboBox fx:id="cbTitular" prefWidth="220"/></VBox>
+                    <Button text="Encolar solicitud" styleClass="boton-contorno" onAction="#onEncolar"/>
+                </FlowPane>
+            </VBox>
 
             <!-- FILA 1: PENDIENTES + CONFLICTOS (misma altura) -->
             <HBox spacing="24" alignment="TOP_LEFT">
@@ -68,6 +83,7 @@
                             <TableColumn fx:id="colConfSolicitud" text="SOLICITUD" prefWidth="90"/>
                             <TableColumn fx:id="colConfMotivo" text="MOTIVO" prefWidth="420"/>
                         </columns>
+                        <placeholder><Label text="Sin conflictos de canal" styleClass="texto-suave"/></placeholder>
                         <columnResizePolicy>
                             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
                         </columnResizePolicy>
@@ -94,6 +110,7 @@
                         <TableColumn fx:id="colProcEstado" text="ESTADO" prefWidth="125" minWidth="125" maxWidth="125"/>
                         <TableColumn fx:id="colProcMotivo" text="MOTIVO" prefWidth="400" minWidth="250"/>
                     </columns>
+                    <placeholder><Label text="Aún no se han procesado solicitudes" styleClass="texto-suave"/></placeholder>
                     <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
                     </columnResizePolicy>

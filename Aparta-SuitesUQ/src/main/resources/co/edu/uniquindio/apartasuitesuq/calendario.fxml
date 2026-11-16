@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!-- C. Calendario de ocupación: apartamentos × noches del mes -->
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="co.edu.uniquindio.apartasuitesuq.viewController.CalendarioViewController"
+            fitToWidth="true">
+    <VBox styleClass="contenido" spacing="18">
+        <HBox spacing="12" alignment="CENTER_LEFT">
+            <VBox spacing="2">
+                <Label text="Calendario de ocupación" styleClass="titulo-pagina"/>
+                <Label text="Cada celda es una noche: la noche de salida no se ocupa." styleClass="texto-suave"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="◀" styleClass="boton-contorno" onAction="#onMesAnterior"/>
+            <Label fx:id="lblMes" styleClass="titulo-seccion" minWidth="170" alignment="CENTER"/>
+            <Button text="▶" styleClass="boton-contorno" onAction="#onMesSiguiente"/>
+            <Button text="Hoy" styleClass="boton-primario" onAction="#onHoy"/>
+        </HBox>
+
+        <HBox spacing="18" alignment="CENTER_LEFT">
+            <HBox spacing="6" alignment="CENTER_LEFT"><Label styleClass="celda, celda-ocupada" text=" "/><Label text="Ocupada / reservada" styleClass="texto-suave"/></HBox>
+            <HBox spacing="6" alignment="CENTER_LEFT"><Label styleClass="celda, celda-bloqueada" text=" "/><Label text="Bloqueada (fuera de servicio)" styleClass="texto-suave"/></HBox>
+            <HBox spacing="6" alignment="CENTER_LEFT"><Label styleClass="celda, celda-libre" text=" "/><Label text="Libre" styleClass="texto-suave"/></HBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="lblResumen" styleClass="texto-suave"/>
+        </HBox>
+
+        <VBox styleClass="tarjeta">
+            <ScrollPane fx:id="desplazamiento" hbarPolicy="AS_NEEDED" vbarPolicy="NEVER">
+                <GridPane fx:id="cuadricula" hgap="2" vgap="2"/>
+            </ScrollPane>
+        </VBox>
+
+        <VBox styleClass="tarjeta" spacing="6">
+            <Label text="Detalle de la noche seleccionada" styleClass="titulo-seccion"/>
+            <Label fx:id="lblDetalle" text="Haz clic en una celda para ver la reserva y el huésped."
+                   styleClass="texto-suave" wrapText="true"/>
+        </VBox>
+    </VBox>
+</ScrollPane>

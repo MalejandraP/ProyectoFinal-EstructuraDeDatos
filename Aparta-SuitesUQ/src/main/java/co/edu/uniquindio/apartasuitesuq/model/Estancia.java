@@ -82,7 +82,7 @@ public class Estancia implements Iterable<LocalDate> {
         @Override
         public LocalDate next() {
             if (!hasNext()) {
-                throw new FechasInvalidasException("No hay más noches en la estancia.");
+                throw new NoSuchElementException("No hay más noches en la estancia.");
             }
             LocalDate noche = actual;
             actual = actual.plusDays(1);

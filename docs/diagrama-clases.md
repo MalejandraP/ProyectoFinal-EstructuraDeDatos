@@ -313,6 +313,9 @@ classDiagram
     ServicioPreparacion --> MapaEdificio
 ```
 
-La interfaz gráfica (paquete `view`) solo habla con `SGA`: `LoginView` → `VentanaPrincipal`, que
-abre `CotizacionView`, `TemporadasTarifasView`, `EstadisticasView`, `CargaDatosView` y las
-pantallas del equipo (tablero, mapa, preparación, panel de usuario y folio).
+La interfaz gráfica es JavaFX + FXML con MVC: cada pantalla es un `.fxml` con su controlador en
+`viewController`, y todos los controladores hablan solo con `SGA` (a través de
+`controller.DatosPrueba`). `login.fxml` → `principal.fxml` (menú por rol y pila de navegación), que
+carga en el centro inicio, reservas, canal externo, calendario, preparación, mapa, folio,
+administración, temporadas, estadísticas, carga de datos o el panel de usuario. La relación de cada
+funcionalidad con su pantalla está en [trazabilidad-gui.md](trazabilidad-gui.md).

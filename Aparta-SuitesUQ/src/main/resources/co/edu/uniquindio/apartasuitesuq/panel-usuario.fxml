@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 
-<ScrollPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="co.edu.uniquindio.apartasuitesuq.viewController.PanelUsuarioViewController"
             fitToWidth="true" styleClass="scroll-panel-usuario">
 
@@ -19,7 +20,10 @@
                 <!-- 1. Tarjeta de Perfil -->
                 <VBox styleClass="tarjeta" spacing="16">
                     <HBox alignment="CENTER_LEFT" spacing="14">
-                        <Label fx:id="lblIniciales" styleClass="avatar"/>
+                        <StackPane>
+                            <Label fx:id="lblIniciales" styleClass="avatar"/>
+                            <ImageView fx:id="imgFoto" fitWidth="48" fitHeight="48" preserveRatio="true"/>
+                        </StackPane>
                         <VBox spacing="4">
                             <Label fx:id="lblNombre" styleClass="titulo-seccion"/>
                             <Label text="Huésped" styleClass="chip, chip-preparado"/>

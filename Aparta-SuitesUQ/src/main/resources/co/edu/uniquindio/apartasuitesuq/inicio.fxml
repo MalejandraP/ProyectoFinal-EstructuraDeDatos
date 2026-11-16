@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+
+<!-- A. Inicio: resumen, filtros, búsquedas y tarjetas de todos los apartamentos -->
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="co.edu.uniquindio.apartasuitesuq.viewController.InicioViewController"
+            fitToWidth="true">
+    <VBox styleClass="contenido" spacing="18">
+
+        <!-- Encabezado -->
+        <HBox spacing="12" alignment="CENTER_LEFT">
+            <VBox spacing="2">
+                <Label text="Tablero del alojamiento" styleClass="titulo-pagina"/>
+                <Label fx:id="lblFecha" styleClass="texto-suave"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="btnCargarDatos" text="Cargar escenario de prueba" styleClass="boton-contorno"
+                    onAction="#onCargarDatos"/>
+            <Button text="Actualizar" styleClass="boton-primario" onAction="#onActualizar"/>
+        </HBox>
+
+        <!-- Resumen superior -->
+        <HBox spacing="12">
+            <VBox styleClass="tile-resumen" spacing="4" HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                <Label text="Ocupación global" styleClass="texto-suave"/>
+                <Label fx:id="lblOcupacion" styleClass="numero-grande"/>
+                <Label fx:id="lblOcupacionDetalle" styleClass="texto-suave"/>
+            </VBox>
+            <VBox styleClass="tile-resumen" spacing="4" HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                <Label text="Check-ins de hoy" styleClass="texto-suave"/>
+                <Label fx:id="lblCheckins" styleClass="numero-grande"/>
+                <Label fx:id="lblCheckinsDetalle" styleClass="texto-suave" wrapText="true" maxWidth="220"/>
+            </VBox>
+            <VBox styleClass="tile-resumen, tile-preparado" spacing="4" HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                <HBox spacing="6" alignment="CENTER_LEFT">
+                    <Circle radius="5" styleClass="punto-preparado"/>
+                    <Label text="Preparados" styleClass="texto-suave"/>
+                </HBox>
+                <Label fx:id="lblPreparados" styleClass="numero-grande"/>
+            </VBox>
+            <VBox styleClass="tile-resumen, tile-ocupado" spacing="4" HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                <HBox spacing="6" alignment="CENTER_LEFT">
+                    <Circle radius="5" styleClass="punto-ocupado"/>
+                    <Label text="Ocupados" styleClass="texto-suave"/>
+                </HBox>
+                <Label fx:id="lblOcupados" styleClass="numero-grande"/>
+            </VBox>
+            <VBox styleClass="tile-resumen, tile-pendiente" spacing="4" HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                <HBox spacing="6" alignment="CENTER_LEFT">
+                    <Circle radius="5" styleClass="punto-pendiente"/>
+                    <Label text="Pendientes" styleClass="texto-suave"/>
+                </HBox>
+                <Label fx:id="lblPendientes" styleClass="numero-grande"/>
+            </VBox>
+            <VBox styleClass="tile-resumen, tile-fuera" spacing="4" HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                <HBox spacing="6" alignment="CENTER_LEFT">
+                    <Circle radius="5" styleClass="punto-fuera"/>
+                    <Label text="Fuera de servicio" styleClass="texto-suave"/>
+                </HBox>
+                <Label fx:id="lblFuera" styleClass="numero-grande"/>
+            </VBox>
+        </HBox>
+
+        <!-- Filtros y búsquedas -->
+        <VBox styleClass="tarjeta" spacing="12">
+            <FlowPane hgap="8" vgap="8" alignment="CENTER_LEFT">
+                <Label text="Estado" styleClass="texto-suave" minWidth="56"/>
+                <ToggleButton fx:id="tgTodos" text="Todos" selected="true" styleClass="filtro">
+                    <toggleGroup><ToggleGroup fx:id="grupoEstado"/></toggleGroup>
+                </ToggleButton>
+                <ToggleButton fx:id="tgPreparado" text="Preparado" styleClass="filtro" toggleGroup="$grupoEstado"/>
+                <ToggleButton fx:id="tgOcupado" text="Ocupado" styleClass="filtro" toggleGroup="$grupoEstado"/>
+                <ToggleButton fx:id="tgPendiente" text="Pendiente / En preparación" styleClass="filtro"
+                              toggleGroup="$grupoEstado"/>
+                <ToggleButton fx:id="tgFuera" text="Fuera de servicio" styleClass="filtro" toggleGroup="$grupoEstado"/>
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Label text="Bloque" styleClass="texto-suave" minWidth="44"/>
+                    <ComboBox fx:id="cbBloque" prefWidth="110" onAction="#onFiltrar"/>
+                    <Label text="Piso" styleClass="texto-suave" minWidth="30"/>
+                    <ComboBox fx:id="cbPiso" prefWidth="100" onAction="#onFiltrar"/>
+                </HBox>
+            </FlowPane>
+            <FlowPane hgap="8" vgap="8" alignment="CENTER_LEFT">
+                <TextField fx:id="txtCodigo" promptText="Código del apartamento (ej. A101)" styleClass="campo-busqueda"
+                           prefWidth="260" onAction="#onBuscarCodigo"/>
+                <Button text="Buscar por código" styleClass="boton-contorno" onAction="#onBuscarCodigo"/>
+                <TextField fx:id="txtHuesped" promptText="Documento del huésped" styleClass="campo-busqueda"
+                           prefWidth="240" onAction="#onBuscarHuesped"/>
+                <Button text="Buscar por huésped" styleClass="boton-contorno" onAction="#onBuscarHuesped"/>
+                <Button text="Limpiar filtros" styleClass="boton-secundario" onAction="#onLimpiar"/>
+            </FlowPane>
+        </VBox>
+
+        <Label fx:id="lblResultado" styleClass="texto-suave"/>
+        <Label fx:id="lblVacio" styleClass="caja-info" wrapText="true" maxWidth="Infinity"
+               text="No hay apartamentos para mostrar. El administrador puede cargar el escenario de prueba."/>
+        <FlowPane fx:id="panelTarjetas" hgap="14" vgap="14"/>
+    </VBox>
+</ScrollPane>

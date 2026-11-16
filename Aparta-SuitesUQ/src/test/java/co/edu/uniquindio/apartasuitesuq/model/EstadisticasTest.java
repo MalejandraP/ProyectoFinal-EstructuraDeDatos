@@ -14,7 +14,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Estadísticas sobre el escenario de ejemplo con "hoy" = 12 de noviembre de 2026.
- * Noches vendidas en noviembre: RES-2 (A102, 3), RES-3 (A103, 3) y RES-4 (B101, 2).
+ * Noches vendidas en noviembre: RES-2 (A102, 3), RES-3 (A103, 3), RES-4 (B101, 2),
+ * RES-10 (B201, 4: del 6 al 9) y RES-11 (A103, 1: el 1 de noviembre).
  */
 class EstadisticasTest {
 
@@ -49,7 +50,7 @@ class EstadisticasTest {
         assertEquals("A101", filas.obtener(0).getEtiqueta(), "el catálogo se recorre en inorden");
         assertEquals(10.0, fila(filas, "A102").getValor(), 0.001, "3 de 30 noches");
         assertEquals(0.0, fila(filas, "B102").getValor(), 0.001, "RES-5 está pendiente: no cuenta");
-        assertEquals(8 * 100.0 / (30 * 8), estadisticas.ocupacionGeneral(NOVIEMBRE), 0.001);
+        assertEquals(13 * 100.0 / (30 * 8), estadisticas.ocupacionGeneral(NOVIEMBRE), 0.001);
     }
 
     @Test
@@ -67,10 +68,12 @@ class EstadisticasTest {
         Estancia periodo = new Estancia(LocalDate.of(2026, 11, 1), LocalDate.of(2027, 1, 1));
         ListaDoble<Indicador> meses = estadisticas.ingresosPorMes(periodo);
         // RES-2: 3 noches x 3 pagantes x 85.000 | RES-3: 3 x 2 x 70.000 | RES-4: 2 x 5 x 80.000
+        // RES-10: 4 x 3 x 85.000 | RES-11: 1 noche en noviembre x 2 x 70.000
+        double noviembre = 765000 + 420000 + 800000 + 1020000 + 140000;
         assertEquals("2026-11", meses.obtener(0).getEtiqueta());
-        assertEquals(765000 + 420000 + 800000, meses.obtener(0).getValor(), 0.001);
+        assertEquals(noviembre, meses.obtener(0).getValor(), 0.001);
         assertEquals(1610000, meses.obtener(1).getValor(), 0.001, "RES-9 cruza Media y Alta");
-        assertEquals(765000 + 420000 + 800000 + 1610000, estadisticas.ingresosTotales(periodo), 0.001);
+        assertEquals(noviembre + 1610000, estadisticas.ingresosTotales(periodo), 0.001);
     }
 
     @Test
@@ -82,8 +85,8 @@ class EstadisticasTest {
 
         ListaDoble<Indicador> porCanal = estadisticas.reservasPorCanal(periodo);
         assertEquals(5, fila(porCanal, Canal.PORTAL.getDescripcion()).getValor(), 0.001);
-        assertEquals(3, fila(porCanal, Canal.DIRECTA.getDescripcion()).getValor(), 0.001);
-        assertEquals(1, fila(porCanal, Canal.EXTERNO.getDescripcion()).getValor(), 0.001);
+        assertEquals(4, fila(porCanal, Canal.DIRECTA.getDescripcion()).getValor(), 0.001);
+        assertEquals(2, fila(porCanal, Canal.EXTERNO.getDescripcion()).getValor(), 0.001);
     }
 
     @Test

@@ -1,4 +1,4 @@
-package co.edu.uniquindio.apartasuitesuq.view;
+package co.edu.uniquindio.apartasuitesuq.controller;
 
 import co.edu.uniquindio.apartasuitesuq.model.Empleado;
 import co.edu.uniquindio.apartasuitesuq.model.Huesped;
@@ -39,7 +39,21 @@ public final class Sesion {
         return huesped;
     }
 
+    public boolean esEmpleado() {
+        return empleado != null;
+    }
+
     public String getNombre() {
         return empleado != null ? empleado.getNombre() : huesped.getNombre();
+    }
+
+    /** @return iniciales para el avatar del encabezado */
+    public String getIniciales() {
+        String[] partes = getNombre().trim().split("\\s+");
+        String iniciales = partes[0].substring(0, 1);
+        if (partes.length > 1) {
+            iniciales += partes[1].substring(0, 1);
+        }
+        return iniciales.toUpperCase();
     }
 }

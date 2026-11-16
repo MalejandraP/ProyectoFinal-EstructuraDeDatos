@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!-- Diálogo con el detalle de un apartamento: datos, tarifas por temporada y sus reservas -->
+<DialogPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="co.edu.uniquindio.apartasuitesuq.viewController.DetalleApartamentoViewController"
+            prefWidth="680">
+    <header>
+        <HBox styleClass="encabezado" spacing="10" alignment="CENTER_LEFT">
+            <Label fx:id="lblTitulo" styleClass="titulo-pagina"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="lblEstado" styleClass="chip"/>
+        </HBox>
+    </header>
+    <content>
+        <VBox spacing="14">
+            <GridPane hgap="18" vgap="8">
+                <Label text="Nombre" styleClass="texto-suave" GridPane.rowIndex="0"/>
+                <Label fx:id="lblNombre" styleClass="texto-fuerte" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                <Label text="Ubicación" styleClass="texto-suave" GridPane.rowIndex="1"/>
+                <Label fx:id="lblUbicacion" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                <Label text="Dormitorios / capacidad" styleClass="texto-suave" GridPane.rowIndex="2"/>
+                <Label fx:id="lblCapacidad" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                <Label text="Características" styleClass="texto-suave" GridPane.rowIndex="3"/>
+                <Label fx:id="lblCaracteristicas" wrapText="true" maxWidth="440" GridPane.rowIndex="3"
+                       GridPane.columnIndex="1"/>
+                <Label text="Tarifa por persona por noche" styleClass="texto-suave" GridPane.rowIndex="4"/>
+                <Label fx:id="lblTarifas" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                <Label text="Motivo fuera de servicio" styleClass="texto-suave" GridPane.rowIndex="5"/>
+                <Label fx:id="lblMotivo" wrapText="true" maxWidth="440" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+            </GridPane>
+            <Label text="Reservas del apartamento (árbol ordenado por fecha de entrada)" styleClass="titulo-seccion"/>
+            <TableView fx:id="tablaReservas" prefHeight="220">
+                <columns>
+                    <TableColumn fx:id="colCodigo" text="Código"/>
+                    <TableColumn fx:id="colTitular" text="Titular"/>
+                    <TableColumn fx:id="colEntrada" text="Entrada"/>
+                    <TableColumn fx:id="colSalida" text="Salida"/>
+                    <TableColumn fx:id="colEstado" text="Estado"/>
+                    <TableColumn fx:id="colTotal" text="Total"/>
+                </columns>
+                <columnResizePolicy><TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/></columnResizePolicy>
+                <placeholder><Label text="Sin reservas registradas"/></placeholder>
+            </TableView>
+        </VBox>
+    </content>
+    <buttonTypes>
+        <ButtonType fx:constant="CLOSE"/>
+    </buttonTypes>
+</DialogPane>

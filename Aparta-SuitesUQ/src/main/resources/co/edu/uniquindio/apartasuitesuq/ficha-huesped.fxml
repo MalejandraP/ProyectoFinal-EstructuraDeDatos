@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<!-- Diálogo con la ficha de un huésped: perfil, foto opcional y la reserva relacionada -->
+<DialogPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="co.edu.uniquindio.apartasuitesuq.viewController.FichaHuespedViewController"
+            prefWidth="520">
+    <header>
+        <HBox styleClass="encabezado" spacing="12" alignment="CENTER_LEFT">
+            <StackPane>
+                <Label fx:id="lblIniciales" styleClass="avatar"/>
+                <ImageView fx:id="imgFoto" fitWidth="56" fitHeight="56" preserveRatio="true"/>
+            </StackPane>
+            <VBox spacing="2">
+                <Label fx:id="lblNombre" styleClass="titulo-seccion"/>
+                <Label text="Huésped" styleClass="chip, chip-neutro"/>
+            </VBox>
+        </HBox>
+    </header>
+    <content>
+        <VBox spacing="14">
+            <GridPane hgap="18" vgap="8">
+                <Label text="Documento" styleClass="texto-suave" GridPane.rowIndex="0"/>
+                <Label fx:id="lblDocumento" styleClass="texto-fuerte" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                <Label text="Fecha de nacimiento" styleClass="texto-suave" GridPane.rowIndex="1"/>
+                <Label fx:id="lblNacimiento" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                <Label text="Teléfono" styleClass="texto-suave" GridPane.rowIndex="2"/>
+                <Label fx:id="lblTelefono" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                <Label text="Correo" styleClass="texto-suave" GridPane.rowIndex="3"/>
+                <Label fx:id="lblCorreo" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                <Label text="Favoritos" styleClass="texto-suave" GridPane.rowIndex="4"/>
+                <Label fx:id="lblFavoritos" wrapText="true" maxWidth="300" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+            </GridPane>
+            <VBox styleClass="caja-info" spacing="4">
+                <Label text="Reserva relacionada" styleClass="texto-suave"/>
+                <Label fx:id="lblReserva" styleClass="texto-fuerte" wrapText="true"/>
+            </VBox>
+        </VBox>
+    </content>
+    <buttonTypes>
+        <ButtonType fx:constant="CLOSE"/>
+    </buttonTypes>
+</DialogPane>
